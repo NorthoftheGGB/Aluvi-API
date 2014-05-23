@@ -2,7 +2,7 @@
 
 <table>
   <tr>
-    <th>References</th>
+    <th>Car</th>
     <th>Last known location</th>
     <th></th>
     <th></th>
@@ -11,7 +11,7 @@
 
 <% @car_locations.each do |car_location| %>
   <tr>
-    <td><%= car_location.references %></td>
+    <td><%= car_location.car %></td>
     <td><%= car_location.last_known_location %></td>
     <td><%= link_to 'Show', car_location %></td>
     <td><%= link_to 'Edit', edit_car_location_path(car_location) %></td>

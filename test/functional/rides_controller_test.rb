@@ -18,7 +18,7 @@ class RidesControllerTest < ActionController::TestCase
 
   test "should create ride" do
     assert_difference('Ride.count') do
-      post :create, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, finished: @ride.finished, meeting_point: @ride.meeting_point, meeting_point_place_name: @ride.meeting_point_place_name, references: @ride.references, references: @ride.references, scheduled: @ride.scheduled, started: @ride.started, state: @ride.state }
+      post :create, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, finished: @ride.finished, meeting_point: @ride.meeting_point, meeting_point_place_name: @ride.meeting_point_place_name, scheduled: @ride.scheduled, started: @ride.started, state: @ride.state }
     end
 
     assert_redirected_to ride_path(assigns(:ride))
@@ -35,7 +35,7 @@ class RidesControllerTest < ActionController::TestCase
   end
 
   test "should update ride" do
-    put :update, id: @ride, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, finished: @ride.finished, meeting_point: @ride.meeting_point, meeting_point_place_name: @ride.meeting_point_place_name, references: @ride.references, references: @ride.references, scheduled: @ride.scheduled, started: @ride.started, state: @ride.state }
+    put :update, id: @ride, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, finished: @ride.finished, meeting_point: @ride.meeting_point, meeting_point_place_name: @ride.meeting_point_place_name, scheduled: @ride.scheduled, started: @ride.started, state: @ride.state }
     assert_redirected_to ride_path(assigns(:ride))
   end
 

@@ -18,7 +18,7 @@ class DevicesControllerTest < ActionController::TestCase
 
   test "should create device" do
     assert_difference('Device.count') do
-      post :create, device: { hardware: @device.hardware, os: @device.os, platform: @device.platform, push_token: @device.push_token, references: @device.references, uuid: @device.uuid }
+      post :create, device: { hardware: @device.hardware, os: @device.os, platform: @device.platform, push_token: @device.push_token, uuid: @device.uuid }
     end
 
     assert_redirected_to device_path(assigns(:device))
@@ -35,7 +35,7 @@ class DevicesControllerTest < ActionController::TestCase
   end
 
   test "should update device" do
-    put :update, id: @device, device: { hardware: @device.hardware, os: @device.os, platform: @device.platform, push_token: @device.push_token, references: @device.references, uuid: @device.uuid }
+    put :update, id: @device, device: { hardware: @device.hardware, os: @device.os, platform: @device.platform, push_token: @device.push_token, uuid: @device.uuid }
     assert_redirected_to device_path(assigns(:device))
   end
 

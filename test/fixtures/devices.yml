@@ -1,7 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  references: 
+  user: 
   hardware: MyString
   os: MyString
   platform: MyString
@@ -9,7 +9,7 @@ one:
   uuid: MyString
 
 two:
-  references: 
+  user: 
   hardware: MyString
   os: MyString
   platform: MyString

@@ -2,8 +2,8 @@
 
 <table>
   <tr>
-    <th>References</th>
-    <th>References</th>
+    <th>User</th>
+    <th>Ride</th>
     <th>State</th>
     <th>Type</th>
     <th>Requested datetime</th>
@@ -18,8 +18,8 @@
 
 <% @ride_requests.each do |ride_request| %>
   <tr>
-    <td><%= ride_request.references %></td>
-    <td><%= ride_request.references %></td>
+    <td><%= ride_request.user %></td>
+    <td><%= ride_request.ride %></td>
     <td><%= ride_request.state %></td>
     <td><%= ride_request.type %></td>
     <td><%= ride_request.requested_datetime %></td>

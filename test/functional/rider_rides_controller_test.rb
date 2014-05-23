@@ -18,7 +18,7 @@ class RiderRidesControllerTest < ActionController::TestCase
 
   test "should create rider_ride" do
     assert_difference('RiderRide.count') do
-      post :create, rider_ride: { references: @rider_ride.references, references: @rider_ride.references }
+      post :create, rider_ride: {  }
     end
 
     assert_redirected_to rider_ride_path(assigns(:rider_ride))
@@ -35,7 +35,7 @@ class RiderRidesControllerTest < ActionController::TestCase
   end
 
   test "should update rider_ride" do
-    put :update, id: @rider_ride, rider_ride: { references: @rider_ride.references, references: @rider_ride.references }
+    put :update, id: @rider_ride, rider_ride: {  }
     assert_redirected_to rider_ride_path(assigns(:rider_ride))
   end
 

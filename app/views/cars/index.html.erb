@@ -2,7 +2,7 @@
 
 <table>
   <tr>
-    <th>References</th>
+    <th>User</th>
     <th>Make</th>
     <th>Model</th>
     <th>License plate</th>
@@ -14,7 +14,7 @@
 
 <% @cars.each do |car| %>
   <tr>
-    <td><%= car.references %></td>
+    <td><%= car.user %></td>
     <td><%= car.make %></td>
     <td><%= car.model %></td>
     <td><%= car.license_plate %></td>

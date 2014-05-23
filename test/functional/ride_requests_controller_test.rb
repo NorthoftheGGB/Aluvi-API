@@ -18,7 +18,7 @@ class RideRequestsControllerTest < ActionController::TestCase
 
   test "should create ride_request" do
     assert_difference('RideRequest.count') do
-      post :create, ride_request: { destination: @ride_request.destination, destination_place_name: @ride_request.destination_place_name, origin: @ride_request.origin, origin_place_name: @ride_request.origin_place_name, references: @ride_request.references, references: @ride_request.references, requested_datetime: @ride_request.requested_datetime, state: @ride_request.state, type: @ride_request.type }
+      post :create, ride_request: { destination: @ride_request.destination, destination_place_name: @ride_request.destination_place_name, origin: @ride_request.origin, origin_place_name: @ride_request.origin_place_name, requested_datetime: @ride_request.requested_datetime, state: @ride_request.state, type: @ride_request.type }
     end
 
     assert_redirected_to ride_request_path(assigns(:ride_request))
@@ -35,7 +35,7 @@ class RideRequestsControllerTest < ActionController::TestCase
   end
 
   test "should update ride_request" do
-    put :update, id: @ride_request, ride_request: { destination: @ride_request.destination, destination_place_name: @ride_request.destination_place_name, origin: @ride_request.origin, origin_place_name: @ride_request.origin_place_name, references: @ride_request.references, references: @ride_request.references, requested_datetime: @ride_request.requested_datetime, state: @ride_request.state, type: @ride_request.type }
+    put :update, id: @ride_request, ride_request: { destination: @ride_request.destination, destination_place_name: @ride_request.destination_place_name, origin: @ride_request.origin, origin_place_name: @ride_request.origin_place_name, requested_datetime: @ride_request.requested_datetime, state: @ride_request.state, type: @ride_request.type }
     assert_redirected_to ride_request_path(assigns(:ride_request))
   end
 

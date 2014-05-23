@@ -1,22 +1,22 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  references: 
-  references: 
+  user: 
+  ride: 
   state: MyString
   type: 
-  requested_datetime: 2014-05-22 18:13:47
+  requested_datetime: 2014-05-22 21:50:20
   origin: 
   origin_place_name: MyString
   destination: 
   destination_place_name: MyString
 
 two:
-  references: 
-  references: 
+  user: 
+  ride: 
   state: MyString
   type: 
-  requested_datetime: 2014-05-22 18:13:47
+  requested_datetime: 2014-05-22 21:50:20
   origin: 
   origin_place_name: MyString
   destination: 

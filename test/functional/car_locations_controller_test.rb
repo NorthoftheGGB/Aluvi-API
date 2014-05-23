@@ -18,7 +18,7 @@ class CarLocationsControllerTest < ActionController::TestCase
 
   test "should create car_location" do
     assert_difference('CarLocation.count') do
-      post :create, car_location: { last_known_location: @car_location.last_known_location, references: @car_location.references }
+      post :create, car_location: { last_known_location: @car_location.last_known_location }
     end
 
     assert_redirected_to car_location_path(assigns(:car_location))
@@ -35,7 +35,7 @@ class CarLocationsControllerTest < ActionController::TestCase
   end
 
   test "should update car_location" do
-    put :update, id: @car_location, car_location: { last_known_location: @car_location.last_known_location, references: @car_location.references }
+    put :update, id: @car_location, car_location: { last_known_location: @car_location.last_known_location }
     assert_redirected_to car_location_path(assigns(:car_location))
   end
 

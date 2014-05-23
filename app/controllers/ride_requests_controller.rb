@@ -44,6 +44,7 @@ class RideRequestsController < ApplicationController
 
     respond_to do |format|
       if @ride_request.save
+				@ride_request.request!
         format.html { redirect_to @ride_request, notice: 'Ride request was successfully created.' }
         format.json { render json: @ride_request, status: :created, location: @ride_request }
       else
