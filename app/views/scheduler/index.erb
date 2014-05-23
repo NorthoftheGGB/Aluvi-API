@@ -1,0 +1,35 @@
+<h1>Listing ride_requests that have been sent to scheduler</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Ride</th>
+    <th>State</th>
+    <th>Type</th>
+    <th>Requested datetime</th>
+    <th>Origin</th>
+    <th>Origin place name</th>
+    <th>Destination</th>
+    <th>Destination place name</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @ride_requests.each do |ride_request| %>
+  <tr>
+    <td><%= ride_request.user %></td>
+    <td><%= ride_request.ride %></td>
+    <td><%= ride_request.state %></td>
+    <td><%= ride_request.type %></td>
+    <td><%= ride_request.requested_datetime %></td>
+    <td><%= ride_request.origin %></td>
+    <td><%= ride_request.origin_place_name %></td>
+    <td><%= ride_request.destination %></td>
+    <td><%= ride_request.destination_place_name %></td>
+    <td><%= link_to 'Driver Found', "scheduler/"+ride_request.id.to_s, method: :not_implemented, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= link_to 'No Drivers Available', "scheduler/"+ride_request.id.to_s, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+

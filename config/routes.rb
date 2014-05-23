@@ -19,6 +19,9 @@ VocoApi::Application.routes.draw do
 
   resources :users
 
+	match 'scheduler' => 'scheduler#index'
+	delete 'scheduler/:id' => 'scheduler#failed'
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

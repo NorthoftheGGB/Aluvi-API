@@ -6,6 +6,10 @@ class User < ActiveRecord::Base
 	# has_one :company, :foreign_key => :user_id
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :state, :stripe_customer_id, :stripe_recipient_id
 
+	scope :drivers, -> { where(is_driver: true) }
+	scope :available_drivers, ->{ drivers.where(state: :driver_idle) }
+
+
 	include AASM
 	aasm_column :state
 

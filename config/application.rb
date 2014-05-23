@@ -60,6 +60,6 @@ module VocoApi
     config.assets.version = '1.0'
 
 		# Activate observers that should always be running
-		config.active_record.observers = [:ride_request_observer]
+		config.active_record.observers = [:ride_request_observer, :ride_observer]
   end
 end

@@ -39,6 +39,12 @@ gem 'activerecord-mysql2spatial-adapter'
 # To use Jbuilder templates for JSON
 gem 'jbuilder'
 
+# Google Cloud Messaging
+gem 'gcm'
+
+# Mapping
+gem 'leaflet-rails'
+
 # Use unicorn as the app server
 # gem 'unicorn'
 
