@@ -1,0 +1,60 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Stripe customer:</b>
+  <%= @user.stripe_customer_id %>
+</p>
+
+<p>
+  <b>Stripe recipient:</b>
+  <%= @user.stripe_recipient_id %>
+</p>
+
+<p>
+  <b>Company:</b>
+  <%= @user.company_id %>
+</p>
+
+<p>
+  <b>First name:</b>
+  <%= @user.first_name %>
+</p>
+
+<p>
+  <b>Last name:</b>
+  <%= @user.last_name %>
+</p>
+
+<p>
+  <b>Is driver:</b>
+  <%= @user.is_driver %>
+</p>
+
+<p>
+  <b>Is rider:</b>
+  <%= @user.is_rider %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%= @user.state %>
+</p>
+
+<p>
+  <b>Commuter balance cents:</b>
+  <%= @user.commuter_balance_cents %>
+</p>
+
+<p>
+  <b>Commuter refill amount cents:</b>
+  <%= @user.commuter_refill_amount_cents %>
+</p>
+
+<p>
+  <b>Last known location:</b>
+  <%= @user.last_known_location %>
+</p>
+
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>

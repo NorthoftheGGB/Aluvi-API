@@ -1,0 +1,33 @@
+<h1>Listing devices</h1>
+
+<table>
+  <tr>
+    <th>References</th>
+    <th>Hardware</th>
+    <th>Os</th>
+    <th>Platform</th>
+    <th>Push token</th>
+    <th>Uuid</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @devices.each do |device| %>
+  <tr>
+    <td><%= device.references %></td>
+    <td><%= device.hardware %></td>
+    <td><%= device.os %></td>
+    <td><%= device.platform %></td>
+    <td><%= device.push_token %></td>
+    <td><%= device.uuid %></td>
+    <td><%= link_to 'Show', device %></td>
+    <td><%= link_to 'Edit', edit_device_path(device) %></td>
+    <td><%= link_to 'Destroy', device, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Device', new_device_path %>

@@ -2,11 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.13'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
-
 gem 'sqlite3'
-
+gem 'mysql2'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -22,11 +19,25 @@ end
 
 gem 'jquery-rails'
 
+# Non-blocking, single threaded server for concurrency
+gem 'thin'
+
+# Models that are state machines
+gem 'aasm'
+
+# Handle Money and Currencies
+gem 'money-rails'
+gem 'monetize'
+
+# Geolocation
+gem 'rgeo'
+gem 'activerecord-mysql2spatial-adapter'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 # To use Jbuilder templates for JSON
-# gem 'jbuilder'
+gem 'jbuilder'
 
 # Use unicorn as the app server
 # gem 'unicorn'

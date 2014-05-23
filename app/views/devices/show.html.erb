@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>References:</b>
+  <%= @device.references %>
+</p>
+
+<p>
+  <b>Hardware:</b>
+  <%= @device.hardware %>
+</p>
+
+<p>
+  <b>Os:</b>
+  <%= @device.os %>
+</p>
+
+<p>
+  <b>Platform:</b>
+  <%= @device.platform %>
+</p>
+
+<p>
+  <b>Push token:</b>
+  <%= @device.push_token %>
+</p>
+
+<p>
+  <b>Uuid:</b>
+  <%= @device.uuid %>
+</p>
+
+
+<%= link_to 'Edit', edit_device_path(@device) %> |
+<%= link_to 'Back', devices_path %>

@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  references: 
+  hardware: MyString
+  os: MyString
+  platform: MyString
+  push_token: MyString
+  uuid: MyString
+
+two:
+  references: 
+  hardware: MyString
+  os: MyString
+  platform: MyString
+  push_token: MyString
+  uuid: MyString

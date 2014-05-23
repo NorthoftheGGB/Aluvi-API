@@ -1,0 +1,39 @@
+<h1>Listing ride_requests</h1>
+
+<table>
+  <tr>
+    <th>References</th>
+    <th>References</th>
+    <th>State</th>
+    <th>Type</th>
+    <th>Requested datetime</th>
+    <th>Origin</th>
+    <th>Origin place name</th>
+    <th>Destination</th>
+    <th>Destination place name</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @ride_requests.each do |ride_request| %>
+  <tr>
+    <td><%= ride_request.references %></td>
+    <td><%= ride_request.references %></td>
+    <td><%= ride_request.state %></td>
+    <td><%= ride_request.type %></td>
+    <td><%= ride_request.requested_datetime %></td>
+    <td><%= ride_request.origin %></td>
+    <td><%= ride_request.origin_place_name %></td>
+    <td><%= ride_request.destination %></td>
+    <td><%= ride_request.destination_place_name %></td>
+    <td><%= link_to 'Show', ride_request %></td>
+    <td><%= link_to 'Edit', edit_ride_request_path(ride_request) %></td>
+    <td><%= link_to 'Destroy', ride_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Ride request', new_ride_request_path %>

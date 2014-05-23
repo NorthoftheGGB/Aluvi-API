@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  references: 
+  references: 
+  state: MyString
+  scheduled: 2014-05-22 18:13:45
+  started: 2014-05-22 18:13:45
+  finished: 2014-05-22 18:13:45
+  meeting_point: 
+  meeting_point_place_name: MyString
+  destination: 
+  destination_place_name: MyString
+
+two:
+  references: 
+  references: 
+  state: MyString
+  scheduled: 2014-05-22 18:13:45
+  started: 2014-05-22 18:13:45
+  finished: 2014-05-22 18:13:45
+  meeting_point: 
+  meeting_point_place_name: MyString
+  destination: 
+  destination_place_name: MyString

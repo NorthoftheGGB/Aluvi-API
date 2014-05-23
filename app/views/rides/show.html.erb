@@ -1,0 +1,55 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>References:</b>
+  <%= @ride.references %>
+</p>
+
+<p>
+  <b>References:</b>
+  <%= @ride.references %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%= @ride.state %>
+</p>
+
+<p>
+  <b>Scheduled:</b>
+  <%= @ride.scheduled %>
+</p>
+
+<p>
+  <b>Started:</b>
+  <%= @ride.started %>
+</p>
+
+<p>
+  <b>Finished:</b>
+  <%= @ride.finished %>
+</p>
+
+<p>
+  <b>Meeting point:</b>
+  <%= @ride.meeting_point %>
+</p>
+
+<p>
+  <b>Meeting point place name:</b>
+  <%= @ride.meeting_point_place_name %>
+</p>
+
+<p>
+  <b>Destination:</b>
+  <%= @ride.destination %>
+</p>
+
+<p>
+  <b>Destination place name:</b>
+  <%= @ride.destination_place_name %>
+</p>
+
+
+<%= link_to 'Edit', edit_ride_path(@ride) %> |
+<%= link_to 'Back', rides_path %>

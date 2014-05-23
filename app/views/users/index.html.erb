@@ -1,0 +1,43 @@
+<h1>Listing users</h1>
+
+<table>
+  <tr>
+    <th>Stripe customer</th>
+    <th>Stripe recipient</th>
+    <th>Company</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Is driver</th>
+    <th>Is rider</th>
+    <th>State</th>
+    <th>Commuter balance cents</th>
+    <th>Commuter refill amount cents</th>
+    <th>Last known location</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= user.stripe_customer_id %></td>
+    <td><%= user.stripe_recipient_id %></td>
+    <td><%= user.company_id %></td>
+    <td><%= user.first_name %></td>
+    <td><%= user.last_name %></td>
+    <td><%= user.is_driver %></td>
+    <td><%= user.is_rider %></td>
+    <td><%= user.state %></td>
+    <td><%= user.commuter_balance_cents %></td>
+    <td><%= user.commuter_refill_amount_cents %></td>
+    <td><%= user.last_known_location %></td>
+    <td><%= link_to 'Show', user %></td>
+    <td><%= link_to 'Edit', edit_user_path(user) %></td>
+    <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New User', new_user_path %>

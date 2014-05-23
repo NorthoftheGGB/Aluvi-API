@@ -1,4 +1,25 @@
 VocoApi::Application.routes.draw do
+  resources :rider_rides
+
+
+  resources :ride_requests
+
+
+  resources :rides
+
+
+  resources :car_locations
+
+
+  resources :cars
+
+
+  resources :devices
+
+
+  resources :users
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

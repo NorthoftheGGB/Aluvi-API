@@ -1,0 +1,57 @@
+<%= form_for(@ride) do |f| %>
+  <% if @ride.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ride.errors.count, "error") %> prohibited this ride from being saved:</h2>
+
+      <ul>
+      <% @ride.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :references %><br />
+    <%= f.text_field :references %>
+  </div>
+  <div class="field">
+    <%= f.label :references %><br />
+    <%= f.text_field :references %>
+  </div>
+  <div class="field">
+    <%= f.label :state %><br />
+    <%= f.text_field :state %>
+  </div>
+  <div class="field">
+    <%= f.label :scheduled %><br />
+    <%= f.datetime_select :scheduled %>
+  </div>
+  <div class="field">
+    <%= f.label :started %><br />
+    <%= f.datetime_select :started %>
+  </div>
+  <div class="field">
+    <%= f.label :finished %><br />
+    <%= f.datetime_select :finished %>
+  </div>
+  <div class="field">
+    <%= f.label :meeting_point %><br />
+    <%= f.text_field :meeting_point %>
+  </div>
+  <div class="field">
+    <%= f.label :meeting_point_place_name %><br />
+    <%= f.text_field :meeting_point_place_name %>
+  </div>
+  <div class="field">
+    <%= f.label :destination %><br />
+    <%= f.text_field :destination %>
+  </div>
+  <div class="field">
+    <%= f.label :destination_place_name %><br />
+    <%= f.text_field :destination_place_name %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

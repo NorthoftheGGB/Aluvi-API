@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  references: 
+  references: 
+  state: MyString
+  type: 
+  requested_datetime: 2014-05-22 18:13:47
+  origin: 
+  origin_place_name: MyString
+  destination: 
+  destination_place_name: MyString
+
+two:
+  references: 
+  references: 
+  state: MyString
+  type: 
+  requested_datetime: 2014-05-22 18:13:47
+  origin: 
+  origin_place_name: MyString
+  destination: 
+  destination_place_name: MyString
