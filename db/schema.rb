@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140523011350) do
+ActiveRecord::Schema.define(:version => 20140523224324) do
 
   create_table "cars", :force => true do |t|
     t.integer  "user_id"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(:version => 20140523011350) do
     t.string   "destination_place_name"
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
+    t.datetime "pickup_time"
   end
 
   add_index "rides", ["destination"], :name => "index_rides_on_destination", :length => {"destination"=>25}

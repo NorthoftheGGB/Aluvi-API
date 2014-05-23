@@ -1,11 +1,8 @@
 class RideRequest < ActiveRecord::Base
 
-	ON_DEMAND = :on_demand
-	COMMUTER = :commuter
-
 	belongs_to :user, inverse_of: :ride_requests
 	belongs_to :ride, inverse_of: :ride_requests
-  attr_accessible :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :type
+  attr_accessible :aasm_state, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :type
 
 	include AASM
 	aasm_column :state
@@ -35,18 +32,23 @@ class RideRequest < ActiveRecord::Base
 
 	end
 
-	def initialize( type )
-		self.type = type
+	def self.create( type, origin, destination )
+		ride_request = RideRequest.new
+		ride_request.type = type
+		ride_request.origin = origin
+		ride_request.destination = destination
+		ride_request
 	end
 
 	private
 	def ride_requested
-		notify_observers :requested # notifies scheduler
-		if( type == RideRequest::ON_DEMAND )
+		if( type == TransportType::ON_DEMAND )
 			# go ahead and create the associated ride if it's on demand
-			self.ride = Ride.new( Time.now, meeting_point, destination )
-			ride.save
+			self.ride = Ride.create( Time.now, origin, destination )
+			self.ride.save
+			save
 		end		
+		notify_observers :requested # notifies scheduler
 
 	end
 

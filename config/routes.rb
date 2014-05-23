@@ -8,9 +8,6 @@ VocoApi::Application.routes.draw do
   resources :rides
 
 
-  resources :car_locations
-
-
   resources :cars
 
 

@@ -4,7 +4,7 @@ class Ride < ActiveRecord::Base
 	has_one :driver, :class_name => 'User', :foreign_key => 'driver_id'
 	has_many :ride_requests, inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
-  attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :scheduled, :started, :state
+  attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
 	include AASM
 	aasm_column :state
@@ -41,35 +41,37 @@ class Ride < ActiveRecord::Base
 		
 	end
  
-	def initialize ( meeting_point, destination )
-		# set ride_request(s) ?
-		self.meeting_point = meeting_point
-		self.destination = destination
+	def self.create ( pickup_time, meeting_point, destination )
+		ride = Ride.new
+		ride.pickup_time = pickup_time
+		ride.meeting_point = meeting_point
+		ride.destination = destination
+		ride
 	end
 	
 	private
 	def schedule_ride( pickup_time, driver, car )
-		self.pickup_time = pickup_time
-		self.driver = driver
-		self.car = car
-		self.scheduled = Time.now
+		@pickup_time = pickup_time
+		@driver = driver
+		@car = car
+		@scheduled = Time.now
 		save
 	end
 
 	def rider_cancelled_ride
-		self.finished = Time.now
+		@finished = Time.now
 	end
 
 	def driver_cancelled_ride
-		self.inished = Time.now
+		@inished = Time.now
 	end
 
 	def started_ride
-		self.started = Time.now
+		@started = Time.now
 	end
 
 	def completed_ride
-		self.finished = Time.now
+		@finished = Time.now
 	end
 
 	def notify_scheduled
