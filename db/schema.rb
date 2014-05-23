@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140523224324) do
+ActiveRecord::Schema.define(:version => 20140523231216) do
 
   create_table "cars", :force => true do |t|
     t.integer  "user_id"
@@ -33,6 +33,13 @@ ActiveRecord::Schema.define(:version => 20140523224324) do
     t.string   "platform"
     t.string   "push_token"
     t.string   "uuid"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "offered_rides", :force => true do |t|
+    t.integer  "driver_id"
+    t.integer  "rider_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

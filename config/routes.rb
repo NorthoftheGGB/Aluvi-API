@@ -1,4 +1,7 @@
 VocoApi::Application.routes.draw do
+  resources :offered_rides
+
+
   resources :rider_rides
 
 

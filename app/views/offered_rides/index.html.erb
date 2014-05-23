@@ -1,0 +1,25 @@
+<h1>Listing offered_rides</h1>
+
+<table>
+  <tr>
+    <th>Driver</th>
+    <th>Rider</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @offered_rides.each do |offered_ride| %>
+  <tr>
+    <td><%= offered_ride.driver_id %></td>
+    <td><%= offered_ride.rider_id %></td>
+    <td><%= link_to 'Show', offered_ride %></td>
+    <td><%= link_to 'Edit', edit_offered_ride_path(offered_ride) %></td>
+    <td><%= link_to 'Destroy', offered_ride, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Offered ride', new_offered_ride_path %>

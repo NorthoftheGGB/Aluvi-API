@@ -1,0 +1,25 @@
+<%= form_for(@offered_ride) do |f| %>
+  <% if @offered_ride.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@offered_ride.errors.count, "error") %> prohibited this offered_ride from being saved:</h2>
+
+      <ul>
+      <% @offered_ride.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :driver_id %><br />
+    <%= f.number_field :driver_id %>
+  </div>
+  <div class="field">
+    <%= f.label :rider_id %><br />
+    <%= f.number_field :rider_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Driver:</b>
+  <%= @offered_ride.driver_id %>
+</p>
+
+<p>
+  <b>Rider:</b>
+  <%= @offered_ride.rider_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_offered_ride_path(@offered_ride) %> |
+<%= link_to 'Back', offered_rides_path %>
