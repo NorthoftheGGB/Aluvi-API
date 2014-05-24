@@ -2,7 +2,7 @@ class RideRequest < ActiveRecord::Base
 
 	belongs_to :user, inverse_of: :ride_requests
 	belongs_to :ride, inverse_of: :ride_requests
-  attr_accessible :aasm_state, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :type
+  attr_accessible :aasm_state, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type
 
 	include AASM
 	aasm_column :state
@@ -26,8 +26,8 @@ class RideRequest < ActiveRecord::Base
 			transitions :fram => :requested, :to => :failed
 		end
 
-		event :schedule do
-			transitions :from => :requested, :to => :scheduled
+		event :scheduled do
+			transitions :from => :requested, :to => :scheduled, :after => :notify_scheduled
 		end
 
 	end
@@ -39,7 +39,7 @@ class RideRequest < ActiveRecord::Base
 
 	def self.create( type, origin, destination )
 		ride_request = RideRequest.new
-		ride_request.type = type
+		ride_request.request_type = type
 		ride_request.origin = origin
 		ride_request.destination = destination
 		ride_request
@@ -53,7 +53,7 @@ class RideRequest < ActiveRecord::Base
 
 	private
 	def ride_requested
-		if( type == TransportType::ON_DEMAND )
+		if( request_type == TransportType::ON_DEMAND )
 			# go ahead and create the associated ride if it's on demand
 			self.ride = Ride.create( Time.now, origin, destination )
 			self.ride.save
@@ -62,5 +62,10 @@ class RideRequest < ActiveRecord::Base
 		notify_observers :requested # notifies scheduler
 
 	end
+
+	def notify_scheduled
+		notify_observers :scheduled
+	end
+
 
 end

@@ -69,5 +69,31 @@ class VocoAPI < Grape::API
 
 		end
 
+		desc "Driver declined ride"
+		params do
+			requires :ride_id, type: Integer
+			requires :driver_id, type: Integer
+		end
+		post :declined do
+			authenticate!
+			ride = Ride.find(params[:ride_id])
+			driver = User.find(params[:driver_id])
+			begin
+				driver.declined_ride(ride)
+				true
+			rescue
+				puts $!, $@
+				# ride is no longer able to be delined
+				# check that if this because it's assigned to THIS driver
+				if( ride.driver == driver )
+					# should this case auto-cancel the ride?
+					return "Already assigned to this driver, they will have to cancel"
+				else
+					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
+				end
+			end
+
+		end
+
 	end
 end

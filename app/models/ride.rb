@@ -46,6 +46,8 @@ class Ride < ActiveRecord::Base
 
 	alias aasm_accepted accepted
 	alias aasm_accepted! accepted!
+	alias aasm_driver_cancelled driver_cancelled
+	alias aasm_driver_cancelled! driver_cancelled!
  
 	def self.create ( pickup_time, meeting_point, destination )
 		ride = Ride.new
@@ -58,11 +60,23 @@ class Ride < ActiveRecord::Base
 	def accepted( driver )
 		aasm_accepted
 		driver_accepted_ride( driver )
+		# and mark all ride requests as scheduled
+		update_ride_requests_to_scheduled
 	end
 
 	def accepted!( driver )
-		aasm_accepted
-		driver_accepted_ride( driver )
+		accepted(driver)
+		save
+	end
+	
+	def driver_cancelled( driver )
+		aasm_driver_cancelled
+		driver_cancelled_ride( driver )
+	end
+
+	def driver_cancelled!( driver )
+		aasm_driver_cancelled
+		driver_cancelled_ride( driver )
 		save
 	end
 	
@@ -79,6 +93,12 @@ class Ride < ActiveRecord::Base
 		Rails.logger.debug 'on transition driver accepted ride'
 		self.driver = driver	
 		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
+		# self.car = driver.car
+		save
+	end
+
+	def driver_cancelled_ride( driver )
+		self.driver = driver	
 		# self.car = driver.car
 		save
 	end
@@ -101,6 +121,12 @@ class Ride < ActiveRecord::Base
 
 	def notify_scheduled
 		notify_observers :scheduled
+	end
+
+	def update_ride_requests_to_scheduled
+		ride_requests.each do |rr|
+			rr.scheduled
+		end
 	end
 	  
 end
