@@ -61,5 +61,10 @@ module VocoApi
 
 		# Activate observers that should always be running
 		config.active_record.observers = [:ride_request_observer, :ride_observer]
+
+		# Mount Grape API
+		config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
+		config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
+
   end
 end

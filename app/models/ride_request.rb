@@ -32,11 +32,22 @@ class RideRequest < ActiveRecord::Base
 
 	end
 
+	# By default, use the GEOS implementation for spatial columns.
+	# This doesn't seem to be working correctly at the moment.
+	self.rgeo_factory_generator = RGeo::Geos.method(:factory)
+	set_rgeo_factory_for_column(:origin, RGeo::Geos.factory(srid: 4326))
+
 	def self.create( type, origin, destination )
 		ride_request = RideRequest.new
 		ride_request.type = type
 		ride_request.origin = origin
 		ride_request.destination = destination
+		ride_request
+	end
+
+	def self.create!( type, origin, destination )
+		ride_request = RideRequest.create( type, origin, destination )
+		ride_request.save
 		ride_request
 	end
 

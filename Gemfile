@@ -31,6 +31,7 @@ gem 'monetize'
 
 # Geolocation
 gem 'rgeo'
+gem 'rgeo-activerecord'
 gem 'activerecord-mysql2spatial-adapter'
 
 # To use ActiveModel has_secure_password
@@ -44,6 +45,9 @@ gem 'gcm'
 
 # Mapping
 gem 'leaflet-rails'
+
+# API
+gem 'grape'
 
 # Use unicorn as the app server
 # gem 'unicorn'

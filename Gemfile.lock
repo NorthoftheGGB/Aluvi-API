@@ -33,7 +33,13 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.3)
+    axiom-types (0.1.1)
+      descendants_tracker (~> 0.0.4)
+      ice_nine (~> 0.11.0)
+      thread_safe (~> 0.3, >= 0.3.1)
     builder (3.0.4)
+    coercible (1.0.0)
+      descendants_tracker (~> 0.0.1)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -42,17 +48,32 @@ GEM
       execjs
     coffee-script-source (1.7.0)
     daemons (1.1.9)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
+    equalizer (0.0.9)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
     gcm (0.0.7)
       httparty
       json
+    grape (0.7.0)
+      activesupport
+      builder
+      hashie (>= 1.2.0)
+      multi_json (>= 1.3.2)
+      multi_xml (>= 0.5.2)
+      rack (>= 1.3.0)
+      rack-accept
+      rack-mount
+      virtus (>= 1.0.0)
+    hashie (2.1.1)
     hike (1.2.3)
     httparty (0.13.1)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.6.1)
+    ice_nine (0.11.0)
     jbuilder (2.0.7)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
@@ -78,8 +99,12 @@ GEM
     mysql2 (0.3.15)
     polyglot (0.3.4)
     rack (1.4.5)
+    rack-accept (0.4.5)
+      rack (>= 0.4)
     rack-cache (1.2)
       rack (>= 0.4)
+    rack-mount (0.8.3)
+      rack (>= 1.0.0)
     rack-ssl (1.3.4)
       rack
     rack-test (0.6.2)
@@ -123,6 +148,7 @@ GEM
       eventmachine (>= 1.0.0)
       rack (>= 1.0.0)
     thor (0.19.1)
+    thread_safe (0.3.3)
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
@@ -131,6 +157,11 @@ GEM
     uglifier (2.5.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    virtus (1.0.2)
+      axiom-types (~> 0.1)
+      coercible (~> 1.0)
+      descendants_tracker (~> 0.0.3)
+      equalizer (~> 0.0.9)
 
 PLATFORMS
   ruby
@@ -140,6 +171,7 @@ DEPENDENCIES
   activerecord-mysql2spatial-adapter
   coffee-rails (~> 3.2.1)
   gcm
+  grape
   jbuilder
   jquery-rails
   leaflet-rails
@@ -148,6 +180,7 @@ DEPENDENCIES
   mysql2
   rails (= 3.2.13)
   rgeo
+  rgeo-activerecord
   sass-rails (~> 3.2.3)
   sqlite3
   thin
