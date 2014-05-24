@@ -34,8 +34,40 @@ class VocoAPI < Grape::API
 
 		end
 
+		desc "Check for state changes"
+		params do
+			requires :sequence, type: Integer, desc: "Sequence number of last recorded state change"
+		end
+		route_param :sequence do
+			get do
+				authenticate!
+			end
+		end
 
+		desc "Driver accepted ride"
+		params do
+			requires :ride_id, type: Integer
+			requires :driver_id, type: Integer
+		end
+		post :accepted do
+			authenticate!
+			ride = Ride.find(params[:ride_id])
+			driver = User.find(params[:driver_id])
+			begin
+				ride.accepted!(driver)
+				true
+			rescue
+				puts $!, $@
+				# ride is no longer available
+				# check that if this because it's assigned to THIS driver
+				if( ride.driver == driver )
+					return "Already assigned to this driver"
+				else
+					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
+				end
+			end
 
+		end
 
 	end
 end

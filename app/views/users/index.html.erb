@@ -12,7 +12,6 @@
     <th>State</th>
     <th>Commuter balance cents</th>
     <th>Commuter refill amount cents</th>
-    <th>Last known location</th>
     <th></th>
     <th></th>
     <th></th>
@@ -30,7 +29,6 @@
     <td><%= user.state %></td>
     <td><%= user.commuter_balance_cents %></td>
     <td><%= user.commuter_refill_amount_cents %></td>
-    <td><%= user.last_known_location %></td>
     <td><%= link_to 'Show', user %></td>
     <td><%= link_to 'Edit', edit_user_path(user) %></td>
     <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>

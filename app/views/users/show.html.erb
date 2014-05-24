@@ -50,11 +50,5 @@
   <%= @user.commuter_refill_amount_cents %>
 </p>
 
-<p>
-  <b>Last known location:</b>
-  <%= @user.last_known_location %>
-</p>
-
-
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

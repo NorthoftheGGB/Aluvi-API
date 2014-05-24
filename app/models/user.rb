@@ -12,5 +12,8 @@ class User < ActiveRecord::Base
 
 	include AASM
 	aasm_column :state
+	aasm do 
+		state :development, :initial => true
+	end
 
 end

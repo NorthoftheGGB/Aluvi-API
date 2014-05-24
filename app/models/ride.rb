@@ -1,7 +1,7 @@
 class Ride < ActiveRecord::Base
 
 	has_many :riders, :class_name => 'User', :through => :rider_rides
-	has_one :driver, :class_name => 'User', :foreign_key => 'driver_id'
+	belongs_to :driver, :class_name => 'User'
 	has_many :ride_requests, inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
   attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
@@ -20,6 +20,10 @@ class Ride < ActiveRecord::Base
 		event :schedule do
 			transitions :from => :created, :to => :scheduled, :on_transition => :schedule_ride, :after => :notify_scheduled
 		end
+		
+		event :accepted do
+			transitions :from => :created, :to => :scheduled, :after => :notify_scheduled # :on_transition => :driver_accepted_ride, 
+		end
 
 		event :rider_cancelled do
 			transitions :from => :scheduled, :to => :rider_cancelled, :after => :rider_cancelled_ride
@@ -37,9 +41,11 @@ class Ride < ActiveRecord::Base
 		event :arrived do
 			transitions :from => :started, :to => :completed, :after => :completed_ride
 		end
-
 		
 	end
+
+	alias aasm_accepted accepted
+	alias aasm_accepted! accepted!
  
 	def self.create ( pickup_time, meeting_point, destination )
 		ride = Ride.new
@@ -48,13 +54,32 @@ class Ride < ActiveRecord::Base
 		ride.destination = destination
 		ride
 	end
+
+	def accepted( driver )
+		aasm_accepted
+		driver_accepted_ride( driver )
+	end
+
+	def accepted!( driver )
+		aasm_accepted
+		driver_accepted_ride( driver )
+		save
+	end
 	
 	private
 	def schedule_ride( pickup_time, driver, car )
-		@pickup_time = pickup_time
-		@driver = driver
-		@car = car
-		@scheduled = Time.now
+		self.pickup_time = pickup_time
+		self.driver = driver
+		self.car = car
+		self.scheduled = Time.now
+		save
+	end
+
+	def driver_accepted_ride( driver )
+		Rails.logger.debug 'on transition driver accepted ride'
+		self.driver = driver	
+		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
+		# self.car = driver.car
 		save
 	end
 
