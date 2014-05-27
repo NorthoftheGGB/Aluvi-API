@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
 	aasm_column :state
 	aasm do 
 		state :development, :initial => true
+		state :driver_idle
 	end
 
 	def offered_ride( ride )

@@ -95,5 +95,38 @@ class VocoAPI < Grape::API
 
 		end
 
+
+		desc "Driver cancelled ride"
+		params do
+			requires :ride_id, type: Integer
+			requires :driver_id, type: Integer
+		end
+		post :driver_cancelled do
+			authenticate!
+			# TODO driver should only be able to cancel their own ride
+			ride = Ride.find(params[:ride_id])
+			driver = User.find(params[:driver_id])
+			ride.driver_cancelled!
+		end
+
+
+		desc "Rider cancelled ride request"
+		params do
+			requires :ride_id, type: Integer
+			requires :rider_id, type: Integer
+		end
+		post :rider_cancelled do
+			authenticate!
+			# TODO rider should only be able to cancel their own ride
+			ride = Ride.find(params[:ride_id])
+			rider = User.find(params[:rider_id])
+			ride.rider_cancelled(rider)
+		end
+
+
+
+		desc "Driver picked up rider"
+		post :pickup do
+		end
 	end
 end

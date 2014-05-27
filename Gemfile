@@ -49,8 +49,8 @@ gem 'leaflet-rails'
 # API
 gem 'grape'
 
-# Use unicorn as the app server
-# gem 'unicorn'
+# Testing
+gem "factory_girl_rails", "~> 4.0"
 
 # Deploy with Capistrano
 # gem 'capistrano'

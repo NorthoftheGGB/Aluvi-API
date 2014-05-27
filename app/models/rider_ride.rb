@@ -1,3 +1,3 @@
 class RiderRide < ActiveRecord::Base
-	belongs_to :user, :primary_key => :rider_id
+	belongs_to :rider, :class_name => User, :foreign_key => :rider_id
 end

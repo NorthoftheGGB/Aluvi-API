@@ -1,6 +1,7 @@
 class Ride < ActiveRecord::Base
 
-	has_many :riders, :class_name => 'User', :through => :rider_rides
+	has_many :rider_rides
+	has_many :riders, through: :rider_rides, :class_name => 'User'
 	belongs_to :driver, :class_name => 'User'
 	has_many :ride_requests, inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
@@ -48,6 +49,8 @@ class Ride < ActiveRecord::Base
 	alias aasm_accepted! accepted!
 	alias aasm_driver_cancelled driver_cancelled
 	alias aasm_driver_cancelled! driver_cancelled!
+	alias aasm_rider_cancelled rider_cancelled
+	alias aasm_rider_cancelled! rider_cancelled!
  
 	def self.create ( pickup_time, meeting_point, destination )
 		ride = Ride.new
@@ -69,17 +72,34 @@ class Ride < ActiveRecord::Base
 		save
 	end
 	
-	def driver_cancelled( driver )
+	def driver_cancelled
 		aasm_driver_cancelled
-		driver_cancelled_ride( driver )
+		driver_cancelled_ride
 	end
 
-	def driver_cancelled!( driver )
+	def driver_cancelled!
 		aasm_driver_cancelled
-		driver_cancelled_ride( driver )
+		driver_cancelled_ride
 		save
 	end
 	
+	def rider_cancelled rider
+		if( riders.count == 1 ) 
+			# this is the only rider, cancel the whole ride
+			aasm_rider_cancelled
+			rider_cancelled_ride
+			notify_ride_cancelled_by_rider
+		else 
+			riders.delete(rider)
+
+		end
+	end
+
+	def rider_cancelled! rider
+		rider_cancelled rider
+		save
+	end
+
 	private
 	def schedule_ride( pickup_time, driver, car )
 		self.pickup_time = pickup_time
@@ -94,34 +114,40 @@ class Ride < ActiveRecord::Base
 		self.driver = driver	
 		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
 		# self.car = driver.car
-		save
-	end
-
-	def driver_cancelled_ride( driver )
-		self.driver = driver	
-		# self.car = driver.car
-		save
-	end
-
-	def rider_cancelled_ride
-		@finished = Time.now
 	end
 
 	def driver_cancelled_ride
-		@inished = Time.now
+		self.finished = Time.now
+	end
+
+	def rider_cancelled_ride
+		self.finished = Time.now
 	end
 
 	def started_ride
-		@started = Time.now
+		self.started = Time.now
 	end
 
 	def completed_ride
-		@finished = Time.now
+		self.finished = Time.now
 	end
 
 	def notify_scheduled
 		notify_observers :scheduled
 	end
+
+	def notify_ride_cancelled_by_rider
+		notify_observers :ride_cancelled_by_rider
+	end
+
+	def notify_ride_cancelled_by_driver
+		notify_observers :ride_cancelled_by_driver
+	end
+
+	def notify_rider_cancelled_by_rider
+		notify_observers :ride_cancelled_by_rider
+	end
+
 
 	def update_ride_requests_to_scheduled
 		ride_requests.each do |rr|
