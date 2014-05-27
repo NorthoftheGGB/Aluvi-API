@@ -26,8 +26,8 @@ class RideRequest < ActiveRecord::Base
 			transitions :fram => :requested, :to => :failed
 		end
 
-		event :scheduled do
-			transitions :from => :requested, :to => :scheduled, :after => :notify_scheduled
+		event :scheduled, :after => :notify_scheduled do
+			transitions :from => :requested, :to => :scheduled
 		end
 
 	end

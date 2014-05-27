@@ -100,5 +100,25 @@ class RideRequestTest < ActiveSupport::TestCase
 		assert_not_nil(ride.finished)
 	end
 
+	test "rider picked up" do
+		ride = FactoryGirl.create(:scheduled_ride)
+		ride.pickup!
+
+		assert_equal("started", ride.state)
+		assert_not_nil(ride.started)
+
+	end
+
+	test "arrival" do
+
+		ride = FactoryGirl.create(:scheduled_ride)
+		ride.pickup!
+		ride.arrived!
+
+		assert_equal("completed", ride.state)
+		assert_not_nil(ride.finished)
+
+	end
+
 
 end

@@ -120,13 +120,48 @@ class VocoAPI < Grape::API
 			# TODO rider should only be able to cancel their own ride
 			ride = Ride.find(params[:ride_id])
 			rider = User.find(params[:rider_id])
-			ride.rider_cancelled(rider)
+			ride.rider_cancelled!(rider)
 		end
-
 
 
 		desc "Driver picked up rider"
-		post :pickup do
+		params do
+			requires :ride_id, type: Integer
+			requires :driver_id, type: Integer
+			optional :rider_id, type: Integer
 		end
+		post :pickup do
+			authenticate!
+			# TODO validate driver and or rider is matched to ride
+			ride = Ride.find(params[:ride_id])
+			if(params[:rider_id].nil?)
+				ride.pickup!
+			else
+				rider = Rider.find(params[:rider_id])
+				ride.pickup! rider
+			end
+		end
+
+
+		desc "Driver dropped off rider(s)"
+		params do
+			requires :ride_id, type: Integer
+			requires :driver_id, type: Integer
+			optional :rider_id, type: Integer
+		end
+		post :arrived do
+			authenticate!
+			# TODO validate driver and or rider is matched to ride
+			ride = Ride.find(params[:ride_id])
+			if(params[:rider_id].nil?)
+				ride.arrived!
+			else
+				rider = Rider.find(params[:rider_id])
+				#ride.arrived! rider
+				ride.arrived! # separate arrivals per ride not currently supported
+			end
+		end
+
+
 	end
 end
