@@ -61,7 +61,7 @@ class Ride < ActiveRecord::Base
 		ride
 	end
 
-	def accepted( driver )
+		def accepted( driver )
 		aasm_accepted
 		driver_accepted_ride( driver )
 		# and mark all ride requests as scheduled
