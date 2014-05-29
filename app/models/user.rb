@@ -5,6 +5,10 @@ class User < ActiveRecord::Base
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
 	has_many :offered_rides, :foreign_key => :driver_id  
+	# TODO: these can be used to track onboarding state
+	#	has_one :driver_state
+	#	has_one :rider_state
+
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :state, :stripe_customer_id, :stripe_recipient_id, :rider_location
 
 	scope :drivers, -> { where(is_driver: true) }
@@ -12,11 +16,14 @@ class User < ActiveRecord::Base
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
+	# this state machine is for driver state
 	include AASM
 	aasm_column :state
 	aasm do 
 		state :development, :initial => true
 		state :driver_idle
+		state :driver_clocked_off
+		state :busy
 	end
 
 	#

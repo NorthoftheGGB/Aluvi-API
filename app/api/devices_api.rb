@@ -21,6 +21,9 @@ class DevicesAPI < Grape::API
 			unless params[:push_token].nil?
 				device.push_token = params[:push_token]
 			end
+			unless params[:user_id].nil?
+				device.user_id = params[:user_id]
+			end
 			device.save
 			device
 		end
