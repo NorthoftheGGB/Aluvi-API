@@ -43,6 +43,9 @@ gem 'jbuilder'
 # Google Cloud Messaging
 gem 'gcm'
 
+# Apple Push Notificatioins
+gem 'apns'
+
 # Mapping
 gem 'leaflet-rails'
 

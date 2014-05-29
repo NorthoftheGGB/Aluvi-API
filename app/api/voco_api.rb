@@ -15,4 +15,5 @@ class VocoAPI < Grape::API
 
 	mount RidesAPI
 	mount GeoAPI
+	mount DevicesAPI
 end

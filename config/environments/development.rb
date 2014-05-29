@@ -36,4 +36,14 @@ VocoApi::Application.configure do
   config.assets.debug = true
 
 	config.log_level = :debug
+
+	APNS.host = 'gateway.sandbox.push.apple.com'
+	# gateway.push.apple.com for production
+	# gateway.sandbox.push.apple.com is default
+	
+	APNS.pem  = "/Users/deepwinter1/software-development/Clients/Will\ OBrien/voco-api/alpha_push_certificate.pem"
+
+	# APNS.port = 2195 
+	# this is also the default. Shouldn't ever have to set this, but just in case Apple goes crazy, you can.
+	#
 end

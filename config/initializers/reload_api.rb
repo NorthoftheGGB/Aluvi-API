@@ -1,5 +1,6 @@
 if Rails.env.development?
 	ActiveSupport::Dependencies.explicitly_unloadable_constants << "VocoAPI"
+	ActiveSupport::Dependencies.explicitly_unloadable_constants << "DevicesAPI"
 
 	api_files = Dir[Rails.root.join('app', 'api', '**', '*.rb')]
 	api_reloader = ActiveSupport::FileUpdateChecker.new(api_files) do

@@ -13,13 +13,21 @@ class RidesAPI< Grape::API
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
 		end
-		post do
+		post :request do
 			authenticate!
 			destination = RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude])
 			ride_request = RideRequest.create!(params[:type],
 																				 RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude]),
 																				 RGeo::Geos.factory.point(params[:destination_latitude], params[:destination_longitude]))
 			ride_request.request!
+			#json_string = Jbuilder.encode do |json|
+			#	json.request_id = ride_request.id
+			#end
+			# TODO problem here is that jbuilder already returned a string
+			# but then the default grape json encoder escapes it
+			rval = Hash.new
+			rval[:request_id] = ride_request.id
+			rval
 
 		end
 
