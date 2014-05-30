@@ -44,7 +44,7 @@ gem 'jbuilder'
 gem 'gcm'
 
 # Apple Push Notificatioins
-gem 'apns'
+gem 'rpush'
 
 # Mapping
 gem 'leaflet-rails'

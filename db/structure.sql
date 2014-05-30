@@ -23,7 +23,7 @@ CREATE TABLE `devices` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `offered_rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -51,7 +51,7 @@ CREATE TABLE `ride_requests` (
   PRIMARY KEY (`id`),
   KEY `index_ride_requests_on_origin` (`origin`(25)),
   KEY `index_ride_requests_on_destination` (`destination`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rider_rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -80,7 +80,66 @@ CREATE TABLE `rides` (
   PRIMARY KEY (`id`),
   KEY `index_rides_on_meeting_point` (`meeting_point`(25)),
   KEY `index_rides_on_destination` (`destination`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `rpush_apps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `environment` varchar(255) DEFAULT NULL,
+  `certificate` text,
+  `password` varchar(255) DEFAULT NULL,
+  `connections` int(11) NOT NULL DEFAULT '1',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `auth_key` varchar(255) DEFAULT NULL,
+  `client_id` varchar(255) DEFAULT NULL,
+  `client_secret` varchar(255) DEFAULT NULL,
+  `access_token` varchar(255) DEFAULT NULL,
+  `access_token_expiration` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `rpush_feedback` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `device_token` varchar(64) NOT NULL,
+  `failed_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `app` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_rapns_feedback_on_device_token` (`device_token`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `rpush_notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `badge` int(11) DEFAULT NULL,
+  `device_token` varchar(64) DEFAULT NULL,
+  `sound` varchar(255) DEFAULT 'default',
+  `alert` varchar(255) DEFAULT NULL,
+  `data` text,
+  `expiry` int(11) DEFAULT '86400',
+  `delivered` tinyint(1) NOT NULL DEFAULT '0',
+  `delivered_at` datetime DEFAULT NULL,
+  `failed` tinyint(1) NOT NULL DEFAULT '0',
+  `failed_at` datetime DEFAULT NULL,
+  `error_code` int(11) DEFAULT NULL,
+  `error_description` text,
+  `deliver_after` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `alert_is_json` tinyint(1) DEFAULT '0',
+  `type` varchar(255) NOT NULL,
+  `collapse_key` varchar(255) DEFAULT NULL,
+  `delay_while_idle` tinyint(1) NOT NULL DEFAULT '0',
+  `registration_ids` mediumtext,
+  `app_id` int(11) NOT NULL,
+  `retries` int(11) DEFAULT '0',
+  `uri` varchar(255) DEFAULT NULL,
+  `fail_after` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_rapns_notifications_multi` (`app_id`,`delivered`,`failed`,`deliver_after`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `schema_migrations` (
   `version` varchar(255) NOT NULL,
@@ -134,3 +193,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140524040642');
 INSERT INTO schema_migrations (version) VALUES ('20140527201119');
 
 INSERT INTO schema_migrations (version) VALUES ('20140528000417');
+
+INSERT INTO schema_migrations (version) VALUES ('20140529231120');
