@@ -28,7 +28,7 @@ class RideRequestTest < ActiveSupport::TestCase
 		driver = User.available_drivers.first # from the factory calls above
 
 		# offer the ride to the driver
-		driver.offered_ride(ride)
+		driver.offer_ride(ride)
 
 		ride.accepted!(driver)
 		
@@ -52,7 +52,7 @@ class RideRequestTest < ActiveSupport::TestCase
 
 		drivers = User.available_drivers
 		drivers.each do |d|
-			d.offered_ride(ride)
+			d.offer_ride(ride)
 		end
 
 		driver = drivers[0]

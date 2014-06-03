@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140527201119) do
+ActiveRecord::Schema.define(:version => 20140529231120) do
 
   create_table "cars", :force => true do |t|
     t.integer  "user_id"
@@ -19,9 +19,9 @@ ActiveRecord::Schema.define(:version => 20140527201119) do
     t.string   "model"
     t.string   "license_plate"
     t.string   "state"
-    t.integer  "location",      :limit => nil
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
+    t.spatial  "location",      :limit => {:type=>"point"}
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
   end
 
   add_index "cars", ["location"], :name => "index_cars_on_location", :length => {"location"=>25}
@@ -51,12 +51,12 @@ ActiveRecord::Schema.define(:version => 20140527201119) do
     t.string   "state"
     t.string   "request_type"
     t.datetime "requested_datetime"
-    t.integer  "origin",                 :limit => nil
+    t.spatial  "origin",                 :limit => {:type=>"point"}
     t.string   "origin_place_name"
-    t.integer  "destination",            :limit => nil
+    t.spatial  "destination",            :limit => {:type=>"point"}
     t.string   "destination_place_name"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                                         :null => false
+    t.datetime "updated_at",                                         :null => false
   end
 
   add_index "ride_requests", ["destination"], :name => "index_ride_requests_on_destination", :length => {"destination"=>25}
@@ -76,17 +76,72 @@ ActiveRecord::Schema.define(:version => 20140527201119) do
     t.datetime "scheduled"
     t.datetime "started"
     t.datetime "finished"
-    t.integer  "meeting_point",            :limit => nil
+    t.spatial  "meeting_point",            :limit => {:type=>"point"}
     t.string   "meeting_point_place_name"
-    t.integer  "destination",              :limit => nil
+    t.spatial  "destination",              :limit => {:type=>"point"}
     t.string   "destination_place_name"
-    t.datetime "created_at",                              :null => false
-    t.datetime "updated_at",                              :null => false
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
     t.datetime "pickup_time"
   end
 
   add_index "rides", ["destination"], :name => "index_rides_on_destination", :length => {"destination"=>25}
   add_index "rides", ["meeting_point"], :name => "index_rides_on_meeting_point", :length => {"meeting_point"=>25}
+
+  create_table "rpush_apps", :force => true do |t|
+    t.string   "name",                                   :null => false
+    t.string   "environment"
+    t.text     "certificate"
+    t.string   "password"
+    t.integer  "connections",             :default => 1, :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.string   "type",                                   :null => false
+    t.string   "auth_key"
+    t.string   "client_id"
+    t.string   "client_secret"
+    t.string   "access_token"
+    t.datetime "access_token_expiration"
+  end
+
+  create_table "rpush_feedback", :force => true do |t|
+    t.string   "device_token", :limit => 64, :null => false
+    t.datetime "failed_at",                  :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.string   "app"
+  end
+
+  add_index "rpush_feedback", ["device_token"], :name => "index_rapns_feedback_on_device_token"
+
+  create_table "rpush_notifications", :force => true do |t|
+    t.integer  "badge"
+    t.string   "device_token",      :limit => 64
+    t.string   "sound",                                 :default => "default"
+    t.string   "alert"
+    t.text     "data"
+    t.integer  "expiry",                                :default => 86400
+    t.boolean  "delivered",                             :default => false,     :null => false
+    t.datetime "delivered_at"
+    t.boolean  "failed",                                :default => false,     :null => false
+    t.datetime "failed_at"
+    t.integer  "error_code"
+    t.text     "error_description"
+    t.datetime "deliver_after"
+    t.datetime "created_at",                                                   :null => false
+    t.datetime "updated_at",                                                   :null => false
+    t.boolean  "alert_is_json",                         :default => false
+    t.string   "type",                                                         :null => false
+    t.string   "collapse_key"
+    t.boolean  "delay_while_idle",                      :default => false,     :null => false
+    t.text     "registration_ids",  :limit => 16777215
+    t.integer  "app_id",                                                       :null => false
+    t.integer  "retries",                               :default => 0
+    t.string   "uri"
+    t.datetime "fail_after"
+  end
+
+  add_index "rpush_notifications", ["app_id", "delivered", "failed", "deliver_after"], :name => "index_rapns_notifications_multi"
 
   create_table "users", :force => true do |t|
     t.integer  "stripe_customer_id"
@@ -99,9 +154,10 @@ ActiveRecord::Schema.define(:version => 20140527201119) do
     t.string   "state"
     t.integer  "commuter_balance_cents"
     t.integer  "commuter_refill_amount_cents"
-    t.integer  "location",                     :limit => nil
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.spatial  "location",                     :limit => {:type=>"point"}
+    t.datetime "created_at",                                               :null => false
+    t.datetime "updated_at",                                               :null => false
+    t.spatial  "rider_location",               :limit => {:type=>"point"}
   end
 
   add_index "users", ["location"], :name => "index_users_on_location", :length => {"location"=>25}

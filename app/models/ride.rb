@@ -1,7 +1,7 @@
 class Ride < ActiveRecord::Base
 
 	has_many :rider_rides
-	has_many :riders, through: :rider_rides, :class_name => 'User'
+	has_many :riders, through: :rider_rides
 	belongs_to :driver, :class_name => 'User'
 	has_many :ride_requests, inverse_of: :ride
 	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
@@ -66,7 +66,10 @@ class Ride < ActiveRecord::Base
 
 	def accepted( driver )
 		aasm_accepted
-		driver_accepted_ride( driver )
+		Rails.logger.debug 'driver accepted ride'
+		self.driver = driver	
+		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
+		# self.car = driver.car
 		# and mark all ride requests as scheduled
 		update_ride_requests_to_scheduled
 		# and mark all ride offers as closed 
@@ -119,13 +122,6 @@ class Ride < ActiveRecord::Base
 		self.car = car
 		self.scheduled = Time.now
 		save
-	end
-
-	def driver_accepted_ride( driver )
-		Rails.logger.debug 'driver accepted ride'
-		self.driver = driver	
-		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
-		# self.car = driver.car
 	end
 
 	def driver_cancelled_ride

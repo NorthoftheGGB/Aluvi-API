@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 	has_many :ride_requests, :foreign_key => :rider_id, :inverse_of => :user
-	has_many :rides, :through => "rider_rides", :foreign_key => :ride_id
+	has_many :rider_rides, :foreign_key => :rider_id
+	has_many :rides, through: :rider_rides
 	has_many :cars, :foreign_key => :driver_id, inverse_of: :users
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id

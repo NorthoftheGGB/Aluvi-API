@@ -9,7 +9,7 @@ class RideRequestObserver < ActiveRecord::Observer
 		offer_to_drivers(ride_request.ride)
 	end
 
-	# this would be a callback from the schduler somewhere
+	# this would be a callback from the schdduler somewhere
 	def offer_to_drivers(ride)
 		#User.available_drivers.each do |driver|
 		User.drivers.each do |driver|
@@ -25,9 +25,10 @@ class RideRequestObserver < ActiveRecord::Observer
 					n = Rpush::Apns::Notification.new
 					n.app = Rpush::Apns::App.find_by_name("voco")
 					n.device_token = d.push_token
-					n.alert = "Ride requested!"
-					#n.content_available = true
-					n.data = { type: :ride_offer, offer_id: offer.id, ride_id: ride.id, meeting_point_place_name: ride.meeting_point_place_name, destination_place_name: ride.destination_place_name }
+					n.alert = "Ride Requested!"
+					n.data = { type: :ride_offer, offer_id: offer.id, ride_id: ride.id,
+						meeting_point_place_name: ride.meeting_point_place_name,
+						destination_place_name: ride.destination_place_name }
 					n.save!
 				end
 			end	

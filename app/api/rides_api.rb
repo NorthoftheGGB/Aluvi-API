@@ -19,7 +19,9 @@ class RidesAPI< Grape::API
 			destination = RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude])
 			ride_request = RideRequest.create!(params[:type],
 																				 RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude]),
-																				 RGeo::Geos.factory.point(params[:destination_latitude], params[:destination_longitude]))
+																				 RGeo::Geos.factory.point(params[:destination_latitude], params[:destination_longitude]),
+																				 params[:rider_id]
+																				)
 			ride_request.request!
 			rval = Hash.new
 			rval[:request_id] = ride_request.id
@@ -40,6 +42,21 @@ class RidesAPI< Grape::API
 			end
 			@offers
 		end
+
+		desc "Get requested and underway rides"
+		params do
+			requires :rider_id, type: Integer, desc: "User id of rider requesting update"
+		end
+		get ':rider_id',  jbuilder: 'rides' do
+			authenticate!
+			@user = User.find(params['rider_id'])			
+			@scheduled_rides = @user.rides.scheduled
+			@scheduled_rides.each do |ride|
+				# mark as delivered here if we like
+			end
+			@scheduled_rides
+		end
+
 
 		desc "Driver accepted ride"
 		params do
@@ -101,6 +118,7 @@ class RidesAPI< Grape::API
 			ride = Ride.find(params[:ride_id])
 			driver = User.find(params[:driver_id])
 			ride.driver_cancelled!
+			ok
 		end
 
 
@@ -115,6 +133,7 @@ class RidesAPI< Grape::API
 			ride = Ride.find(params[:ride_id])
 			rider = User.find(params[:rider_id])
 			ride.rider_cancelled!(rider)
+			ok
 		end
 
 
