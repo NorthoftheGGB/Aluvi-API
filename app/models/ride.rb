@@ -4,6 +4,7 @@ class Ride < ActiveRecord::Base
 	has_many :riders, through: :rider_rides, :class_name => 'User'
 	belongs_to :driver, :class_name => 'User'
 	has_many :ride_requests, inverse_of: :ride
+	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
   attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
@@ -19,11 +20,11 @@ class Ride < ActiveRecord::Base
 		state :completed
 
 		event :schedule do
-			transitions :from => :created, :to => :scheduled, :on_transition => :schedule_ride, :after => :notify_scheduled
+			transitions :from => :created, :to => :scheduled, :on_transition => :schedule_ride
 		end
 		
 		event :accepted do
-			transitions :from => :created, :to => :scheduled, :after => :notify_scheduled # :on_transition => :driver_accepted_ride, 
+			transitions :from => :created, :to => :scheduled
 		end
 
 		event :rider_cancelled, :after => :rider_cancelled_ride do
@@ -68,6 +69,11 @@ class Ride < ActiveRecord::Base
 		driver_accepted_ride( driver )
 		# and mark all ride requests as scheduled
 		update_ride_requests_to_scheduled
+		# and mark all ride offers as closed 
+		offers.open_offers.each do |offer|
+			offer.closed!
+		end
+		notify_scheduled
 	end
 
 	def accepted!( driver )
@@ -116,7 +122,7 @@ class Ride < ActiveRecord::Base
 	end
 
 	def driver_accepted_ride( driver )
-		Rails.logger.debug 'on transition driver accepted ride'
+		Rails.logger.debug 'driver accepted ride'
 		self.driver = driver	
 		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
 		# self.car = driver.car
@@ -144,6 +150,7 @@ class Ride < ActiveRecord::Base
 	end
 
 	def notify_scheduled
+		Rails.logger.debug "in notify_scheduled"
 		notify_observers :scheduled
 	end
 

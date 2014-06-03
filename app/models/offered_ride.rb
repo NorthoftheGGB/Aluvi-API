@@ -3,7 +3,8 @@ class OfferedRide < ActiveRecord::Base
 	belongs_to :ride, :class_name => 'Ride', :foreign_key => 'ride_id'
   attr_accessible :driver_id, :ride_id
 
-	scope :open_rides, where(state: [:offered]) 
+	scope :undelivered_offers, where(state: [:offered]) 
+	scope :open_offers, where(state: [:offered, :offer_delivered]) 
 
 	include AASM
 	aasm_column :state
@@ -30,11 +31,8 @@ class OfferedRide < ActiveRecord::Base
 			transitions :from => :offer_delivered, :to => :declined
 		end
 
-		event :delivered_closed_offer_message do
+		event :closed do
 			transitions :from => :offer_delivered, :to => :offer_closed_delivered
-		end
-
-		event :offered do
 			transitions :from => :offered, :to => :offer_closed_unviewed
 		end
 

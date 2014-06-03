@@ -21,11 +21,6 @@ class RidesAPI< Grape::API
 																				 RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude]),
 																				 RGeo::Geos.factory.point(params[:destination_latitude], params[:destination_longitude]))
 			ride_request.request!
-			#json_string = Jbuilder.encode do |json|
-			#	json.request_id = ride_request.id
-			#end
-			# TODO problem here is that jbuilder already returned a string
-			# but then the default grape json encoder escapes it
 			rval = Hash.new
 			rval[:request_id] = ride_request.id
 			rval
@@ -38,7 +33,12 @@ class RidesAPI< Grape::API
 		end
 		get 'offers/:driver_id', jbuilder: 'offer' do
 			authenticate!
-			@offers = User.find(params['driver_id']).offered_rides.open_rides
+			user = User.find(params['driver_id'])			
+			@offers = user.offered_rides.open_offers
+			user.offered_rides.undelivered_offers.each do |offer|
+				offer.offer_delivered!
+			end
+			@offers
 		end
 
 		desc "Driver accepted ride"
