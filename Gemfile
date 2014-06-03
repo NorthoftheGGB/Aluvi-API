@@ -39,6 +39,7 @@ gem 'activerecord-mysql2spatial-adapter'
 
 # To use Jbuilder templates for JSON
 gem 'jbuilder'
+gem 'grape-jbuilder'
 
 # Google Cloud Messaging
 gem 'gcm'

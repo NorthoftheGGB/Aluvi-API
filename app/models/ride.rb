@@ -58,6 +58,8 @@ class Ride < ActiveRecord::Base
 		ride.pickup_time = pickup_time
 		ride.meeting_point = meeting_point
 		ride.destination = destination
+		ride.meeting_point_place_name = "Placeholder meeting point"
+		ride.destination_place_name = "Placeholder destination"
 		ride
 	end
 

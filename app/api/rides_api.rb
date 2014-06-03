@@ -1,6 +1,7 @@
 class RidesAPI< Grape::API
 	version 'v1', using: :header, vendor: 'voco'
 	format :json
+	formatter :json, Grape::Formatter::Jbuilder
 
 	resources :rides do
 
@@ -31,14 +32,13 @@ class RidesAPI< Grape::API
 
 		end
 
-		desc "Check for state changes"
+		desc "Update list of offered or underway rides"
 		params do
-			requires :sequence, type: Integer, desc: "Sequence number of last recorded state change"
+			requires :driver_id, type: Integer, desc: "User id of driver requesting update"
 		end
-		route_param :sequence do
-			get do
-				authenticate!
-			end
+		get 'offers/:driver_id', jbuilder: 'offer' do
+			authenticate!
+			@offers = User.find(params['driver_id']).offered_rides.open_rides
 		end
 
 		desc "Driver accepted ride"
@@ -50,18 +50,20 @@ class RidesAPI< Grape::API
 			authenticate!
 			ride = Ride.find(params[:ride_id])
 			driver = User.find(params[:driver_id])
-			begin
-				ride.accepted!(driver)
-				true
-			rescue
-				puts $!, $@
-				# ride is no longer available
-				# check that if this because it's assigned to THIS driver
+
+
+			if(ride.state != "created")
 				if( ride.driver == driver )
-					return "Already assigned to this driver"
+					message = Hash.new
+					message['message'] = "Ride already assigned to this driver"
+					message
 				else
 					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
+					return
 				end
+			else 
+				ride.accepted!(driver)
+				Hash.new	
 			end
 
 		end
@@ -75,20 +77,17 @@ class RidesAPI< Grape::API
 			authenticate!
 			ride = Ride.find(params[:ride_id])
 			driver = User.find(params[:driver_id])
-			begin
-				driver.declined_ride(ride)
-				true
-			rescue
-				puts $!, $@
-				# ride is no longer able to be delined
-				# check that if this because it's assigned to THIS driver
+			if(ride.state != "created")
 				if( ride.driver == driver )
-					# should this case auto-cancel the ride?
-					return "Already assigned to this driver, they will have to cancel"
+					return "Already assigned to this driver"
 				else
 					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
+					return
 				end
 			end
+
+			driver.declined_ride(ride)
+			Hash.new	
 
 		end
 

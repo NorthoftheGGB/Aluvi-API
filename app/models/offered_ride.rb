@@ -3,6 +3,8 @@ class OfferedRide < ActiveRecord::Base
 	belongs_to :ride, :class_name => 'Ride', :foreign_key => 'ride_id'
   attr_accessible :driver_id, :ride_id
 
+	scope :open_rides, where(state: [:offered]) 
+
 	include AASM
 	aasm_column :state
 

@@ -6,26 +6,34 @@ class RideRequestObserver < ActiveRecord::Observer
 		# this is where the scheduler needs to be notified, or a flag set
 
 		# for now, sidestep the scheduler and just send push notifications out to the drivers
+		offer_to_drivers(ride_request.ride)
+	end
 
+	# this would be a callback from the schduler somewhere
+	def offer_to_drivers(ride)
 		#User.available_drivers.each do |driver|
-		User.all.each do |driver|
+		User.drivers.each do |driver|
 			Rails.logger.debug driver.id
 			# Every device used by an available driver gets a push notification if they are available
 			# this solves any multi-device problems, driver is the key entity in delivery of this particular push
-			driver.devices.each do |d|
-				Rails.logger.debug( "Push: " + d.push_token)
-				n = Rpush::Apns::Notification.new
-				n.app = Rpush::Apns::App.find_by_name("voco")
-				n.device_token = d.push_token
-				n.alert = "Ride requested!"
-				n.content_available = true
-				n.data = { foo: :bar }
-				n.save!
-			end
+			if(driver.devices.count > 0 )
+				offer = driver.offer_ride(ride)
+				driver.devices.each do |d|
+					Rails.logger.info( "Push: " + d.push_token)
+					n = Rpush::Apns::Notification.new
+					n.app = Rpush::Apns::App.find_by_name("voco")
+					n.device_token = d.push_token
+					n.alert = "Ride requested!"
+					n.content_available = true
+					n.data = { offer_id: offer.id, ride_id: ride.id, meeting_point_place_name: ride.meeting_point_place_name, destination_place_name: ride.destination_place_name }
+					n.save!
+				end
+			end	
 		end
 
 		#APNS.send_notifications(notifications)
 		Rails.logger.debug "Sent push notifications to drivers"
+
 	end
 
 	def scheduled(ride_request)

@@ -1,6 +1,6 @@
 VocoApi::Application.routes.draw do
 
-	mount VocoAPI => '/'
+	mount VocoAPI => '/api/'
 
   resources :offered_rides
 

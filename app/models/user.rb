@@ -29,15 +29,17 @@ class User < ActiveRecord::Base
 	#
 	# driver model
 	#
-	def offered_ride( ride )
+	def offer_ride( ride )
 		offered_ride = OfferedRide.new
 		offered_ride.ride = ride
+		offered_ride.ride.save
 		offered_rides << offered_ride
 		save
+		offered_ride
 	end
 
 	def declined_ride( ride )
-		offered_ride = offered_rides.where(:ride_id => ride.id).first
+		offered_ride = OfferedRide.where(:driver_id => id).where(:ride_id => ride.id).first
 		offered_ride.declined!
 	end
 
