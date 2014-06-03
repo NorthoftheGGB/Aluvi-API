@@ -38,9 +38,17 @@ class User < ActiveRecord::Base
 		offered_ride
 	end
 
-	def declined_ride( ride )
+	def offer_for_ride( ride )
 		offered_ride = OfferedRide.where(:driver_id => id).where(:ride_id => ride.id).first
-		offered_ride.declined!
+	end
+
+	def declined_ride( ride )
+		offer_for_ride(ride).declined!
+	end
+
+	def accepted_ride( ride )
+		offer_for_ride(ride).accepted!
+		ride.accepted!(self)
 	end
 
 	#

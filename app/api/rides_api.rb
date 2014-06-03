@@ -51,19 +51,17 @@ class RidesAPI< Grape::API
 			ride = Ride.find(params[:ride_id])
 			driver = User.find(params[:driver_id])
 
-
 			if(ride.state != "created")
 				if( ride.driver == driver )
-					message = Hash.new
-					message['message'] = "Ride already assigned to this driver"
-					message
+					# ok to return HTTP success
+					ok
 				else
 					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
 					return
 				end
 			else 
-				ride.accepted!(driver)
-				Hash.new	
+				driver.accepted_ride(ride)
+				ok
 			end
 
 		end
@@ -79,7 +77,7 @@ class RidesAPI< Grape::API
 			driver = User.find(params[:driver_id])
 			if(ride.state != "created")
 				if( ride.driver == driver )
-					return "Already assigned to this driver"
+					error! 'Already assigned to this driver', 404, 'X-Error-Detail' => 'Already assigned to this driver'
 				else
 					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
 					return
@@ -87,7 +85,7 @@ class RidesAPI< Grape::API
 			end
 
 			driver.declined_ride(ride)
-			Hash.new	
+			ok
 
 		end
 

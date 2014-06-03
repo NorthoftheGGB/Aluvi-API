@@ -11,6 +11,10 @@ class VocoAPI < Grape::API
 			Rails.logger.debug "Skipping authentication"
 			# error!('401 Unauthorized', 401) unless current_user
 		end
+
+		def ok
+			Hash.new	
+		end
 	end
 
 	mount RidesAPI
