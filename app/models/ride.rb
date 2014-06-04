@@ -64,6 +64,14 @@ class Ride < ActiveRecord::Base
 		ride
 	end
 
+	def is_cancelled
+		if(state == 'driver_cancelled' || state == 'rider_cancelled')
+			true
+		else
+			false
+		end
+	end
+
 	def accepted( driver )
 		aasm_accepted
 		Rails.logger.debug 'driver accepted ride'
@@ -127,6 +135,7 @@ class Ride < ActiveRecord::Base
 	def driver_cancelled_ride
 		self.finished = Time.now
 		save
+		notify_observers :ride_cancelled_by_driver
 	end
 
 	def rider_cancelled_ride
@@ -157,11 +166,6 @@ class Ride < ActiveRecord::Base
 	def notify_ride_cancelled_by_driver
 		notify_observers :ride_cancelled_by_driver
 	end
-
-	def notify_rider_cancelled_by_rider
-		notify_observers :ride_cancelled_by_rider
-	end
-
 
 	def update_ride_requests_to_scheduled
 		ride_requests.each do |rr|

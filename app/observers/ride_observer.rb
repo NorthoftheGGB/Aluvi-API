@@ -48,6 +48,21 @@ class RideObserver < ActiveRecord::Observer
 	end
 
 	def ride_cancelled_by_driver(ride)
+		ride.riders.each do |rider|
+			rider.devices.each do |d|
+				n = push_message(d)
+				n.alert = "Ride Cancelled!"
+				n.data = { type: :ride_cancelled_by_driver, ride_id: ride.id }
+				n.save!
+			end
+		end
+	end
+
+	def push_message(device)
+		n = Rpush::Apns::Notification.new
+		n.app = Rpush::Apns::App.find_by_name("voco")
+		n.device_token = device.push_token
+		n
 	end
 
 end

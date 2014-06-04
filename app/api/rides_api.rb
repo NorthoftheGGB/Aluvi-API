@@ -117,8 +117,16 @@ class RidesAPI< Grape::API
 			# TODO driver should only be able to cancel their own ride
 			ride = Ride.find(params[:ride_id])
 			driver = User.find(params[:driver_id])
-			ride.driver_cancelled!
-			ok
+			begin
+				ride.driver_cancelled!
+				ok
+			rescue AASM::InvalidTransition => e
+				if(ride.is_cancelled)
+					ok
+				else
+					raise e
+				end
+			end
 		end
 
 
@@ -132,8 +140,16 @@ class RidesAPI< Grape::API
 			# TODO rider should only be able to cancel their own ride
 			ride = Ride.find(params[:ride_id])
 			rider = User.find(params[:rider_id])
-			ride.rider_cancelled!(rider)
-			ok
+			begin
+				ride.rider_cancelled!(rider)
+				ok
+			rescue AASM::InvalidTransition => e
+				if(ride.is_cancelled)
+					ok
+				else
+					raise e
+				end
+			end
 		end
 
 
