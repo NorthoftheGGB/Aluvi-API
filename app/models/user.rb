@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
 	#	has_one :driver_state
 	#	has_one :rider_state
 
-  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :state, :stripe_customer_id, :stripe_recipient_id, :rider_location
+  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :state, :stripe_customer_id, :stripe_recipient_id
 
 	scope :drivers, -> { where(is_driver: true) }
 	scope :available_drivers, ->{ drivers.where(state: :driver_idle) }
@@ -56,15 +56,8 @@ class User < ActiveRecord::Base
 	# rider model
 	# 
 	def update_location!(longitude, latitude)
-		self.rider_location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
+		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		save
 	end
-
-	# convience method
-	def location
-		return self.rider_location
-	end
-
-
 
 end

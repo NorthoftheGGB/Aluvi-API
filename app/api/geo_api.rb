@@ -10,12 +10,18 @@ class GeoAPI < Grape::API
 			requires :longitude, type: BigDecimal
 		end
 		put 'car/:id' do
-			car = Car.find(params[:id])
-			if(car.nil?)
-				error! 'Car not found', 404
-				return
-			end
-			car.update_location!( params[:latitude], params[:longitude] )
+			# hack to just use user locations for now
+			Rails.logger.debug(params)
+			user = User.find(params[:id])
+			user.update_location!( params[:longitude], params[:latitude] )
+			ok
+#			car = Car.find(params[:id])
+#			if(car.nil?)
+#				error! 'Car not found', 404
+#				return
+#			end
+#			car.update_location!( params[:latitude], params[:longitude] )
+#			ok
 		end
 
 		

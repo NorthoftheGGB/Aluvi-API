@@ -4,9 +4,23 @@ class UsersController < ApplicationController
   def index
     @users = User.all
 
+		#switch to jbuilder
+		json = Array.new
+		@users.each do |u|
+			item = Hash.new
+			item[:id] = u.id
+			unless u.location.nil?
+				Rails.logger.debug u.location
+				item[:latitude] = u.location.latitude
+				item[:longitude] = u.location.longitude
+				item[:is_driver] = u.is_driver
+			end
+			json.push item
+		end
+
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @users }
+      format.json { render json: json }
     end
   end
 

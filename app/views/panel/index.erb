@@ -1,0 +1,45 @@
+<script>
+
+	$( document ).ready(function() {
+	var map = L.map('map')
+	var markers = {};
+
+	function update_markers() {
+		jQuery.ajax({                                                                                                               
+			type: 'GET',                                                                                                              
+			url: "/users.json",                                                                                                                 
+			beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},           
+			success:function(data){
+				console.log(data)
+				jQuery.each(data, function(index, item){
+					if(item.latitude == null || item.longitude == null){
+						return;
+					}
+
+					marker = markers[item.id];
+					if(marker == null){
+						marker = L.marker([item.latitude, item.longitude]).addTo(map);
+						markers[item.id] = marker;
+					}
+					marker.setLatLng([item.latitude, item.longitude]);
+				});
+				setTimeout(update_markers, 10000);
+			},
+			error:function(){                                                                                                         
+				console.log('error getting markers');                                                                           
+			}
+		});
+	}
+	map.setView([37.7577, -122.4376], 12)
+	L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg', {
+		attribution: 'attribution statement',
+		maxZoom: 18
+	}).addTo(map)
+
+	update_markers();
+});
+
+
+</script>
+<div id="map" style="height: 1000px;" >
+</div>

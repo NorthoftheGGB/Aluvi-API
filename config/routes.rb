@@ -25,6 +25,8 @@ VocoApi::Application.routes.draw do
 	match 'scheduler' => 'scheduler#index'
 	delete 'scheduler/:id' => 'scheduler#failed'
 
+	match 'panel' => 'panel#index'
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
