@@ -169,6 +169,7 @@ class RidesAPI< Grape::API
 				rider = Rider.find(params[:rider_id])
 				ride.pickup! rider
 			end
+			ok
 		end
 
 
@@ -189,6 +190,7 @@ class RidesAPI< Grape::API
 				#ride.arrived! rider
 				ride.arrived! # separate arrivals per ride not currently supported
 			end
+			ok
 		end
 
 	end

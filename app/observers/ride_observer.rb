@@ -58,6 +58,17 @@ class RideObserver < ActiveRecord::Observer
 		end
 	end
 
+	def ride_completed(ride)
+		ride.riders.each do |rider|
+			rider.devices.each do |d|
+				n = push_message(d)
+				n.alert = "Receipt For Your Ride"
+				n.data = { type: :ride_receipt, ride_id: ride.id }
+				n.save!
+			end
+		end
+	end
+
 	def push_message(device)
 		n = Rpush::Apns::Notification.new
 		n.app = Rpush::Apns::App.find_by_name("voco")

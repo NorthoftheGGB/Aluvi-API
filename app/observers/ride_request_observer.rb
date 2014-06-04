@@ -33,8 +33,6 @@ class RideRequestObserver < ActiveRecord::Observer
 				end
 			end	
 		end
-
-		#APNS.send_notifications(notifications)
 		Rails.logger.debug "Sent push notifications to drivers"
 
 	end
