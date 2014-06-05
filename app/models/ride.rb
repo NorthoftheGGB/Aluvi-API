@@ -152,7 +152,7 @@ class Ride < ActiveRecord::Base
 	def completed_ride
 		self.finished = Time.now
 		save
-		notify_observers :ride_complete
+		notify_observers :ride_completed
 	end
 
 	def notify_scheduled

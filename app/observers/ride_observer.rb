@@ -24,6 +24,9 @@ class RideObserver < ActiveRecord::Observer
 			Rails.logger.debug rider
 			request = ride.ride_requests.where(user_id: rider.id).first
 			rider.devices.each do |d|
+				if(d.push_token.nil?)
+					next	
+				end
 				n = Rpush::Apns::Notification.new
 				n.app = Rpush::Apns::App.find_by_name("voco")
 				n.device_token = d.push_token
@@ -38,6 +41,9 @@ class RideObserver < ActiveRecord::Observer
 
 	def ride_cancelled_by_rider(ride)
 		ride.driver.devices.each do |d|
+				if(d.push_token.nil?)
+					next	
+				end
 				n = Rpush::Apns::Notification.new
 				n.app = Rpush::Apns::App.find_by_name("voco")
 				n.device_token = d.push_token
@@ -50,6 +56,9 @@ class RideObserver < ActiveRecord::Observer
 	def ride_cancelled_by_driver(ride)
 		ride.riders.each do |rider|
 			rider.devices.each do |d|
+				if(d.push_token.nil?)
+					next	
+				end
 				n = push_message(d)
 				n.alert = "Ride Cancelled!"
 				n.data = { type: :ride_cancelled_by_driver, ride_id: ride.id }
@@ -59,8 +68,12 @@ class RideObserver < ActiveRecord::Observer
 	end
 
 	def ride_completed(ride)
+		Rails.logger.debug('RideObserver::ride_completed')
 		ride.riders.each do |rider|
 			rider.devices.each do |d|
+				if(d.push_token.nil?)
+					next	
+				end
 				n = push_message(d)
 				n.alert = "Receipt For Your Ride"
 				n.data = { type: :ride_receipt, ride_id: ride.id }
