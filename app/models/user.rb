@@ -26,11 +26,11 @@ class User < ActiveRecord::Base
 	#	state :busy
 	#end
 
-	def self.user_with_email(email)
-		user = User.where( :email => email).first
+	def self.user_with_phone(phone)
+		user = User.where( :phone => phone).first
 		if user.nil?
 			user = User.new
-			user.email = email
+			user.phone = phone
 			user.save
 		end
 		user

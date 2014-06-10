@@ -16,13 +16,13 @@ class UsersAPI < Grape::API
 			optional :referral_code, type: String
 		end
 		post do
-			user = User.user_with_email params[:email]
+			user = User.user_with_phone params[:phone]
 			unless(user.rider_role.nil? || user.rider_role.state == 'registered')
 				error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
 				return
 			end
 			user.last_name = params[:name]
-			user.phone = params[:phone]
+			user.email = params[:email]
 			user.password = user.hash_password(params[:password])
 			user.referral_code = params[:referral_code]
 			user.registered_for_riding
@@ -57,7 +57,7 @@ class UsersAPI < Grape::API
 		post "login" do
 
 			begin
-				user = User.where(:email => params['email']).first
+				user = User.where(:phone => params['phone']).first
 				if user.nil?
 					raise "User not found"
 				end
@@ -84,9 +84,9 @@ class UsersAPI < Grape::API
 			optional :driver_referral_code, type: String	
 		end
 		post "driver_interested" do
-			user = User.user_with_email params[:email]
+			user = User.user_with_phone params[:phone]
 			user.last_name = params[:name]
-			user.phone = params[:phone]
+			user.email = params[:email]
 			user.driver_request_region = params[:region]
 			user.driver_referral_code = params[:driver_referral_code]
 			user.interested_in_driving
