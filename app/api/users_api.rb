@@ -51,7 +51,7 @@ class UsersAPI < Grape::API
 
 		desc "Log the user in"
 		params do
-			requires :email, type: String
+			requires :phone, type: String
 			requires :password, type: String
 		end
 		post "login" do
