@@ -17,6 +17,10 @@ class UsersAPI < Grape::API
 		end
 		post do
 			user = User.user_with_email params[:email]
+			unless(user.rider_role.nil? || user.rider_role.state == 'registered')
+				error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
+				return
+			end
 			user.last_name = params[:name]
 			user.phone = params[:phone]
 			user.password = user.hash_password(params[:password])
