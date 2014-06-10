@@ -19,7 +19,6 @@ class UsersAPI < Grape::API
 			user = User.user_with_email params[:email]
 			user.last_name = params[:name]
 			user.phone = params[:phone]
-			user.salt = SecureRandom.hex(32)
 			user.password = user.hash_password(params[:password])
 			user.referral_code = params[:referral_code]
 			user.registered_for_riding
@@ -78,11 +77,11 @@ class UsersAPI < Grape::API
 			requires :phone, type: String
 			requires :region, type: String
 			requires :email, type: String
-			requires :driver_referral_code, type: String	
+			optional :driver_referral_code, type: String	
 		end
-		post "driver_request" do
+		post "driver_interested" do
 			user = User.user_with_email params[:email]
-			user.name = params[:name]
+			user.last_name = params[:name]
 			user.phone = params[:phone]
 			user.driver_request_region = params[:region]
 			user.driver_referral_code = params[:driver_referral_code]

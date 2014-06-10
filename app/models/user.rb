@@ -53,6 +53,10 @@ class User < ActiveRecord::Base
 
 	# authentication
 	def hash_password(password)
+			if(self.salt.nil?)
+				self.salt = SecureRandom.hex(32)
+				save
+			end
 			salted_password = self.salt + password
 			Digest::SHA2.hexdigest salted_password
 	end
