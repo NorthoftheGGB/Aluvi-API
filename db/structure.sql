@@ -184,6 +184,7 @@ CREATE TABLE `users` (
   `driver_request_region` varchar(255) DEFAULT NULL,
   `driver_referral_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `index_users_on_email` (`email`),
   KEY `index_users_on_location` (`location`(25))
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
@@ -242,3 +243,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140609200128');
 INSERT INTO schema_migrations (version) VALUES ('20140609200135');
 
 INSERT INTO schema_migrations (version) VALUES ('20140609222744');
+
+INSERT INTO schema_migrations (version) VALUES ('20140610001847');
