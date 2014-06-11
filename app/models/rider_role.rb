@@ -2,6 +2,11 @@ class RiderRole < ActiveRecord::Base
 	belongs_to :user
   attr_accessible :state
 
+	def self.states
+		[ :registered, :active, :payment_problem, :suspended ]
+	end
+
+
 	include AASM
 	aasm_column :state
 

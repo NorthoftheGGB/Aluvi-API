@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 	has_one :driver_role
 	has_one :rider_role
 
-  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email
+  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state
 
 	scope :drivers, -> { where(is_driver: true) }
 	scope :available_drivers, ->{ drivers.joins(:driver_role).where(:state => :on_duty) }
@@ -92,6 +92,41 @@ class User < ActiveRecord::Base
 	def update_location!(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		save
+	end
+
+
+	def rider_state
+		unless self.rider_role.nil?
+			self.rider_role.state
+		end
+	end
+
+	def rider_state=(state_change)
+		if state_change == :initialize
+			self.rider_role = RiderRole.new
+			self.rider_role.save
+			save
+		else
+			self.rider_role.method(state_change).call
+			self.rider_role.save
+		end
+	end
+
+	def driver_state
+		unless self.driver_role.nil?
+			return self.driver_role.state
+		end
+	end
+
+	def driver_state=(state_change)
+		if state_change == :initialize
+			self.driver_role = DriverRole.new
+			self.driver_role.save
+			save
+		else
+			self.driver_role.method(state_change).call
+			self.driver_role.save
+		end
 	end
 
 end

@@ -12,14 +12,6 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :stripe_customer_id %><br />
-    <%= f.number_field :stripe_customer_id %>
-  </div>
-  <div class="field">
-    <%= f.label :stripe_recipient_id %><br />
-    <%= f.number_field :stripe_recipient_id %>
-  </div>
-  <div class="field">
     <%= f.label :company_id %><br />
     <%= f.number_field :company_id %>
   </div>
@@ -32,19 +24,25 @@
     <%= f.text_field :last_name %>
   </div>
   <div class="field">
-    <%= f.label :is_driver %><br />
-    <%= f.check_box :is_driver %>
+    <%= f.label "Rider State" %><br />
+		<% unless @user.rider_role.nil? %>
+    <%= f.label @user.rider_role.state %><br />
+		<%= f.select :rider_state, @user.rider_role.aasm.events, :include_blank => true %>
+		<% else %>
+		Not Configured
+		<%= f.select :rider_state, [ :initalize ], :include_blank => true %>
+		<% end %>
   </div>
   <div class="field">
-    <%= f.label :is_rider %><br />
-    <%= f.check_box :is_rider %>
+    <%= f.label "Driver State" %><br />
+		<% unless @user.driver_role.nil? %>
+    <%= f.label @user.driver_role.state %><br />
+		<%= f.select :driver_state, @user.driver_role.aasm.events, :include_blank => true %>
+		<% else %>
+			Not Configured
+			<%= f.select :driver_state, [ :initalize ], :include_blank => true %>
+		<% end %>
   </div>
-	<!--
-  <div class="field">
-    <%= f.label :state %><br />
-    <%= f.text_field :state %>
-  </div>
-	-->
   <div class="field">
     <%= f.label :commuter_balance_cents %><br />
     <%= f.number_field :commuter_balance_cents %>

@@ -2,6 +2,10 @@ class DriverRole < ActiveRecord::Base
 	belongs_to :user
   attr_accessible :state
 
+	def self.states
+		[ :interested, :approved, :denied, :registered, :active, :suspended, :on_duty ]
+	end
+
 	include AASM
 	aasm_column :state
 
