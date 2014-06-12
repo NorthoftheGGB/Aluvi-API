@@ -8,9 +8,8 @@ CREATE TABLE `cars` (
   `location` point DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `index_cars_on_location` (`location`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `devices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -23,7 +22,7 @@ CREATE TABLE `devices` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `offered_rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -33,7 +32,7 @@ CREATE TABLE `offered_rides` (
   `updated_at` datetime NOT NULL,
   `state` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `ride_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -48,10 +47,8 @@ CREATE TABLE `ride_requests` (
   `destination_place_name` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `index_ride_requests_on_origin` (`origin`(25)),
-  KEY `index_ride_requests_on_destination` (`destination`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=217 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rider_rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -77,10 +74,8 @@ CREATE TABLE `rides` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `pickup_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `index_rides_on_meeting_point` (`meeting_point`(25)),
-  KEY `index_rides_on_destination` (`destination`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rpush_apps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -98,7 +93,7 @@ CREATE TABLE `rpush_apps` (
   `access_token` varchar(255) DEFAULT NULL,
   `access_token_expiration` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rpush_feedback` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -139,7 +134,7 @@ CREATE TABLE `rpush_notifications` (
   `fail_after` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_rapns_notifications_multi` (`app_id`,`delivered`,`failed`,`deliver_after`)
-) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `schema_migrations` (
   `version` varchar(255) NOT NULL,
@@ -162,9 +157,8 @@ CREATE TABLE `users` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `rider_location` point DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `index_users_on_location` (`location`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO schema_migrations (version) VALUES ('20140523011016');
 

@@ -11,7 +11,7 @@ class CreateCars < ActiveRecord::Migration
       t.timestamps
     end
 		change_table :cars do |t|
-			t.index :location, :spatial => true
+			#t.index :location, :spatial => true
 		end
   end
 end

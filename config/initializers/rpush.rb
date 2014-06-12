@@ -115,4 +115,8 @@ rescue
 	Rails.logger.debug "Hack until I have a better idea how rpush is configured"
 end
 
-Rpush.embed
+begin
+	Rpush.embed
+rescue
+	Rails.logger.debug "Hack until I have a better idea how rpush is configured"
+end

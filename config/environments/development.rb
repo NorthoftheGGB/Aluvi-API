@@ -35,12 +35,6 @@ VocoApi::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
-	config.log_level = :debug
-	
-	# no longer using APNS
-	# APNS.host = 'gateway.sandbox.push.apple.com'
-	# gateway.push.apple.com for production
-	# gateway.sandbox.push.apple.com is default
-	# APNS.pem  = "/Users/deepwinter1/software-development/Clients/Will\ OBrien/voco-api/alpha_push_certificate.pem"
-	# APNS.port = 2195 
+  config.log_level = :debug
+
 end
