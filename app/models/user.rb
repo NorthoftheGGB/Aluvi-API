@@ -26,6 +26,11 @@ class User < ActiveRecord::Base
 	#	state :busy
 	#end
 
+
+	def self.authorize!(token)
+		User.where( :token => token ).first
+	end
+
 	def self.user_with_phone(phone)
 		user = User.where( :phone => phone).first
 		if user.nil?
@@ -34,6 +39,15 @@ class User < ActiveRecord::Base
 			user.save
 		end
 		user
+	end
+
+	def generate_token!
+		self.token = loop do
+			random_token = SecureRandom.hex(64)
+			break random_token unless User.exists?(token: random_token)
+		end
+		save
+		self.token
 	end
 
 	def interested_in_driving

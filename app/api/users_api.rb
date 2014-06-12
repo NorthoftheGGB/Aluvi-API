@@ -64,10 +64,9 @@ class UsersAPI < Grape::API
 				if user.password != user.hash_password(params['password'])
 					raise "Wrong password"
 				end
-				user.token = SecureRandom.hex(64)
-				user.save
+				token = user.generate_token!
 				response = Hash.new
-				response["token"] = user.token
+				response["token"] = token
 				response
 			rescue
 				puts $!.message

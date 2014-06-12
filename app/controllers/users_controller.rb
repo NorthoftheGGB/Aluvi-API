@@ -94,4 +94,19 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+	def csv_import    
+		file_data = params[:file].read
+		csv_rows  = CSV.parse(file_data, :headers => true)
+
+		csv_rows.each do |row|
+			Rails.logger.debug(row.to_hash)
+			User.create!(row.to_hash)
+		end
+
+		respond_to do |format|
+			format.html { redirect_to :action =>  "index", :notice => "Successfully imported the CSV file." }
+		end
+	end
+
 end

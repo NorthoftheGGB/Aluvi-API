@@ -33,3 +33,12 @@
 <br />
 
 <%= link_to 'New User', new_user_path %>
+
+
+<br/>
+<br/>
+<h2>Batch Upload</h2>
+<%= form_tag 'users/csv_import', :multipart => true do %>
+	<%= file_field_tag :file, :accept => "text/csv" %>
+	<%= submit_tag "Upload CSV" %>
+<% end %>

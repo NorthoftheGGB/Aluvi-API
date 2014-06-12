@@ -7,7 +7,6 @@ class RidesAPI< Grape::API
 
 		desc "Request a ride"
 		params do
-			requires :rider_id, type: String
 			requires :type, type: String
 			requires :departure_latitude, type: BigDecimal
 			requires :departure_longitude, type: BigDecimal
@@ -20,7 +19,7 @@ class RidesAPI< Grape::API
 			ride_request = RideRequest.create!(params[:type],
 																				 RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude]),
 																				 RGeo::Geos.factory.point(params[:destination_latitude], params[:destination_longitude]),
-																				 params[:rider_id]
+																				 current_user.id
 																				)
 			ride_request.request!
 			rval = Hash.new
@@ -44,13 +43,9 @@ class RidesAPI< Grape::API
 		end
 
 		desc "Get requested and underway rides"
-		params do
-			requires :rider_id, type: Integer, desc: "User id of rider requesting update"
-		end
 		get ':rider_id',  jbuilder: 'rides' do
 			authenticate!
-			@user = User.find(params['rider_id'])			
-			@scheduled_rides = @user.rides.scheduled
+			@scheduled_rides = current_user.rides.scheduled
 			@scheduled_rides.each do |ride|
 				# mark as delivered here if we like
 			end
