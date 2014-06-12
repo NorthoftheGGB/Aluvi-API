@@ -102,21 +102,3 @@ Rpush.reflect do |on|
   # on.error do |error|
   # end
 end
-
-begin
-	app = Rpush::Apns::App.new
-	app.name = "voco"
-	app.certificate = File.read("/Users/deepwinter1/software-development/Clients/Will\ OBrien/voco-api/alpha_push_certificate.pem")
-	app.environment = "sandbox" # APNs environment.
-	app.password = ""
-	app.connections = 1
-	app.save!
-rescue
-	Rails.logger.debug "Hack until I have a better idea how rpush is configured"
-end
-
-begin
-	Rpush.embed
-rescue
-	Rails.logger.debug "Hack until I have a better idea how rpush is configured"
-end

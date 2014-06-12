@@ -50,6 +50,7 @@ GEM
     daemons (1.1.9)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
+    diff-lcs (1.2.5)
     equalizer (0.0.9)
     erubis (2.7.0)
     eventmachine (1.0.3)
@@ -62,6 +63,7 @@ GEM
     gcm (0.0.7)
       httparty
       json
+    gmail_sender (1.1.1)
     grape (0.7.0)
       activesupport
       builder
@@ -149,6 +151,26 @@ GEM
     rpush (1.0.0)
       multi_json (~> 1.0)
       net-http-persistent
+    rspec (3.0.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+    rspec-core (3.0.0)
+      rspec-support (~> 3.0.0)
+    rspec-expectations (3.0.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.0.0)
+    rspec-mocks (3.0.1)
+      rspec-support (~> 3.0.0)
+    rspec-rails (3.0.1)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+      rspec-support (~> 3.0.0)
+    rspec-support (3.0.0)
     sass (3.3.7)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -196,6 +218,7 @@ DEPENDENCIES
   execjs
   factory_girl_rails (~> 4.0)
   gcm
+  gmail_sender
   grape
   grape-jbuilder
   jbuilder
@@ -208,6 +231,8 @@ DEPENDENCIES
   rgeo
   rgeo-activerecord
   rpush
+  rspec
+  rspec-rails (~> 3.0.0)
   sass-rails (~> 3.2.3)
   sqlite3
   therubyracer

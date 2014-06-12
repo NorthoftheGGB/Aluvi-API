@@ -60,6 +60,15 @@ gem "factory_girl_rails", "~> 4.0"
 gem 'execjs'
 gem 'therubyracer'
 
+# Email
+gem 'gmail_sender'
+
+# Testing
+group :development, :test do
+	gem 'rspec'
+	gem 'rspec-rails', '~> 3.0.0'
+end
+
 # Deploy with Capistrano
 # gem 'capistrano'
 

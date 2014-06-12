@@ -1,16 +1,6 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Stripe customer:</b>
-  <%= @user.stripe_customer_id %>
-</p>
-
-<p>
-  <b>Stripe recipient:</b>
-  <%= @user.stripe_recipient_id %>
-</p>
-
-<p>
   <b>Company:</b>
   <%= @user.company_id %>
 </p>
@@ -26,18 +16,13 @@
 </p>
 
 <p>
-  <b>Is driver:</b>
-  <%= @user.is_driver %>
+  <b>Driver State:</b>
+	<%= @user.driver_role.nil? ? "not configured" : @user.driver_role.state %>
 </p>
 
 <p>
-  <b>Is rider:</b>
-  <%= @user.is_rider %>
-</p>
-
-<p>
-  <b>State:</b>
-  <%= @user.state %>
+  <b>Rider State:</b>
+	<%= @user.rider_role.nil? ? "not configured" : @user.rider_role.state %>
 </p>
 
 <p>
@@ -49,6 +34,7 @@
   <b>Commuter refill amount cents:</b>
   <%= @user.commuter_refill_amount_cents %>
 </p>
+
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

@@ -8,5 +8,4 @@ use Rack::Config do |env|
 end
 
 run VocoApi::Application
-
-
+Rpush.embed

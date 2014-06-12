@@ -6,25 +6,59 @@ class User < ActiveRecord::Base
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
 	has_many :offered_rides, :foreign_key => :driver_id  
-	# TODO: these can be used to track onboarding state
-	#	has_one :driver_state
-	#	has_one :rider_state
+	has_one :driver_role
+	has_one :rider_role
 
-  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :state, :stripe_customer_id, :stripe_recipient_id
+  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state
 
 	scope :drivers, -> { where(is_driver: true) }
-	scope :available_drivers, ->{ drivers.where(state: :driver_idle) }
+	scope :available_drivers, ->{ drivers.joins(:driver_role).where(:state => :on_duty) }
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
 	# this state machine is for driver state
-	include AASM
-	aasm_column :state
-	aasm do 
-		state :development, :initial => true
-		state :driver_idle
-		state :driver_clocked_off
-		state :busy
+	#include AASM
+	#aasm_column :state
+	#aasm do 
+	#	state :development, :initial => true
+	#	state :driver_idle
+	#	state :driver_clocked_off
+	#	state :busy
+	#end
+
+	def self.user_with_phone(phone)
+		user = User.where( :phone => phone).first
+		if user.nil?
+			user = User.new
+			user.phone = phone
+			user.save
+		end
+		user
+	end
+
+	def interested_in_driving
+		if self.driver_role.nil?
+			self.driver_role = DriverRole.new
+			save
+		end
+	end
+
+	def registered_for_riding
+		if self.rider_role.nil?
+			self.rider_role = RiderRole.new
+			save
+		end
+	end
+
+
+	# authentication
+	def hash_password(password)
+			if(self.salt.nil?)
+				self.salt = SecureRandom.hex(32)
+				save
+			end
+			salted_password = self.salt + password
+			Digest::SHA2.hexdigest salted_password
 	end
 
 	#
@@ -58,6 +92,41 @@ class User < ActiveRecord::Base
 	def update_location!(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		save
+	end
+
+
+	def rider_state
+		unless self.rider_role.nil?
+			self.rider_role.state
+		end
+	end
+
+	def rider_state=(state_change)
+		if state_change == :initialize
+			self.rider_role = RiderRole.new
+			self.rider_role.save
+			save
+		else
+			self.rider_role.method(state_change).call
+			self.rider_role.save
+		end
+	end
+
+	def driver_state
+		unless self.driver_role.nil?
+			return self.driver_role.state
+		end
+	end
+
+	def driver_state=(state_change)
+		if state_change == :initialize
+			self.driver_role = DriverRole.new
+			self.driver_role.save
+			save
+		else
+			self.driver_role.method(state_change).call
+			self.driver_role.save
+		end
 	end
 
 end
