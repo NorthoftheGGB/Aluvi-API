@@ -16,7 +16,7 @@ class CreateUsers < ActiveRecord::Migration
       t.timestamps
     end
 		change_table :users do |t|
-			t.index :location, :spatial => true
+			#		t.index :location, :spatial => true
 		end
   end
 end

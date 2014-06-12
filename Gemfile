@@ -56,6 +56,10 @@ gem 'grape'
 # Testing
 gem "factory_girl_rails", "~> 4.0"
 
+# JS Runtime
+gem 'execjs'
+gem 'therubyracer'
+
 # Email
 gem 'gmail_sender'
 

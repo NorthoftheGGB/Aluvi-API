@@ -15,8 +15,8 @@ class CreateRides < ActiveRecord::Migration
       t.timestamps
     end
 		change_table :rides do |t|
-			t.index :meeting_point, :spatial=>true
-			t.index :destination, :spatial=>true
+			#t.index :meeting_point, :spatial=>true
+			#t.index :destination, :spatial=>true
 		end
   end
 end
