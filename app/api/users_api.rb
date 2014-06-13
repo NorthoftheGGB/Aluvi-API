@@ -78,7 +78,7 @@ class UsersAPI < Grape::API
 		params do
 			requires :name, type: String
 			requires :phone, type: String
-			requires :region, type: String
+			requires :driver_request_region, type: String
 			requires :email, type: String
 			optional :driver_referral_code, type: String	
 		end
@@ -86,7 +86,7 @@ class UsersAPI < Grape::API
 			user = User.user_with_phone params[:phone]
 			user.last_name = params[:name]
 			user.email = params[:email]
-			user.driver_request_region = params[:region]
+			user.driver_request_region = params[:driver_request_region]
 			user.driver_referral_code = params[:driver_referral_code]
 			user.interested_in_driving
 			user.save
