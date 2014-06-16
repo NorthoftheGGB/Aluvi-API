@@ -16,8 +16,8 @@ class RidesAPI< Grape::API
 		post :request do
 			authenticate!
 			ride_request = RideRequest.create!(params[:type],
-																				 RGeo::Geos.factory.point(params[:departure_latitude], params[:departure_longitude]),
-																				 RGeo::Geos.factory.point(params[:destination_latitude], params[:destination_longitude]),
+																				 RGeo::Geographic.spherical_factory.point(params[:departure_latitude], params[:departure_longitude]),
+																				 RGeo::Geographic.spherical_factory.point(params[:destination_latitude], params[:destination_longitude]),
 																				 current_user.id
 																				)
 			ride_request.request!
