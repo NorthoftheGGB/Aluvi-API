@@ -12,8 +12,13 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :user %><br />
-    <%= f.text_field :user %>
+    Driver<br />
+		<% if @ride.driver == nil  %>
+			Schedule driver for this ride: 
+			<%= f.collection_select :driver, User.drivers, :id, :full_name, :include_blank => true %>
+		<% else %>
+			<%= f.label @ride.driver.full_name %>
+		<% end %>
   </div>
   <div class="field">
     <%= f.label :car %><br />
@@ -21,7 +26,7 @@
   </div>
   <div class="field">
     <%= f.label :state %><br />
-    <%= f.text_field :state %>
+		<%= @ride.state %>
   </div>
   <div class="field">
     <%= f.label :scheduled %><br />
@@ -36,16 +41,8 @@
     <%= f.datetime_select :finished %>
   </div>
   <div class="field">
-    <%= f.label :meeting_point %><br />
-    <%= f.text_field :meeting_point %>
-  </div>
-  <div class="field">
     <%= f.label :meeting_point_place_name %><br />
     <%= f.text_field :meeting_point_place_name %>
-  </div>
-  <div class="field">
-    <%= f.label :destination %><br />
-    <%= f.text_field :destination %>
   </div>
   <div class="field">
     <%= f.label :destination_place_name %><br />

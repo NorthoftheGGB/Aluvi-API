@@ -2,7 +2,7 @@
 
 <table>
   <tr>
-    <th>User</th>
+    <th>Driver</th>
     <th>Car</th>
     <th>State</th>
     <th>Scheduled</th>
@@ -19,7 +19,7 @@
 
 <% @rides.each do |ride| %>
   <tr>
-    <td><%= ride.user %></td>
+    <td><%= ride.driver != nil ? ride.driver.full_name : '' %></td>
     <td><%= ride.car %></td>
     <td><%= ride.state %></td>
     <td><%= ride.scheduled %></td>

@@ -18,7 +18,7 @@ class RideRequest < ActiveRecord::Base
 			transitions :from => :created, :to => :requested
 		end
 
-		event :cancel do
+		event :cancel, :after => :request_cancelled do
 			transitions :from => :requested, :to => :cancelled
 		end
 
@@ -64,6 +64,12 @@ class RideRequest < ActiveRecord::Base
 		end		
 		notify_observers :requested # notifies scheduler
 
+	end
+
+	def request_cancelled
+		if self.ride != nil
+			self.ride.retracted_by_rider! self.user
+		end
 	end
 
 	def notify_scheduled

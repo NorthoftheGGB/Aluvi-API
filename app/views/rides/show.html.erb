@@ -2,7 +2,7 @@
 
 <p>
   <b>User:</b>
-  <%= @ride.user %>
+	<%= @ride.driver != nil ? @ride.driver.full_name : '' %>
 </p>
 
 <p>

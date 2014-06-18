@@ -64,7 +64,7 @@ module VocoApi
 
 		# Mount Grape API
 		config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
-		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', '*')]
+		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', 'exceptions', '*')]
 
   end
 end

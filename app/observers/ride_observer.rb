@@ -3,21 +3,7 @@ class RideObserver < ActiveRecord::Observer
 	def scheduled(ride)
 		Rails.logger.debug "RideObserver::scheduled"
 		# send push messages to clear dialog for other drivers
-		ride.offers.offer_closed_delivered.each do |offer|
-			driver = offer.driver	
-			driver.devices.each do |d|
-				if(d.push_token.nil?)
-					next	
-				end
-				n = Rpush::Apns::Notification.new
-				n.app = Rpush::Apns::App.find_by_name("voco")
-				n.device_token = d.push_token
-				n.alert = ""
-				n.content_available = true
-				n.data = { type: :ride_offer_closed, offer_id: offer.id, ride_id: ride.id }
-				n.save!
-			end
-		end
+		send_offer_closed_messages ride
 
 		# and send push messages to notify rider(s) that the ride has been found
 		ride.riders.each do |rider|
@@ -37,6 +23,10 @@ class RideObserver < ActiveRecord::Observer
 				n.save!
 			end
 		end
+	end
+
+	def retracted(ride)
+		send_offer_closed_messages ride
 	end
 
 	def ride_cancelled_by_rider(ride)
@@ -82,11 +72,29 @@ class RideObserver < ActiveRecord::Observer
 		end
 	end
 
+	@private 
 	def push_message(device)
 		n = Rpush::Apns::Notification.new
 		n.app = Rpush::Apns::App.find_by_name("voco")
 		n.device_token = device.push_token
 		n
 	end
+
+	def send_offer_closed_messages ride 	
+		ride.offers.offer_closed_delivered.each do |offer|
+			driver = offer.driver	
+			driver.devices.each do |d|
+				if(d.push_token.nil?)
+					next	
+				end
+				n = push_message(d)
+				n.alert = ""
+				n.content_available = true
+				n.data = { type: :ride_offer_closed, offer_id: offer.id, ride_id: ride.id }
+				n.save!
+			end
+		end
+	end
+
 
 end

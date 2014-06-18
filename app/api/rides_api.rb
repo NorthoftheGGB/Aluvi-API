@@ -40,8 +40,10 @@ class RidesAPI< Grape::API
 				end
 				ride_request.cancel!
 				ok
+			rescue ApiExceptions::WrongUserForEntityException
+				forbidden $!
 			rescue
-				error! $!.messags, 403, 'X-Error-Detail' => $!.message
+				error! $!.message, 403, 'X-Error-Detail' => $!.message
 			end
 
 		end

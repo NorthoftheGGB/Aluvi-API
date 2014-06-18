@@ -58,6 +58,14 @@ class RidesController < ApplicationController
   def update
     @ride = Ride.find(params[:id])
 
+		if(params[:ride][:driver])
+			driver = User.find(params[:ride][:driver])
+			@ride.assign!(driver)
+			params[:ride].delete("driver")
+		end
+
+		params[:ride].delete("car")
+
     respond_to do |format|
       if @ride.update_attributes(params[:ride])
         format.html { redirect_to @ride, notice: 'Ride was successfully updated.' }

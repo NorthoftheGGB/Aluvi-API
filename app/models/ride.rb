@@ -13,17 +13,26 @@ class Ride < ActiveRecord::Base
 
 	aasm do
 		state :created, :initial => true
+		state :retracted_by_rider
 		state :scheduled
 		state :rider_cancelled
 		state :started
 		state :driver_cancelled
 		state :completed
 
+		event :retracted_by_rider do
+			transitions :from => :created, :to => :retracted_by_rider
+		end
+
 		event :schedule do
 			transitions :from => :created, :to => :scheduled, :on_transition => :schedule_ride
 		end
 		
 		event :accepted do
+			transitions :from => :created, :to => :scheduled
+		end
+
+		event :assign do
 			transitions :from => :created, :to => :scheduled
 		end
 
@@ -49,10 +58,14 @@ class Ride < ActiveRecord::Base
 
 	alias aasm_accepted accepted
 	alias aasm_accepted! accepted!
+	alias aasm_assign assign
+	alias aasm_assign! assign!
 	alias aasm_rider_cancelled rider_cancelled
 	alias aasm_rider_cancelled! rider_cancelled!
 	alias aasm_pickup pickup
 	alias aasm_pickup! pickup!
+	alias aasm_retracted_by_rider retracted_by_rider
+	alias aasm_retracted_by_rider! retracted_by_rider!
  
 	def self.create ( pickup_time, meeting_point, destination )
 		ride = Ride.new
@@ -75,8 +88,27 @@ class Ride < ActiveRecord::Base
 	def accepted( driver )
 		aasm_accepted
 		Rails.logger.debug 'driver accepted ride'
+		schedule_driver(driver)
+	end
+
+	def accepted!( driver )
+		accepted(driver)
+		save
+	end
+
+	def assign(driver)
+		aasm_assign
+		schedule_driver(driver)
+	end
+
+	def assign!(driver)
+		assign(driver)
+		save
+	end
+
+	def schedule_driver(driver)
 		self.driver = driver	
-		Rails.logger.debug "driver_accepted_ride: not currently setting car for ride"
+		Rails.logger.debug "not currently setting car for ride"
 		# self.car = driver.car
 		# and mark all ride requests as scheduled
 		update_ride_requests_to_scheduled
@@ -87,20 +119,33 @@ class Ride < ActiveRecord::Base
 		notify_scheduled
 	end
 
-	def accepted!( driver )
-		accepted(driver)
+	def retracted_by_rider! rider
+		retracted_by_rider rider
 		save
 	end
+
+	def retracted_by_rider rider
+		if( riders.count == 1 )
+			aasm_retracted_by_rider
+			self.finished = Time.now
+			offers.open_offers.each do |offer|
+				offer.closed!
+			end
+			notify_observers :retracted
+		else
+			riders.delete(rider)
+		end
+	end
+
 	
 	def rider_cancelled rider
 		if( riders.count == 1 ) 
 			# this is the only rider, cancel the whole ride
 			aasm_rider_cancelled
-			rider_cancelled_ride
+			self.finished = Time.now
 			notify_ride_cancelled_by_rider
 		else 
 			riders.delete(rider)
-
 		end
 	end
 
@@ -138,9 +183,6 @@ class Ride < ActiveRecord::Base
 		notify_observers :ride_cancelled_by_driver
 	end
 
-	def rider_cancelled_ride
-		self.finished = Time.now
-	end
 
 	def started_ride
 		if(@started.nil?)
@@ -173,5 +215,6 @@ class Ride < ActiveRecord::Base
 			rr.scheduled
 		end
 	end
+
 	  
 end
