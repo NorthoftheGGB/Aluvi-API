@@ -38,10 +38,19 @@ class RidesAPI< Grape::API
 				if(ride_request.user != current_user )
 					raise ApiExceptions::WrongUserForEntityException
 				end
-				ride_request.cancel!
+				if !ride_request.ride.nil? && ride_request.ride.scheduled?
+					#if ride found has yet been delivered to phone, cancel ride instead of request anyway
+					ride_request.ride.rider_cancelled! ride_request.user
+				else
+					ride_request.cancel!
+				end
 				ok
 			rescue ApiExceptions::WrongUserForEntityException
+				Rails.logger.debug $!
 				forbidden $!
+			rescue AASM::InvalidTransition => e 
+				Rails.logger.debug e
+				forbidden e
 			rescue
 				error! $!.message, 403, 'X-Error-Detail' => $!.message
 			end
@@ -59,7 +68,7 @@ class RidesAPI< Grape::API
 		end
 
 		desc "Get requested and underway rides"
-		get jbuilder: 'rides' do
+		get '', jbuilder: 'rides' do
 			authenticate!
 			@scheduled_rides = current_user.rides.scheduled
 			@scheduled_rides.each do |ride|
@@ -148,8 +157,9 @@ class RidesAPI< Grape::API
 			# TODO rider should only be able to cancel their own ride
 			ride = Ride.find(params[:ride_id])
 			begin
-				if( !ride.riders.contains(current_user) )
-					raise RideNotAssignedToThisRiderException
+
+				if( !ride.riders.any?{ |r| current_user.id = ride.id } )
+					raise ApiExceptions::RideNotAssignedToThisRiderException
 				end
 				ride.rider_cancelled!(current_user)
 				ok
@@ -159,7 +169,7 @@ class RidesAPI< Grape::API
 				else
 					raise e
 				end
-			rescue RideNotAssignedToThisRiderException
+			rescue ApiExceptions::RideNotAssignedToThisRiderException
 				forbidden $!
 			end
 		end

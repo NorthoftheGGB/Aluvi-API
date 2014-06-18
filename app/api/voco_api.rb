@@ -6,16 +6,23 @@ class VocoAPI < Grape::API
 		def current_user
 			Rails.logger.debug headers['Authorization']
 			auth = token_and_options(headers['Authorization'])
-			current_user ||= User.authorize!(auth[0])
+			Rails.logger.debug auth
+			@current_user ||= User.authorize!(auth[0])
 		end
 
 		def authenticate!
-			error!('401 Unauthorized', 401) unless current_user
+			unless current_user
+				error!('401 Unauthorized', 401)
+			else
+				Rails.logger.debug "Authorized User" + current_user.id.to_s
+			end
 		end
 
 		# from https://github.com/technoweenie/http_token_authentication/blob/master/lib/http_token_authentication.rb
 		def token_and_options(header)
-			values = header.split(',').
+			value_string = header.match(/Token (.*)/)[1]
+			Rails.logger.debug value_string
+			values = value_string.split(',').
 				inject({}) do |memo, value|
 				value.strip!                      # remove any spaces between commas and values
 				key, value = value.split(/\=\"?/) # split key=value pairs

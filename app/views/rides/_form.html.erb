@@ -21,6 +21,12 @@
 		<% end %>
   </div>
   <div class="field">
+		Riders<br />
+		<% @ride.riders.each do |r| %>
+		<%= r.full_name %>
+		<% end %>
+	</div>
+  <div class="field">
     <%= f.label :car %><br />
     <%= f.text_field :car %>
   </div>
@@ -30,15 +36,15 @@
   </div>
   <div class="field">
     <%= f.label :scheduled %><br />
-    <%= f.datetime_select :scheduled %>
+    <%= @ride.scheduled %>
   </div>
   <div class="field">
     <%= f.label :started %><br />
-    <%= f.datetime_select :started %>
+    <%= @ride.started %>
   </div>
   <div class="field">
     <%= f.label :finished %><br />
-    <%= f.datetime_select :finished %>
+    <%= @ride.finished %>
   </div>
   <div class="field">
     <%= f.label :meeting_point_place_name %><br />

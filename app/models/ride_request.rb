@@ -67,7 +67,7 @@ class RideRequest < ActiveRecord::Base
 	end
 
 	def request_cancelled
-		if self.ride != nil
+		if self.ride != nil && self.ride.unscheduled?
 			self.ride.retracted_by_rider! self.user
 		end
 	end

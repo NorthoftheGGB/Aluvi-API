@@ -12,7 +12,7 @@ class Ride < ActiveRecord::Base
 	aasm_column :state
 
 	aasm do
-		state :created, :initial => true
+		state :unscheduled, :initial => true
 		state :retracted_by_rider
 		state :scheduled
 		state :rider_cancelled
@@ -21,22 +21,22 @@ class Ride < ActiveRecord::Base
 		state :completed
 
 		event :retracted_by_rider do
-			transitions :from => :created, :to => :retracted_by_rider
+			transitions :from => :unscheduled, :to => :retracted_by_rider
 		end
 
 		event :schedule do
-			transitions :from => :created, :to => :scheduled, :on_transition => :schedule_ride
+			transitions :from => :unscheduled, :to => :scheduled, :on_transition => :schedule_ride
 		end
 		
 		event :accepted do
-			transitions :from => :created, :to => :scheduled
+			transitions :from => :unscheduled, :to => :scheduled
 		end
 
 		event :assign do
-			transitions :from => :created, :to => :scheduled
+			transitions :from => :unscheduled, :to => :scheduled
 		end
 
-		event :rider_cancelled, :after => :rider_cancelled_ride do
+		event :rider_cancelled do
 			transitions :from => :scheduled, :to => :rider_cancelled
 		end
 
