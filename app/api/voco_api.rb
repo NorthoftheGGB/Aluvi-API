@@ -29,6 +29,10 @@ class VocoAPI < Grape::API
 		def ok
 			Hash.new	
 		end
+
+		def forbidden exception
+			error! exception.message, 403, 'X-Error-Detail' => exception.message
+		end
 	end
 
 	mount RidesAPI
