@@ -67,6 +67,8 @@ class UsersAPI < Grape::API
 				token = user.generate_token!
 				response = Hash.new
 				response["token"] = token
+				response["rider_state"] = user.rider_state
+				response["driver_state"] = user.driver_state
 				response
 			rescue
 				puts $!.message
@@ -83,17 +85,45 @@ class UsersAPI < Grape::API
 			optional :driver_referral_code, type: String	
 		end
 		post "driver_interested" do
-			user = User.user_with_phone params[:phone]
-			user.last_name = params[:name]
-			user.email = params[:email]
-			user.driver_request_region = params[:driver_request_region]
-			user.driver_referral_code = params[:driver_referral_code]
-			user.interested_in_driving
-			user.save
-			ok
+
+			state = ''
+			if current_user
+				current_user.driver_request_region = params[:driver_request_region]
+				unless params[:driver_referral_code].nil?
+					current_user.driver_referral_code = params[:driver_referral_code]
+				end
+				current_user.interested_in_driving
+				current_user.save
+				driver_state = current_user.driver_state
+			else
+				user = User.user_with_phone params[:phone]
+				user.last_name = params[:name]
+				user.email = params[:email]
+				user.driver_request_region = params[:driver_request_region]
+				user.driver_referral_code = params[:driver_referral_code]
+				user.interested_in_driving
+				user.save
+				driver_state = user.driver_state
+			end
+
+			response = Hash.new
+			response["driver_state"] = driver_state
+			response
+		end
+
+		desc "Get user states"
+		get "state" do
+			authenticate!
+			response = Hash.new
+			response["rider_state"] = current_user.rider_state
+			response["driver_state"] = current_user.driver_state
+			response
 		end
 
 	end
+
+	def driver_interested params
+		end
 
 end
 

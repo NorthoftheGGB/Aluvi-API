@@ -30,9 +30,6 @@ VocoApi::Application.routes.draw do
 
 	match 'panel' => 'panel#index'
 
-	get 'jpi/swagger_doc.json', to:  redirect('api/swagger_doc.json')
-
-
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
