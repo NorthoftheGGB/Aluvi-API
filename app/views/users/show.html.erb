@@ -19,6 +19,22 @@
   <b>Driver State:</b>
 	<%= @user.driver_role.nil? ? "not configured" : @user.driver_role.state %>
 </p>
+<p>Driver's License: 
+	
+	<%= link_to image_tag(@user.driver_role.drivers_license.url(:thumb)), @user.driver_role.drivers_license.url  %>
+</p>
+<p>Vehicle Registration: 
+	<%= link_to image_tag(@user.driver_role.vehicle_registration.url(:thumb)), @user.driver_role.vehicle_registration.url %>
+</p>
+<p>Proof of Insurance: 
+	<%= link_to image_tag(@user.driver_role.proof_of_insurance.url(:thumb)), @user.driver_role.proof_of_insurance.url %>
+</p>
+<p>Car Photo: 
+	<%= link_to image_tag(@user.driver_role.car_photo.url(:thumb)), @user.driver_role.car_photo.url %>
+</p>
+<p>National Database Check: 
+	<%= link_to image_tag(@user.driver_role.national_database_check.url(:thumb)), @user.driver_role.national_database_check.url %>
+</p>
 
 <p>
   <b>Rider State:</b>

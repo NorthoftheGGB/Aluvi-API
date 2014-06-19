@@ -63,6 +63,10 @@ gem 'therubyracer'
 # Email
 gem 'gmail_sender'
 
+# File Storage
+gem "paperclip", "~> 4.1"
+gem 'aws-sdk', '~> 1.5.7'
+
 # Testing
 group :development, :test do
 	gem 'rspec'

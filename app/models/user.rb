@@ -116,13 +116,15 @@ class User < ActiveRecord::Base
 	end
 
 	def rider_state=(state_change)
-		if state_change == :initialize
-			self.rider_role = RiderRole.new
-			self.rider_role.save
-			save
-		else
-			self.rider_role.method(state_change).call
-			self.rider_role.save
+		unless state_change.nil? || state_change == ''
+			if state_change == :initialize
+				self.rider_role = RiderRole.new
+				self.rider_role.save
+				save
+			else
+				self.rider_role.method(state_change).call
+				self.rider_role.save
+			end
 		end
 	end
 
@@ -133,13 +135,15 @@ class User < ActiveRecord::Base
 	end
 
 	def driver_state=(state_change)
-		if state_change == :initialize
-			self.driver_role = DriverRole.new
-			self.driver_role.save
-			save
-		else
-			self.driver_role.method(state_change).call
-			self.driver_role.save
+		unless state_change.nil? || state_change == ''
+			if state_change == :initialize
+				self.driver_role = DriverRole.new
+				self.driver_role.save
+				save
+			else
+				self.driver_role.method(state_change).call
+				self.driver_role.save
+			end
 		end
 	end
 

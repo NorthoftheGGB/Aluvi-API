@@ -1,4 +1,4 @@
-<%= form_for(@user) do |f| %>
+<%= form_for @user, :html => { :multipart => true } do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -33,6 +33,7 @@
 		<%= f.select :rider_state, [ :initalize ], :include_blank => true %>
 		<% end %>
   </div>
+	<h2>Driver Role</h2>
   <div class="field">
     <%= f.label "Driver State" %><br />
 		<% unless @user.driver_role.nil? %>
@@ -43,6 +44,37 @@
 			<%= f.select :driver_state, [ :initalize ], :include_blank => true %>
 		<% end %>
   </div>
+	<div class="field">
+		<%= f.label :drivers_license %><br />
+		<%= f.file_field :drivers_license %>
+		<%= image_tag @user.driver_role.drivers_license.url(:thumb) %>
+	</div>
+
+	<div class="field">
+		<%= f.label :vehicle_registration %><br />
+		<%= f.file_field :vehicle_registration %>
+		<%= image_tag @user.driver_role.vehicle_registration.url(:thumb) %>
+	</div>
+
+	<div class="field">
+		<%= f.label :proof_of_insurance %><br />
+		<%= f.file_field :proof_of_insurance %>
+		<%= image_tag @user.driver_role.proof_of_insurance.url(:thumb) %>
+	</div>
+
+	<div class="field">
+		<%= f.label :car_photo %><br />
+		<%= f.file_field :car_photo %>
+		<%= image_tag @user.driver_role.car_photo.url(:thumb) %>
+	</div>
+
+	<div class="field">
+		<%= f.label :national_database_check %><br />
+		<%= f.file_field :national_database_check %>
+		<%= image_tag @user.driver_role.national_database_check.url(:thumb) %>
+	</div>
+
+	<h2>Commuter Card</h2>
   <div class="field">
     <%= f.label :commuter_balance_cents %><br />
     <%= f.number_field :commuter_balance_cents %>
@@ -51,6 +83,7 @@
     <%= f.label :commuter_refill_amount_cents %><br />
     <%= f.number_field :commuter_refill_amount_cents %>
   </div>
+
   <div class="actions">
     <%= f.submit %>
   </div>
