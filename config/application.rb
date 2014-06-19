@@ -66,13 +66,10 @@ module VocoApi
 		config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
 		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', 'exceptions', '*')]
 
-		# AWS
-		#AWS.config(:s3_endpoint => 's3-us-west-2.amazonaws.com')
-
+		# AWS - Paperclip
 		config.paperclip_defaults = {
 			  :storage => :s3,
 			  :s3_credentials => {
-					:bucket => 'voco-alpha',
 					:access_key_id => "AKIAIYBNFGUMCVPBP5VQ",
 					:secret_access_key => "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"
 			  }

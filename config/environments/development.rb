@@ -37,5 +37,10 @@ VocoApi::Application.configure do
 
   config.log_level = :debug
 
+	config.paperclip_defaults = {
+		:s3_credentials => {
+			:bucket => 'voco-development'
+		}
+	}
 
 end
