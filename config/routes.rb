@@ -19,9 +19,11 @@ VocoApi::Application.routes.draw do
 
   resources :devices
 
+  resources :riders
+	match 'riders/csv_import' => 'riders#csv_import'
 
-  resources :users
-	match 'users/csv_import' => 'users#csv_import'
+  resources :drivers
+	match 'drivers/csv_import' => 'drivers#csv_import'
 
 	match 'scheduler' => 'scheduler#index'
 	delete 'scheduler/:id' => 'scheduler#failed'

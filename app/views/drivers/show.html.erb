@@ -1,0 +1,56 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Company:</b>
+  <%= @driver.company_id %>
+</p>
+
+<p>
+  <b>First name:</b>
+  <%= @driver.first_name %>
+</p>
+
+<p>
+  <b>Last name:</b>
+  <%= @driver.last_name %>
+</p>
+
+<p>
+  <b>Driver State:</b>
+	<%= @driver.driver_role.nil? ? "not configured" : @driver.driver_role.state %>
+</p>
+<p>Driver's License: 
+	
+	<%= link_to image_tag(@driver.driver_role.drivers_license.url(:thumb)), @driver.driver_role.drivers_license.url  %>
+</p>
+<p>Vehicle Registration: 
+	<%= link_to image_tag(@driver.driver_role.vehicle_registration.url(:thumb)), @driver.driver_role.vehicle_registration.url %>
+</p>
+<p>Proof of Insurance: 
+	<%= link_to image_tag(@driver.driver_role.proof_of_insurance.url(:thumb)), @driver.driver_role.proof_of_insurance.url %>
+</p>
+<p>Car Photo: 
+	<%= link_to image_tag(@driver.driver_role.car_photo.url(:thumb)), @driver.driver_role.car_photo.url %>
+</p>
+<p>National Database Check: 
+	<%= link_to image_tag(@driver.driver_role.national_database_check.url(:thumb)), @driver.driver_role.national_database_check.url %>
+</p>
+
+<p>
+  <b>Rider State:</b>
+	<%= @driver.rider_role.nil? ? "not configured" : @driver.rider_role.state %>
+</p>
+
+<p>
+  <b>Commuter balance cents:</b>
+  <%= @driver.commuter_balance_cents %>
+</p>
+
+<p>
+  <b>Commuter refill amount cents:</b>
+  <%= @driver.commuter_refill_amount_cents %>
+</p>
+
+
+<%= link_to 'Edit', edit_driver_path(@driver) %> |
+<%= link_to 'Back', drivers_path %>

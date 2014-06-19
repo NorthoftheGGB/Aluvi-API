@@ -1,0 +1,44 @@
+<h1>Listing riders</h1>
+
+<table>
+  <tr>
+    <th>Company</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Driver State</th>
+    <th>Rider State</th>
+    <th>Commuter balance cents</th>
+    <th>Commuter refill amount cents</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @riders.each do |rider| %>
+  <tr>
+    <td><%= rider.company_id %></td>
+    <td><%= rider.first_name %></td>
+    <td><%= rider.last_name %></td>
+    <td><%= rider.driver_role.nil? ? "" : rider.driver_role.state %></td>
+    <td><%= rider.rider_role.nil? ? "" : rider.rider_role.state %></td>
+    <td><%= rider.commuter_balance_cents %></td>
+    <td><%= rider.commuter_refill_amount_cents %></td>
+		<td><%= link_to 'Show', rider_path(rider)  %></td>
+    <td><%= link_to 'Edit', edit_rider_path(rider) %></td>
+    <td><%= link_to 'Destroy', rider_path(rider), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New User', new_rider_path %>
+
+
+<br/>
+<br/>
+<h2>Batch Upload</h2>
+<%= form_tag 'riders/csv_import', :multipart => true do %>
+	<%= file_field_tag :file, :accept => "text/csv" %>
+	<%= submit_tag "Upload CSV" %>
+<% end %>

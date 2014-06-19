@@ -1,0 +1,38 @@
+<h1>Listing drivers</h1>
+
+<table>
+  <tr>
+    <th>Company</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Driver State</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @drivers.each do |driver| %>
+  <tr>
+    <td><%= driver.company_id %></td>
+    <td><%= driver.first_name %></td>
+    <td><%= driver.last_name %></td>
+    <td><%= driver.driver_role.nil? ? "" : driver.driver_role.state %></td>
+    <td><%= link_to 'Show', driver_path(driver) %></td>
+    <td><%= link_to 'Edit', edit_driver_path(driver) %></td>
+    <td><%= link_to 'Destroy', driver_path(driver), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Driver', new_driver_path %>
+
+
+<br/>
+<br/>
+<h2>Batch Upload</h2>
+<%= form_tag 'drivers/csv_import', :multipart => true do %>
+	<%= file_field_tag :file, :accept => "text/csv" %>
+	<%= submit_tag "Upload CSV" %>
+<% end %>

@@ -11,21 +11,17 @@ class User < ActiveRecord::Base
 
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state
 
-	scope :drivers, -> { where(is_driver: true) }
-	scope :available_drivers, ->{ drivers.joins(:driver_role) } #.where(:driver_roles => {:state => :on_duty}) }
+	scope :drivers, -> { joins(:driver_role) }
+	scope :available_drivers #, ->{ .where(:driver_roles => {:state => :on_duty}) }
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
-	# this state machine is for driver state
-	#include AASM
-	#aasm_column :state
-	#aasm do 
-	#	state :development, :initial => true
-	#	state :driver_idle
-	#	state :driver_clocked_off
-	#	state :busy
-	#end
-
+	def self.new_driver
+		user = User.new
+		user.driver_role = DriverRole.new
+		user.save!
+		user
+	end
 
 	def self.authorize!(token)
 		User.where( :token => token ).first

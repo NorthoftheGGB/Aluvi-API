@@ -1,0 +1,50 @@
+<%= form_for @rider, :url => url_for(:controller => 'riders', :action => 'update'), :html => { :multipart => true } do |f| %>
+  <% if @rider.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@rider.errors.count, "error") %> prohibited this rider from being saved:</h2>
+
+      <ul>
+      <% @rider.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :company_id %><br />
+    <%= f.number_field :company_id %>
+  </div>
+  <div class="field">
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name %>
+  </div>
+  <div class="field">
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name %>
+  </div>
+  <div class="field">
+    <%= f.label "Rider State" %><br />
+		<% unless @rider.rider_role.nil? %>
+    <%= f.label @rider.rider_role.state %><br />
+		<%= f.select :rider_state, @rider.rider_role.aasm.events, :include_blank => true %>
+		<% else %>
+		Not Configured
+		<%= f.select :rider_state, [ :initalize ], :include_blank => true %>
+		<% end %>
+  </div>
+
+	<h2>Commuter Card</h2>
+  <div class="field">
+    <%= f.label :commuter_balance_cents %><br />
+    <%= f.number_field :commuter_balance_cents %>
+  </div>
+  <div class="field">
+    <%= f.label :commuter_refill_amount_cents %><br />
+    <%= f.number_field :commuter_refill_amount_cents %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

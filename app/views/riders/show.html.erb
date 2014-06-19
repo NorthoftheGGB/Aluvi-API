@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Company:</b>
+  <%= @rider.company_id %>
+</p>
+
+<p>
+  <b>First name:</b>
+  <%= @rider.first_name %>
+</p>
+
+<p>
+  <b>Last name:</b>
+  <%= @rider.last_name %>
+</p>
+
+<p>
+  <b>Rider State:</b>
+	<%= @rider.rider_role.nil? ? "not configured" : @rider.rider_role.state %>
+</p>
+
+<p>
+  <b>Commuter balance cents:</b>
+  <%= @rider.commuter_balance_cents %>
+</p>
+
+<p>
+  <b>Commuter refill amount cents:</b>
+  <%= @rider.commuter_refill_amount_cents %>
+</p>
+
+
+<%= link_to 'Edit', edit_rider_path(@rider) %> |
+<%= link_to 'Back', riders_path %>

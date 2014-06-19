@@ -1,0 +1,80 @@
+<%= form_for @driver, :url => driver_path(@driver), :html => { :multipart => true } do |f| %>
+  <% if @driver.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@driver.errors.count, "error") %> prohibited this driver from being saved:</h2>
+
+      <ul>
+      <% @driver.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :company_id %><br />
+    <%= f.number_field :company_id %>
+  </div>
+  <div class="field">
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name %>
+  </div>
+  <div class="field">
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name %>
+  </div>
+	<h2>Driver Role</h2>
+  <div class="field">
+    <%= f.label "Driver State" %><br />
+		<% unless @driver.driver_role.nil? %>
+    <%= f.label @driver.driver_role.state %><br />
+		<%= f.select :driver_state, @driver.driver_role.aasm.events, :include_blank => true %>
+		<% else %>
+			Not Configured
+			<%= f.select :driver_state, [ :initalize ], :include_blank => true %>
+		<% end %>
+  </div>
+	<div class="field">
+		<%= f.label :drivers_license %><br />
+		<%= f.file_field :drivers_license %>
+		<% unless @driver.driver_role.nil? %>
+			<%= image_tag @driver.driver_role.drivers_license.url(:thumb) %>
+		<% end %>
+	</div>
+
+	<div class="field">
+		<%= f.label :vehicle_registration %><br />
+		<%= f.file_field :vehicle_registration %>
+		<% unless @driver.driver_role.nil? %>
+			<%= image_tag @driver.driver_role.vehicle_registration.url(:thumb) %>
+		<% end %>
+	</div>
+
+	<div class="field">
+		<%= f.label :proof_of_insurance %><br />
+		<%= f.file_field :proof_of_insurance %>
+		<% unless @driver.driver_role.nil? %>
+			<%= image_tag @driver.driver_role.proof_of_insurance.url(:thumb) %>
+		<% end %>
+	</div>
+
+	<div class="field">
+		<%= f.label :car_photo %><br />
+		<%= f.file_field :car_photo %>
+		<% unless @driver.driver_role.nil? %>
+			<%= image_tag @driver.driver_role.car_photo.url(:thumb) %>
+		<% end %>
+	</div>
+
+	<div class="field">
+		<%= f.label :national_database_check %><br />
+		<%= f.file_field :national_database_check %>
+		<% unless @driver.driver_role.nil? %>
+			<%= image_tag @driver.driver_role.national_database_check.url(:thumb) %>
+		<% end %>
+	</div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
