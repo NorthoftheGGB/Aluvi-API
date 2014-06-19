@@ -1,3 +1,4 @@
+source 'https://code.stripe.com'
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.13'
@@ -25,9 +26,10 @@ gem 'thin'
 # Models that are state machines
 gem 'aasm'
 
-# Handle Money and Currencies
+# Handle Money, Currencies, and Stripe API
 gem 'money-rails'
 gem 'monetize'
+gem 'stripe'
 
 # Geolocation
 gem 'rgeo'
@@ -53,13 +55,6 @@ gem 'leaflet-rails'
 # API
 gem 'grape'
 
-# Testing
-gem "factory_girl_rails", "~> 4.0"
-
-# JS Runtime
-gem 'execjs'
-gem 'therubyracer'
-
 # Email
 gem 'gmail_sender'
 
@@ -67,8 +62,11 @@ gem 'gmail_sender'
 gem "paperclip", "~> 4.1"
 gem 'aws-sdk', '~> 1.5.7'
 
+gem 'grape-swagger'
+
 # Testing
-group :development, :test do
+group :test do
+	gem "factory_girl_rails", "~> 4.0"
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.0.0'
 end

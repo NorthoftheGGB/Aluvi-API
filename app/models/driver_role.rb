@@ -1,7 +1,7 @@
 class DriverRole < ActiveRecord::Base
 	belongs_to :user
   attr_accessible :state
-	attr_accessible :drivers_license, :vehicle_registration, :proof_of_insurance, :car_photo, :national_database_check
+	attr_accessible :drivers_license, :drivers_license_number, :vehicle_registration, :proof_of_insurance, :car_photo, :national_database_check
 	has_attached_file :drivers_license, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
 	has_attached_file :vehicle_registration, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
 	has_attached_file :proof_of_insurance, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
@@ -53,6 +53,14 @@ class DriverRole < ActiveRecord::Base
 
 		event :reactivate do
 			transitions :from => :suspended, :to => :active
+		end
+
+		event :clock_on do
+			transitions :from => :active, :to => :on_duty
+		end
+
+		event :clock_off do
+			transitions :from => :on_duty, :to => :active
 		end
 	end
 

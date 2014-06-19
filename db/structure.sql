@@ -1,6 +1,6 @@
 CREATE TABLE `cars` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT NULL,
+  `driver_id` int(11) DEFAULT NULL,
   `make` varchar(255) DEFAULT NULL,
   `model` varchar(255) DEFAULT NULL,
   `license_plate` varchar(255) DEFAULT NULL,
@@ -8,6 +8,7 @@ CREATE TABLE `cars` (
   `location` point DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `year` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_cars_on_location` (`location`(25))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
@@ -49,8 +50,9 @@ CREATE TABLE `driver_roles` (
   `national_database_check_content_type` varchar(255) DEFAULT NULL,
   `national_database_check_file_size` int(11) DEFAULT NULL,
   `national_database_check_updated_at` datetime DEFAULT NULL,
+  `drivers_license_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `offered_rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -182,8 +184,8 @@ CREATE TABLE `schema_migrations` (
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `stripe_customer_id` int(11) DEFAULT NULL,
-  `stripe_recipient_id` int(11) DEFAULT NULL,
+  `stripe_customer_id` varchar(255) DEFAULT NULL,
+  `stripe_recipient_id` varchar(255) DEFAULT NULL,
   `company_id` int(11) DEFAULT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
@@ -206,7 +208,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_users_on_email` (`email`),
   KEY `index_users_on_location` (`location`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 INSERT INTO schema_migrations (version) VALUES ('20140523011016');
 
@@ -267,3 +269,13 @@ INSERT INTO schema_migrations (version) VALUES ('20140609222744');
 INSERT INTO schema_migrations (version) VALUES ('20140610001847');
 
 INSERT INTO schema_migrations (version) VALUES ('20140618203022');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619051846');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619052055');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619071122');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619071629');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619072814');
