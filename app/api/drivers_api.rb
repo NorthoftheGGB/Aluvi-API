@@ -47,8 +47,8 @@ class DriversAPI < Grape::API
 				current_user.stripe_recipient_id = recipient.id
 
 				current_user.save
-				current_user.driver_role.registered!
-				current_user.driver_role.active!
+				current_user.driver_role.register!
+				ok
 			rescue
 				Rails.logger.debug $!
 				raise $!

@@ -11,7 +11,17 @@ class DriverRoleObserver < ActiveRecord::Observer
 					n.data = { type: :user_state_change }
 					n.save!
 				end
-			elsif(["registered", "active", "suspended", "denied"].contains( driver_role.state ) )
+			elsif( driver_role.state == "active" )
+				driver_role.user.devices.each do |d|
+					if(d.push_token.nil?)
+						next	
+					end
+					n = PushHelper::push_message(d)
+					n.alert = "Your Voco driver account has been activated"
+					n.data = { type: :user_state_change }
+					n.save!
+				end
+			elsif(["registered", "active", "suspended", "denied"].include?( driver_role.state ) )
 				driver_role.user.devices.each do |d|
 					if(d.push_token.nil?)
 						next	
