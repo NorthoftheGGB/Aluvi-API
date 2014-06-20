@@ -49,7 +49,7 @@ class RideObserver < ActiveRecord::Observer
 				if(d.push_token.nil?)
 					next	
 				end
-				n = push_message(d)
+				n = PushHelper::push_message(d)
 				n.alert = "Ride Cancelled!"
 				n.data = { type: :ride_cancelled_by_driver, ride_id: ride.id }
 				n.save!
@@ -64,20 +64,12 @@ class RideObserver < ActiveRecord::Observer
 				if(d.push_token.nil?)
 					next	
 				end
-				n = push_message(d)
+				n = PushHelper::push_message(d)
 				n.alert = "Receipt For Your Ride"
 				n.data = { type: :ride_receipt, ride_id: ride.id }
 				n.save!
 			end
 		end
-	end
-
-	@private 
-	def push_message(device)
-		n = Rpush::Apns::Notification.new
-		n.app = Rpush::Apns::App.find_by_name("voco")
-		n.device_token = device.push_token
-		n
 	end
 
 	def send_offer_closed_messages ride 	
@@ -87,7 +79,7 @@ class RideObserver < ActiveRecord::Observer
 				if(d.push_token.nil?)
 					next	
 				end
-				n = push_message(d)
+				n = PushHelper::push_message(d)
 				n.alert = ""
 				n.content_available = true
 				n.data = { type: :ride_offer_closed, offer_id: offer.id, ride_id: ride.id }
