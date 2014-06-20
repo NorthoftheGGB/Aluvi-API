@@ -5,8 +5,11 @@ class RideRequestObserver < ActiveRecord::Observer
 		Rails.logger.debug "Got :requested in RideRequestObserver"
 		# this is where the scheduler needs to be notified, or a flag set
 
-		# for now, sidestep the scheduler and just send push notifications out to the drivers
-		offer_to_drivers(ride_request.ride)
+		if(ride_request.request_type == "on_demand")
+			# for now, sidestep the scheduler and just send push notifications out to the drivers
+			# when this is an on demand request, for commuter it MUST go through the scheduler to work at all
+			offer_to_drivers(ride_request.ride)
+		end	
 	end
 
 	# this would be a callback from the schdduler somewhere
