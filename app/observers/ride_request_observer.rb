@@ -13,6 +13,9 @@ class RideRequestObserver < ActiveRecord::Observer
 	def offer_to_drivers(ride)
 		#User.available_drivers.each do |driver|
 		User.drivers.each do |driver|
+			if ride.riders.include?(driver)
+				next
+			end
 			Rails.logger.debug driver.id
 			# Every device used by an available driver gets a push notification if they are available
 			# this solves any multi-device problems, driver is the key entity in delivery of this particular push

@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state
 
-	scope :drivers, -> { joins(:driver_role) }
+	scope :drivers, -> { joins(:driver_role).readonly(false) }
 	scope :available_drivers #, ->{ .where(:driver_roles => {:state => :on_duty}) }
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
 		offered_ride = OfferedRide.new
 		offered_ride.ride = ride
 		offered_ride.ride.save
-		offered_rides << offered_ride
+		self.offered_rides << offered_ride
 		save
 		offered_ride
 	end

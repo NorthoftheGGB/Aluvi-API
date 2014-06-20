@@ -86,7 +86,7 @@ class RidesAPI< Grape::API
 			authenticate!
 			ride = Ride.find(params[:ride_id])
 
-			if(ride.state != "created")
+			unless(["created", "unscheduled"].include? ride.state)
 				if( ride.driver == current_user )
 					# ok to return HTTP success
 					ok
