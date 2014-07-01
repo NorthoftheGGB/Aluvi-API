@@ -5,7 +5,7 @@ gem 'rails', '3.2.13'
 
 # database
 gem 'mysql2'
-gem 'foreigner', :git => 'git@github.com:deepwinter/foreigner.git'
+gem 'foreigner', :git => 'git://github.com/deepwinter/foreigner.git'
 
 # Gems used only for assets and not required
 # in production environments by default.

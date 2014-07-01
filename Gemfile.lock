@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:deepwinter/foreigner.git
+  remote: git://github.com/deepwinter/foreigner.git
   revision: 762ffe425d57f184a5313bcc2a5a2f74f7713ef2
   specs:
     foreigner (1.6.1)
