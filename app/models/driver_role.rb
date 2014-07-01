@@ -42,7 +42,7 @@ class DriverRole < ActiveRecord::Base
 			transitions :from => :approved, :to => :registered
 		end
 
-		event :activate do
+		event :activate, :after => :notify_driver_activated do
 			transitions :from => :registered, :to => :active
 		end
 
@@ -65,7 +65,13 @@ class DriverRole < ActiveRecord::Base
 	end
 
 	def notify_state_changed
+		Rails.logger.debug 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 		notify_observers :driver_state_changed
+	end
+
+	def notify_driver_activated
+		Rails.logger.debug 'whoiwhoeihre'
+		notify_observers :driver_activated
 	end
 
 end

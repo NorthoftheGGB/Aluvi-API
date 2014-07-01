@@ -7,8 +7,8 @@ VocoApi::Application.routes.draw do
 
   resources :rider_rides
 
-
   resources :ride_requests
+  resources :commuter_ride_requests
 
 
   resources :rides

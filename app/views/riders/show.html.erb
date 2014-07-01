@@ -30,6 +30,13 @@
   <%= @rider.commuter_refill_amount_cents %>
 </p>
 
-
 <%= link_to 'Edit', edit_rider_path(@rider) %> |
 <%= link_to 'Back', riders_path %>
+<br /><br />
+<%= simple_table_for @rider.rides do |t| %>
+		<%# t.column :origin_place_name %>
+		<% t.column :meeting_point_place_name %>
+		<% t.column :destination_place_name %>
+	  <% t.column :state %>
+<% end %>
+

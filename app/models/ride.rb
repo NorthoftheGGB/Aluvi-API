@@ -8,6 +8,8 @@ class Ride < ActiveRecord::Base
 	belongs_to :car, inverse_of: :rides
   attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
+	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
+
 	include AASM
 	aasm_column :state
 
@@ -67,13 +69,13 @@ class Ride < ActiveRecord::Base
 	alias aasm_retracted_by_rider retracted_by_rider
 	alias aasm_retracted_by_rider! retracted_by_rider!
  
-	def self.create ( pickup_time, meeting_point, destination )
+	def self.create ( pickup_time, meeting_point, meeting_point_place_name, destination, destination_place_name )
 		ride = Ride.new
 		ride.pickup_time = pickup_time
 		ride.meeting_point = meeting_point
+		ride.meeting_point_place_name = meeting_point_place_name
 		ride.destination = destination
-		ride.meeting_point_place_name = "Placeholder meeting point"
-		ride.destination_place_name = "Placeholder destination"
+		ride.destination_place_name = destination_place_name
 		ride
 	end
 

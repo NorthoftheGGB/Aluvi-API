@@ -1,0 +1,50 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @ride_request.user %>
+</p>
+
+<p>
+  <b>Ride:</b>
+  <%= @ride_request.ride %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%= @ride_request.state %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%= @ride_request.type %>
+</p>
+
+<p>
+  <b>Requested datetime:</b>
+  <%= @ride_request.requested_datetime %>
+</p>
+
+<p>
+  <b>Origin:</b>
+  <%= @ride_request.origin %>
+</p>
+
+<p>
+  <b>Origin place name:</b>
+  <%= @ride_request.origin_place_name %>
+</p>
+
+<p>
+  <b>Destination:</b>
+  <%= @ride_request.destination %>
+</p>
+
+<p>
+  <b>Destination place name:</b>
+  <%= @ride_request.destination_place_name %>
+</p>
+
+
+<%= link_to 'Edit', edit_ride_request_path(@ride_request) %> |
+<%= link_to 'Back', ride_requests_path %>

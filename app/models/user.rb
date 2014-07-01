@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-	has_many :ride_requests, :foreign_key => :rider_id, :inverse_of => :user
+	has_many :ride_requests, :foreign_key => :user_id, :inverse_of => :user
 	has_many :rider_rides, :foreign_key => :rider_id
 	has_many :rides, through: :rider_rides
 	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver
@@ -143,6 +143,16 @@ class User < ActiveRecord::Base
 		end
 	end
 
+	# access
+	def involved_in_ride ride
+		if ride.riders.include? self || ride.driver == self
+			true
+		else
+			false
+		end
+	end
+
+	# convienience
 	def full_name
 		(self.first_name || "") + ' ' + (self.last_name || "")
 	end

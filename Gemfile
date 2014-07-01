@@ -3,8 +3,9 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.13'
 
-gem 'sqlite3'
+# database
 gem 'mysql2'
+gem 'foreigner', :git => 'git://github.com/deepwinter/foreigner.git'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -62,7 +63,11 @@ gem 'gmail_sender'
 gem "paperclip", "~> 4.1"
 gem 'aws-sdk', '~> 1.5.7'
 
+# Documentation
 gem 'grape-swagger'
+
+# HTML
+gem 'table_cloth'
 
 # Testing
 group :test do
