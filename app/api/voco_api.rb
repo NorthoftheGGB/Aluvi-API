@@ -47,6 +47,10 @@ class VocoAPI < Grape::API
 		def forbidden exception
 			error! exception.message, 403, 'X-Error-Detail' => exception.message
 		end
+
+		def not_found
+			error! 'Resource not found', 403, 'X-Error-Detail' => 'Resource not found'
+		end
 	end
 
 	mount RidesAPI

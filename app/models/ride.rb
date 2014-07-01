@@ -8,6 +8,8 @@ class Ride < ActiveRecord::Base
 	belongs_to :car, inverse_of: :rides
   attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
+	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
+
 	include AASM
 	aasm_column :state
 

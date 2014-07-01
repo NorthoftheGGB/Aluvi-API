@@ -2,6 +2,7 @@
 
 <table>
   <tr>
+		<th></th>
     <th>User</th>
     <th>State</th>
     <th>Type</th>
@@ -16,6 +17,7 @@
 
 <% @ride_requests.each do |ride_request| %>
   <tr>
+		<td><%= check_box_tag("selected[]", ride_request.id) %></td>
     <td><%= ride_request.user.full_name %></td>
     <td><%= ride_request.state %></td>
     <td><%= ride_request.request_type %></td>

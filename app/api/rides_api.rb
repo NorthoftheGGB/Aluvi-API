@@ -12,14 +12,28 @@ class RidesAPI< Grape::API
 			requires :departure_longitude, type: BigDecimal
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
+			optional :desired_arrival, type: Date
 		end
 		post :request do
 			authenticate!
-			ride_request = RideRequest.create!(params[:type],
-																				 RGeo::Geographic.spherical_factory.point(params[:departure_latitude], params[:departure_longitude]),
-																				 RGeo::Geographic.spherical_factory.point(params[:destination_latitude], params[:destination_longitude]),
-																				 current_user.id
-																				)
+			Rails.logger.debug params
+			case params[:type]
+			when 'on_demand'
+					ride_request = OnDemandRideRequest.create!(params[:type],
+																						 RGeo::Geographic.spherical_factory.point(params[:departure_longitude], params[:departure_latitude]),
+																						 RGeo::Geographic.spherical_factory.point(params[:destination_longitude], params[:destination_latitude]),
+																						 current_user.id
+																						)
+			when 'commuter'
+					ride_request = CommuterRideRequest.create!(params[:type],
+																						 RGeo::Geographic.spherical_factory.point(params[:departure_longitude], params[:departure_latitude]),
+																						 RGeo::Geographic.spherical_factory.point(params[:destination_longitude], params[:destination_latitude]),
+																						 params[:desired_arrival],
+																						 current_user.id
+																						)
+			end
+
+
 			ride_request.request!
 			rval = Hash.new
 			rval[:request_id] = ride_request.id
@@ -70,11 +84,27 @@ class RidesAPI< Grape::API
 		desc "Get requested and underway rides"
 		get '', jbuilder: 'rides' do
 			authenticate!
-			@scheduled_rides = current_user.rides.scheduled
+			@scheduled_rides = current_user.ride_requests.select('*').joins('JOIN rides ON rides.id = ride_requests.ride_id').where( state: ["requested", "scheduled"])
+			#.where('request_type' => 'commuter')  #current_user.rides.where(request_type: 'commuter')
 			@scheduled_rides.each do |ride|
 				# mark as delivered here if we like
 			end
 			@scheduled_rides
+		end
+
+		desc "Get specific ride details"
+		get ':id' do
+			authenticate!
+			ride = Ride.find(params[:id])
+			unless ride.nil?
+				if current_user.involved_in_ride ride
+					ride		
+				else
+					forbidden
+				end
+			else
+				not_found
+			end
 		end
 
 

@@ -1,8 +1,20 @@
 class DriversAPI < Grape::API
 	version 'v1', using: :header, vendor: 'voco'
 	format :json
+	formatter :json, Grape::Formatter::Jbuilder
 
 	resources :drivers do
+
+		desc "Get Specific Driver"
+		get  ':id' do
+			authenticate!
+			driver = User.find(params[:id])
+			unless driver.nil?
+				driver
+			else
+				not_found
+			end
+		end
 
 		desc "Register Driver"
 		params do 
@@ -62,6 +74,7 @@ class DriversAPI < Grape::API
 		post "clock_on" do
 			authenticate!
 			current_user.driver_role.clock_on!
+			ok
 		end
 
 		desc "Clock Off"
@@ -70,6 +83,18 @@ class DriversAPI < Grape::API
 		post "clock_off" do
 			authenticate!
 			current_user.driver_role.clock_off!
+			ok
+		end
+
+		desc "Load Ride Details for Driver"
+		get "rides/:id", jbuilder: 'drive' do
+			authenticate!
+			@ride = Ride.find(params[:id])
+			unless @ride.nil?
+				@ride		
+			else
+				not_found
+			end
 		end
 
 	end

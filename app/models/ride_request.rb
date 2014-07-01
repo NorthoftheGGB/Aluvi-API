@@ -2,7 +2,7 @@ class RideRequest < ActiveRecord::Base
 
 	belongs_to :user, inverse_of: :ride_requests
 	belongs_to :ride, inverse_of: :ride_requests
-  attr_accessible :aasm_state, :user_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type
+  attr_accessible :aasm_state, :user_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :desired_arrival
 
 	include AASM
 	aasm_column :state
@@ -32,25 +32,7 @@ class RideRequest < ActiveRecord::Base
 
 	end
 
-	# By default, use the GEOS implementation for spatial columns.
-	# This doesn't seem to be working correctly at the moment.
-	self.rgeo_factory_generator = RGeo::Geos.method(:factory)
-	set_rgeo_factory_for_column(:origin, RGeo::Geos.factory(srid: 4326))
-
-	def self.create( type, origin, destination, rider_id )
-		ride_request = RideRequest.new
-		ride_request.request_type = type
-		ride_request.origin = origin
-		ride_request.destination = destination
-		ride_request.user_id = rider_id
-		ride_request
-	end
-
-	def self.create!( type, origin, destination, rider_id )
-		ride_request = RideRequest.create( type, origin, destination, rider_id )
-		ride_request.save
-		ride_request
-	end
+	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
 	private
 	def ride_requested
@@ -61,6 +43,8 @@ class RideRequest < ActiveRecord::Base
 			self.ride.riders << rider
 			self.ride.save
 			save
+		elsif( request_type == TransportType::COMMUTER )
+
 		end		
 		notify_observers :requested # notifies scheduler
 
