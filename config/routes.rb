@@ -19,6 +19,8 @@ VocoApi::Application.routes.draw do
 
   resources :devices
 
+	resources :users
+
   resources :riders
 	match 'riders/csv_import' => 'riders#csv_import'
 
