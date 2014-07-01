@@ -38,7 +38,9 @@ class RideRequest < ActiveRecord::Base
 	def ride_requested
 		if( request_type == TransportType::ON_DEMAND )
 			# go ahead and create the associated ride if it's on demand
-			self.ride = Ride.create( Time.now, origin, destination )
+			self.ride = Ride.create( Time.now, origin, origin_place_name, destination, destination_place_name )
+			self.ride.meeting_point = origin
+			self.ride.meeting_point_place_name = origin_place_name
 			rider = User.find(user_id)
 			self.ride.riders << rider
 			self.ride.save

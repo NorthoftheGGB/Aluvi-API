@@ -10,8 +10,10 @@ class RidesAPI< Grape::API
 			requires :type, type: String
 			requires :departure_latitude, type: BigDecimal
 			requires :departure_longitude, type: BigDecimal
+			requires :departure_place_name, type: String
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
+			requires :destination_place_name, type: String
 			optional :desired_arrival, type: Date
 		end
 		post :request do
@@ -21,13 +23,17 @@ class RidesAPI< Grape::API
 			when 'on_demand'
 					ride_request = OnDemandRideRequest.create!(params[:type],
 																						 RGeo::Geographic.spherical_factory.point(params[:departure_longitude], params[:departure_latitude]),
+																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory.point(params[:destination_longitude], params[:destination_latitude]),
+																						 params[:destination_place_name],
 																						 current_user.id
 																						)
 			when 'commuter'
 					ride_request = CommuterRideRequest.create!(params[:type],
 																						 RGeo::Geographic.spherical_factory.point(params[:departure_longitude], params[:departure_latitude]),
+																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory.point(params[:destination_longitude], params[:destination_latitude]),
+																						 params[:destination_place_name],
 																						 params[:desired_arrival],
 																						 current_user.id
 																						)
