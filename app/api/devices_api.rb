@@ -11,11 +11,10 @@ class DevicesAPI < Grape::API
 			optional :longitude, type: BigDecimal
 		end
 		patch ':uuid' do
-			Rails.logger.debug params
 			device = Device.where( :uuid => params[:uuid] ).first
 			if(device.nil?)
 				device = Device.new
-				device.uuid = params[:uuid]
+				device.uuid = params[:uuid] 
 				device.save
 			end
 			unless params[:push_token].nil?

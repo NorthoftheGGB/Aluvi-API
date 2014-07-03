@@ -12,6 +12,7 @@ class CommuterRideRequest < RideRequest
 		ride_request.destination_place_name = destination_place_name
 		ride_request.desired_arrival = desired_arrival
 		ride_request.user_id = rider_id
+		ride_request.requested_datetime = DateTime.now
 		ride_request
 	end
 

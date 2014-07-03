@@ -9,6 +9,7 @@ VocoApi::Application.routes.draw do
 
   resources :ride_requests
   resources :commuter_ride_requests
+	match 'commuter_ride_requests/assemble_ride' => 'commuter_ride_requests#assemble_ride'
 
 
   resources :rides

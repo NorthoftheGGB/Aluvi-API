@@ -37,8 +37,9 @@ class RidesAPI< Grape::API
 																						 params[:desired_arrival],
 																						 current_user.id
 																						)
+			else
+				raise "No request type set"
 			end
-
 
 			ride_request.request!
 			rval = Hash.new
@@ -87,15 +88,14 @@ class RidesAPI< Grape::API
 			@offers
 		end
 
-		desc "Get requested and underway rides"
-		get '', jbuilder: 'rides' do
+		desc "Get requested and underway ride requests"
+		get 'requests', jbuilder: 'requests' do
 			authenticate!
-			@scheduled_rides = current_user.ride_requests.select('*').joins('JOIN rides ON rides.id = ride_requests.ride_id').where( state: ["requested", "scheduled"])
-			#.where('request_type' => 'commuter')  #current_user.rides.where(request_type: 'commuter')
-			@scheduled_rides.each do |ride|
+			@requests = current_user.ride_requests.select('*, ride_requests.id as request_id').joins('JOIN rides ON rides.id = ride_requests.ride_id').where( state: ["requested", "scheduled"])
+			@requests.each do |ride|
 				# mark as delivered here if we like
 			end
-			@scheduled_rides
+			@requests
 		end
 
 		desc "Get specific ride details"
