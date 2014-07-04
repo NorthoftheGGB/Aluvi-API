@@ -2,14 +2,14 @@ class User < ActiveRecord::Base
 	has_many :ride_requests, :foreign_key => :user_id, :inverse_of => :user
 	has_many :rider_rides, :foreign_key => :rider_id
 	has_many :rides, through: :rider_rides
+	has_many :driver_rides, :class_name => 'Ride', :foreign_key => :driver_id
 	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
 	has_many :offered_rides, :foreign_key => :driver_id  
 	has_one :driver_role
 	has_one :rider_role
-
-  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :is_driver, :is_rider, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state
+  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state
 
 	scope :drivers, -> { joins(:driver_role).readonly(false) }
 	scope :available_drivers, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }

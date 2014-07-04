@@ -89,8 +89,11 @@ class CommuterRideRequestsController < ApplicationController
 		#TODO this login should be moved to the manual scheduler module
 		Rails.logger.debug params
 
+		#TODO this logic should be moved to a helper or model
 		ActiveRecord::Base.transaction do
 			@ride = Ride.assemble_ride_from_requests request_ids
+			@ride.meeting_point_place_name = RidesHelper::reverse_geocode	@ride.meeting_point
+			@ride.drop_off_point_place_name = RidesHelper::reverse_geocode	@ride.drop_off_point
 			drivers = User.available_drivers
 			driver = drivers.first
 			@ride.schedule!( nil, DateTime.now, driver, driver.cars.first ) 

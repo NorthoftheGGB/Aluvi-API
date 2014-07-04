@@ -27,6 +27,24 @@ class RideObserver < ActiveRecord::Observer
 		end
 	end
 
+	def driver_assigned(ride)
+		Rails.logger.debug 'observer: driver_assigned'
+		# if this is a ride assigned by the scheduler (rather than accepted) notify the driver
+		Rails.logger.debug ride.driver
+		Rails.logger.debug ride.driver.devices
+		ride.driver.devices.each do |d|
+				if(d.push_token.nil?)
+					next
+				end
+				n = PushHelper::push_message(d)
+				n.alert = "Ride Assigned"
+				n.data = { type: :ride_assigned, ride_id:ride.id }
+				Rails.logger.debug n
+				n.save!
+		end
+				
+	end
+
 	def retracted(ride)
 		send_offer_closed_messages ride
 	end

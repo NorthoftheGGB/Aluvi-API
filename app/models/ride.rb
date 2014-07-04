@@ -2,11 +2,13 @@ class Ride < ActiveRecord::Base
 
 	has_many :rider_rides
 	has_many :riders, through: :rider_rides
-	belongs_to :driver, :class_name => 'User'
+	belongs_to :driver, :class_name => 'User', inverse_of: :driver_rides
 	has_many :ride_requests, inverse_of: :ride
 	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
+
+	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
@@ -100,9 +102,9 @@ class Ride < ActiveRecord::Base
 		drop_off_point_longitude = drop_off_point_longitude / requests.size
 		ride = self.create( nil, 
 								RGeo::Geographic.spherical_factory.point(meeting_point_longitude, meeting_point_latitude),
-								"needs reverse geocode",
+								"unnamed location",
 								RGeo::Geographic.spherical_factory.point(drop_off_point_longitude, drop_off_point_latitude),
-								"needs reverse geocode");
+								"unnamed location");
 		requests.each do |request|
 			ride.ride_requests << request
 			ride.riders << request.user
@@ -133,7 +135,7 @@ class Ride < ActiveRecord::Base
 	def accepted( driver )
 		aasm_accepted
 		Rails.logger.debug 'driver accepted ride'
-		schedule_driver(driver)
+		assign_driver(driver)
 	end
 
 	def accepted!( driver )
@@ -143,7 +145,7 @@ class Ride < ActiveRecord::Base
 
 	def assign(driver)
 		aasm_assign
-		schedule_driver(driver)
+		assign_driver(driver)
 	end
 
 	def assign!(driver)
@@ -151,10 +153,9 @@ class Ride < ActiveRecord::Base
 		save
 	end
 
-	def schedule_driver(driver)
+	def assign_driver(driver)
 		self.driver = driver	
-		Rails.logger.debug "not currently setting car for ride"
-		# self.car = driver.car
+		self.car = driver.car
 		# and mark all ride requests as scheduled
 		update_ride_requests_to_scheduled
 		# and mark all ride offers as closed 
@@ -224,6 +225,7 @@ class Ride < ActiveRecord::Base
 	def ride_was_scheduled 
 		update_ride_requests_to_scheduled
 		notify_scheduled
+		notify_observers :driver_assigned
 	end
 
 	def driver_cancelled_ride
