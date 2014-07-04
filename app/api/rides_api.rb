@@ -78,7 +78,7 @@ class RidesAPI< Grape::API
 
 		end
 
-		desc "Update list of offered or underway rides"
+		desc "Update list of offered rides"
 		get 'offers', jbuilder: 'offer' do
 			authenticate!
 			@offers = current_user.offered_rides.open_offers
@@ -86,6 +86,17 @@ class RidesAPI< Grape::API
 				offer.offer_delivered!
 			end
 			@offers
+		end
+
+		desc "Update list of rides assigned to driver"
+		get 'rides', jbuilder: 'rides' do
+			authenticate!
+			if current_user.driver_role.nil?
+				forbidden
+				return
+			end
+			@rides = current_user.driver_rides.active
+
 		end
 
 		desc "Get requested and underway ride requests"
@@ -217,6 +228,7 @@ class RidesAPI< Grape::API
 			optional :rider_id, type: Integer
 		end
 		post :pickup do
+			Rails.logger.debug params
 			authenticate!
 			# TODO validate driver and or rider is matched to ride
 			begin
