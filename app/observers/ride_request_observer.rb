@@ -34,7 +34,7 @@ class RideRequestObserver < ActiveRecord::Observer
 					n.alert = "Ride Requested!"
 					n.data = { type: :ride_offer, offer_id: offer.id, ride_id: ride.id,
 						meeting_point_place_name: ride.meeting_point_place_name,
-						destination_place_name: ride.destination_place_name }
+						drop_off_point_place_name: ride.drop_off_point_place_name }
 					n.save!
 				end
 			end	

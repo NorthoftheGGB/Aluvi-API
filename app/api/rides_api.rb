@@ -189,7 +189,7 @@ class RidesAPI< Grape::API
 				else
 					raise e
 				end
-			rescue RideNotAssignedToThisDriverException
+			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				error! $!.message, 403, 'X-Error-Detail' => $!.message
 			end
 		end
@@ -234,7 +234,7 @@ class RidesAPI< Grape::API
 			begin
 				ride = Ride.find(params[:ride_id])
 				if ride.driver != current_user
-					raise RideNotAssignedToThisDriverException
+					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
 				if(params[:rider_id].nil?)
@@ -244,7 +244,7 @@ class RidesAPI< Grape::API
 					ride.pickup! rider
 				end
 				ok
-			rescue RideNotAssignedToThisDriverException
+			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
 		end
@@ -258,9 +258,11 @@ class RidesAPI< Grape::API
 		post :arrived do
 			authenticate!
 			begin
+				Rails.logger.debug ride.driver.id
+				Rails.logger.debug curent_user.id
 				ride = Ride.find(params[:ride_id])
 				if ride.driver != current_user
-					raise RideNotAssignedToThisDriverException
+					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
 				ride = Ride.find(params[:ride_id])
@@ -272,7 +274,7 @@ class RidesAPI< Grape::API
 					ride.arrived! # separate arrivals per ride not currently supported
 				end
 				ok
-			rescue RideNotAssignedToThisDriverException
+			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
 		end

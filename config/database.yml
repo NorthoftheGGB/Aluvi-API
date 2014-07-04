@@ -41,3 +41,12 @@ alpha:
   database: voco_alpha
   pool: 5
   timeout: 5000
+
+alpha_dev:
+  adapter: mysql2spatial
+  username: voco
+  password: voco
+  host: localhost
+  database: voco_alpha
+  pool: 5
+  timeout: 5000

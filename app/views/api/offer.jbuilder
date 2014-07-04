@@ -4,5 +4,5 @@ json.array! @offers do |offer|
 	json.created_at offer.created_at
 	json.updated_at offer.updated_at
 	json.meeting_point_place_name offer.ride.meeting_point_place_name
-	json.destination_place_name offer.ride.destination_place_name
+	json.drop_off_point_place_name offer.ride.drop_off_point_place_name
 end
