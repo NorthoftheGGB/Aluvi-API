@@ -6,7 +6,7 @@ class Ride < ActiveRecord::Base
 	has_many :ride_requests, inverse_of: :ride
 	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
-  attr_accessible :destination, :destination_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
+  attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
@@ -26,8 +26,8 @@ class Ride < ActiveRecord::Base
 			transitions :from => :unscheduled, :to => :retracted_by_rider
 		end
 
-		event :schedule do
-			transitions :from => :unscheduled, :to => :scheduled, :on_transition => :schedule_ride
+		event :schedule, :after => :ride_was_scheduled do
+			transitions :from => :unscheduled, :to => :scheduled , :on_transition => Proc.new {|obj, *args| obj.schedule_ride(*args)}
 		end
 		
 		event :accepted do
@@ -68,14 +68,57 @@ class Ride < ActiveRecord::Base
 	alias aasm_pickup! pickup!
 	alias aasm_retracted_by_rider retracted_by_rider
 	alias aasm_retracted_by_rider! retracted_by_rider!
+
+	def self.assemble_ride_from_requests requests_arg
+
+		Rails.logger.debug requests_arg
+		requests = Array.new
+		requests_arg.each do |r|
+			if(r.is_a? Integer)
+				requests << RideRequest.find(r)
+			elsif (r.is_a? String)
+				requests << RideRequest.find(r.to_i)
+			else
+				requests << r	
+			end
+		end
+		Rails.logger.debug requests
+
+		meeting_point_latitude = 0
+		meeting_point_longitude = 0
+		drop_off_point_latitude = 0
+		drop_off_point_longitude = 0
+		requests.each do |request|
+			meeting_point_latitude += request.origin.latitude
+			meeting_point_longitude += request.origin.longitude
+			drop_off_point_latitude += request.destination.latitude
+			drop_off_point_longitude += request.destination.longitude
+		end
+		meeting_point_latitude = meeting_point_latitude / requests.size
+		meeting_point_longitude = meeting_point_longitude / requests.size
+		drop_off_point_latitude = drop_off_point_latitude / requests.size
+		drop_off_point_longitude = drop_off_point_longitude / requests.size
+		ride = self.create( nil, 
+								RGeo::Geographic.spherical_factory.point(meeting_point_longitude, meeting_point_latitude),
+								"needs reverse geocode",
+								RGeo::Geographic.spherical_factory.point(drop_off_point_longitude, drop_off_point_latitude),
+								"needs reverse geocode");
+		requests.each do |request|
+			ride.ride_requests << request
+			ride.riders << request.user
+		end
+		ride.save
+		ride
+
+	end
  
-	def self.create ( pickup_time, meeting_point, meeting_point_place_name, destination, destination_place_name )
+	def self.create ( pickup_time, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name )
 		ride = Ride.new
 		ride.pickup_time = pickup_time
 		ride.meeting_point = meeting_point
 		ride.meeting_point_place_name = meeting_point_place_name
-		ride.destination = destination
-		ride.destination_place_name = destination_place_name
+		ride.drop_off_point = drop_off_point
+		ride.drop_off_point_place_name = drop_off_point_place_name
 		ride
 	end
 
@@ -169,14 +212,18 @@ class Ride < ActiveRecord::Base
 		save
 	end
 
-
-	private
 	def schedule_ride( pickup_time, driver, car )
 		self.pickup_time = pickup_time
 		self.driver = driver
 		self.car = car
 		self.scheduled = Time.now
 		save
+	end
+
+	private
+	def ride_was_scheduled 
+		update_ride_requests_to_scheduled
+		notify_scheduled
 	end
 
 	def driver_cancelled_ride
@@ -214,7 +261,7 @@ class Ride < ActiveRecord::Base
 
 	def update_ride_requests_to_scheduled
 		ride_requests.each do |rr|
-			rr.scheduled
+			rr.scheduled!
 		end
 	end
 

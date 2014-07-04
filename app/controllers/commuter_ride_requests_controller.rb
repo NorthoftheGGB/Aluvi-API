@@ -1,8 +1,8 @@
 class CommuterRideRequestsController < ApplicationController
-  # GET /ride_requests
-  # GET /ride_requests.json
+  # GET commuter_ride_requests
+  # GET commuter_ride_requests.json
   def index
-    @ride_requests = CommuterRideRequest.all
+    @ride_requests = CommuterRideRequest.order(desired_arrival: :desc).all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -10,8 +10,8 @@ class CommuterRideRequestsController < ApplicationController
     end
   end
 
-  # GET /ride_requests/1
-  # GET /ride_requests/1.json
+  # GET commuter_ride_requests/1
+  # GET commuter_ride_requests/1.json
   def show
     @ride_request = CommuterRideRequest.find(params[:id])
 
@@ -21,8 +21,8 @@ class CommuterRideRequestsController < ApplicationController
     end
   end
 
-  # GET /ride_requests/new
-  # GET /ride_requests/new.json
+  # GET commuter_ride_requests/new
+  # GET commuter_ride_requests/new.json
   def new
     @ride_request = CommuterRideRequest.new
 
@@ -32,13 +32,13 @@ class CommuterRideRequestsController < ApplicationController
     end
   end
 
-  # GET /ride_requests/1/edit
+  # GET commuter_ride_requests/1/edit
   def edit
     @ride_request = CommuterRideRequest.find(params[:id])
   end
 
-  # POST /ride_requests
-  # POST /ride_requests.json
+  # POST commuter_ride_requests
+  # POST commuter_ride_requests.json
   def create
     @ride_request = CommuterRideRequest.new(params[:ride_request])
 
@@ -54,8 +54,8 @@ class CommuterRideRequestsController < ApplicationController
     end
   end
 
-  # PUT /ride_requests/1
-  # PUT /ride_requests/1.json
+  # PUT commuter_ride_requests/1
+  # PUT commuter_ride_requests/1.json
   def update
     @ride_request = CommuterRideRequest.find(params[:id])
 
@@ -70,8 +70,8 @@ class CommuterRideRequestsController < ApplicationController
     end
   end
 
-  # DELETE /ride_requests/1
-  # DELETE /ride_requests/1.json
+  # DELETE commuter_ride_requests/1
+  # DELETE commuter_ride_requests/1.json
   def destroy
     @ride_request = CommuterRideRequest.find(params[:id])
     @ride_request.destroy
@@ -81,4 +81,24 @@ class CommuterRideRequestsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+	#POST 
+	def assemble_ride
+		request_ids = params['selected']
+
+		#TODO this login should be moved to the manual scheduler module
+		Rails.logger.debug params
+
+		ActiveRecord::Base.transaction do
+			@ride = Ride.assemble_ride_from_requests request_ids
+			drivers = User.available_drivers
+			driver = drivers.first
+			@ride.schedule!( nil, DateTime.now, driver, driver.cars.first ) 
+		end
+
+		respond_to do |format|
+			format.html { redirect_to @ride, notice: 'Ride was created.' }
+			format.json { render json: @ride }
+		end
+	end
 end

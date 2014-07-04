@@ -7,6 +7,7 @@ class RideObserver < ActiveRecord::Observer
 
 		# and send push messages to notify rider(s) that the ride has been found
 		ride.riders.each do |rider|
+			Rails.logger.debug "notifying rider"
 			Rails.logger.debug rider
 			request = ride.ride_requests.where(user_id: rider.id).first
 			rider.devices.each do |d|
@@ -18,8 +19,9 @@ class RideObserver < ActiveRecord::Observer
 				n.device_token = d.push_token
 				n.alert = "Ride Found!"
 				n.data = { type: :ride_found, ride_id: ride.id, request_id: request.id,
+						request_type: request.request_type,
 						meeting_point_place_name: ride.meeting_point_place_name,
-						destination_place_name: ride.destination_place_name }
+						drop_off_point_place_name: ride.drop_off_point_place_name }
 				n.save!
 			end
 		end
