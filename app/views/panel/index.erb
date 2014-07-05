@@ -7,12 +7,18 @@
 	function update_markers() {
 		jQuery.ajax({                                                                                                               
 			type: 'GET',                                                                                                              
-			url: "/drivers.json",                                                                                                                 
+			url: "/api/geo/drivers.json",                                                                                                                 
+			contentType: "application/json",
+			dataType: 'json',
 			beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},           
 			success:function(data){
 				console.log(data)
 				jQuery.each(data, function(index, item){
-					if(item.latitude == null || item.longitude == null){
+					console.log(item);
+					console.log(item.driver_name);
+					console.log(item.latitude);
+					console.log(item['latitude']);
+					if(item['latitude'] == null || item.longitude == null){
 						return;
 					}
 
@@ -23,7 +29,7 @@
 					}
 					marker.setLatLng([item.latitude, item.longitude]);
 				});
-				setTimeout(update_markers, 10000);
+				setTimeout(update_markers, 5000);
 			},
 			error:function(){                                                                                                         
 				console.log('error getting markers');                                                                           

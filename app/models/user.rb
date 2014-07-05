@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
 
 	scope :drivers, -> { joins(:driver_role).readonly(false) }
 	scope :available_drivers, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
+	scope :on_duty, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 

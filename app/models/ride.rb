@@ -155,7 +155,7 @@ class Ride < ActiveRecord::Base
 
 	def assign_driver(driver)
 		self.driver = driver	
-		self.car = driver.car
+		self.car = driver.cars.first
 		# and mark all ride requests as scheduled
 		update_ride_requests_to_scheduled
 		# and mark all ride offers as closed 

@@ -3,6 +3,8 @@ require 'grape-swagger'
 class VocoAPI < Grape::API
 	version 'v1', using: :header, vendor: 'voco'
 	format :json
+	content_type :json, "application/json"
+
 
 	before do
 		Rails.logger.debug "WARNING: CORS is wide open for whole application, allowing for swagger UI to publish api docs"
