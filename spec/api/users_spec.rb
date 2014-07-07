@@ -23,7 +23,6 @@ describe UsersAPI do
 				puts response.body
 			end
 		end
-
 		it "returns failure" do
 			post "/api/users", :email => 'test@test.com'
 			unless expect(response.status).to eq(400)

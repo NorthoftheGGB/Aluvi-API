@@ -1,22 +1,25 @@
 require 'grape-swagger'
 
 class WebAPI < Grape::API
-	version 'v1', using: :header, vendor: 'voco'
+	version 'v1', using: :header, vendor: 'voco', cascade: false
 	format :json
 	formatter :json, Grape::Formatter::Jbuilder
 	content_type :json, "application/json"
 
-	include voco_api_helper
+	include VocoApiHelper
+
+	helpers do
+		def current_user
+			auth = token_and_options(headers['Authorization'])
+			@current_user ||= User.authorize_web!(auth[0])
+		end
+
+	end
 
 	resources :web do
 
 		desc "Log the user in"
-		params do
-			requires :phone, type: String
-			requires :password, type: String
-		end
 		post "authenicate" do
-
 			begin
 				user = User.where(:phone => params['phone']).first
 				if user.nil?
@@ -25,9 +28,9 @@ class WebAPI < Grape::API
 				if user.password != user.hash_password(params['password'])
 					raise "Wrong password"
 				end
-				token = user.generate_token!
+				token = user.generate_web_token!
 				response = Hash.new
-				response["token"] = token
+				response["webtoken"] = token
 				roles = Array.new
 				unless current_user.rider_role.nil?
 					roles << "rider"
@@ -46,7 +49,7 @@ class WebAPI < Grape::API
 
 		desc "Log the user out"
 		post 'logout' do
-			current_user.token = "";
+			current_user.web_token = "";
 			current_user.save
 		end
 
@@ -60,13 +63,13 @@ class WebAPI < Grape::API
 			optional :driver_id, type: Integer
 			optional :role, type: Symbol, values: [:rider, :driver, :admin], default: :rider
 		end
-		get "rides", jbuilder: 'web_rides' do
+		get "trips", jbuilder: 'web_rides' do
 			authenticate!
 			if( params[:role] == :rider )
 				@rides = current_user.rides
-			else if ( params[:role] == :driver )
+			elsif ( params[:role] == :driver )
 				@rides = current_user.fares
-			else if ( params[:role] == :admin )
+			elsif ( params[:role] == :admin )
 
 				if params['rider_id']
 					@rides.includes(:riders).where( :riders => { rider_id: params['rider_id'] } )
@@ -77,8 +80,9 @@ class WebAPI < Grape::API
 				end
 
 			else
-				Raise "Invalid Role"
+				raise "Invalid Role"
 			end
+
 			if params['begin_date']
 				@rides.where( "started >", params['begin_date'])
 			else 
