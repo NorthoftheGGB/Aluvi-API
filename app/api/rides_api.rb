@@ -258,8 +258,8 @@ class RidesAPI< Grape::API
 		post :arrived do
 			authenticate!
 			begin
-				Rails.logger.debug ride.driver.id
-				Rails.logger.debug curent_user.id
+				Rails.logger.debug params
+				Rails.logger.debug current_user.id
 				ride = Ride.find(params[:ride_id])
 				if ride.driver != current_user
 					raise ApiExceptions::RideNotAssignedToThisDriverException

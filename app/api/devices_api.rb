@@ -24,10 +24,14 @@ class DevicesAPI < Grape::API
 				# this deals with the issue of different user logging in on same device with changed vendor identifier
 				preexisting = Device.where( :push_token => params[:push_token] ).where( "uuid != ? ", params[:uuid])
 				preexisting.each do |p|
-					p.push_token = ""
+					p.push_token = nil
 					p.save
 				end
-				device.push_token = params[:push_token]
+				unless params[:push_token] == ""
+					device.push_token = params[:push_token]
+				else
+					device.push_token = nil
+				end
 			end
 			if params['user_id'].nil?	
 				device.user = current_user
