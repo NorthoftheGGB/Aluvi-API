@@ -118,10 +118,14 @@ class User < ActiveRecord::Base
 	# 
 	def update_location!(longitude, latitude)
 		Rails.logger.debug longitude
+		puts longitude
 		Rails.logger.debug latitude
+		puts latitude
 		Rails.logger.debug RGeo::Geographic.spherical_factory.point(longitude, latitude)
+		puts  RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		Rails.logger.debug self.location
+		puts self.location
 		save
 	end
 
