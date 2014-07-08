@@ -33,8 +33,8 @@ gem 'monetize'
 gem 'stripe'
 
 # Geolocation
-#gem 'rgeo'
-#gem 'rgeo-activerecord'
+gem 'rgeo'
+gem 'rgeo-activerecord'
 gem 'activerecord-mysql2spatial-adapter'
 gem 'mapquest'
 
