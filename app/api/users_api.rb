@@ -9,7 +9,8 @@ class UsersAPI < Grape::API
 
 		desc "Create new user"
 		params do
-			requires :name, type: String
+			requires :first_name, type: String
+			requires :last_name, type: String
 			requires :phone, type: String
 			requires :password, type: String
 			requires :email, type: String
@@ -21,7 +22,8 @@ class UsersAPI < Grape::API
 				error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
 				return
 			end
-			user.last_name = params[:name]
+			user.first_name = params[:first_name]
+			user.last_name = params[:last_name]
 			user.email = params[:email]
 			user.password = user.hash_password(params[:password])
 			user.referral_code = params[:referral_code]
