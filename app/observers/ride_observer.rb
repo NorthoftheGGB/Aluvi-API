@@ -14,9 +14,7 @@ class RideObserver < ActiveRecord::Observer
 				if(d.push_token.nil?)
 					next	
 				end
-				n = Rpush::Apns::Notification.new
-				n.app = Rpush::Apns::App.find_by_name("voco")
-				n.device_token = d.push_token
+				n = PushHelper::push_message(d)
 				n.alert = "Ride Found!"
 				n.data = { type: :ride_found, ride_id: ride.id, request_id: request.id,
 						request_type: request.request_type,
@@ -54,9 +52,7 @@ class RideObserver < ActiveRecord::Observer
 				if(d.push_token.nil?)
 					next	
 				end
-				n = Rpush::Apns::Notification.new
-				n.app = Rpush::Apns::App.find_by_name("voco")
-				n.device_token = d.push_token
+				n = PushHelper::push_message(d)
 				n.alert = "Ride Cancelled!"
 				n.data = { type: :ride_cancelled_by_rider, ride_id: ride.id }
 				n.save!

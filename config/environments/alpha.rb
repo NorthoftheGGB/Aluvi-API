@@ -43,4 +43,6 @@ VocoApi::Application.configure do
 		}
 	}
 
+	config.mobile_app_identifier = 'com.vocotransportation.alpha'
+
 end

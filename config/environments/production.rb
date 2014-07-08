@@ -64,4 +64,8 @@ VocoApi::Application.configure do
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
+	
+
+	# production is the current 'staging' which is actually 'testing' for the mobile app
+	config.mobile_app_identifier = 'com.vocotransportation.testing'
 end

@@ -28,9 +28,7 @@ class RideRequestObserver < ActiveRecord::Observer
 					if(d.push_token.nil?)
 						next	
 					end
-					n = Rpush::Apns::Notification.new
-					n.app = Rpush::Apns::App.find_by_name("voco")
-					n.device_token = d.push_token
+					n = PushHelper::push_message(d)
 					n.alert = "Ride Requested!"
 					n.data = { type: :ride_offer, offer_id: offer.id, ride_id: ride.id,
 						meeting_point_place_name: ride.meeting_point_place_name,
