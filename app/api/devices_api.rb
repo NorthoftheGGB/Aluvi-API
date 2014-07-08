@@ -11,6 +11,8 @@ class DevicesAPI < Grape::API
 			optional :longitude, type: BigDecimal
 		end
 		patch ':uuid' do
+			#validate api token
+			Rails.logger.debug params
 			device = Device.where( :uuid => params[:uuid] ).first
 			if(device.nil?)
 				device = Device.new
@@ -18,10 +20,19 @@ class DevicesAPI < Grape::API
 				device.save
 			end
 			unless params[:push_token].nil?
+				# clear prexisting records that have this push token
+				# this deals with the issue of different user logging in on same device with changed vendor identifier
+				preexisting = Device.where( :push_token => params[:push_token] ).where( "uuid != ? ", params[:uuid])
+				preexisting.each do |p|
+					p.push_token = ""
+					p.save
+				end
 				device.push_token = params[:push_token]
 			end
-			unless current_user.nil?
+			if params['user_id'].nil?	
 				device.user = current_user
+			else
+				device.user_id = params['user_id']
 			end
 			device.save
 			device
