@@ -31,9 +31,6 @@ GEM
       activesupport (= 3.2.13)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activerecord-mysql2spatial-adapter (0.4.3)
-      mysql2 (>= 0.2.13)
-      rgeo-activerecord (~> 0.4.5)
     activeresource (3.2.13)
       activemodel (= 3.2.13)
       activesupport (= 3.2.13)
@@ -181,11 +178,6 @@ GEM
       json (~> 1.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    rgeo (0.3.20)
-    rgeo-activerecord (0.4.6)
-      activerecord (>= 3.0.3)
-      arel (>= 2.0.6)
-      rgeo (>= 0.3.20)
     rpush (1.0.0)
       multi_json (~> 1.0)
       net-http-persistent
@@ -255,7 +247,6 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
-  activerecord-mysql2spatial-adapter
   aws-sdk (~> 1.5.7)
   coffee-rails (~> 3.2.1)
   factory_girl_rails (~> 4.0)
