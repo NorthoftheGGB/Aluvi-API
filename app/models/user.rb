@@ -121,6 +121,7 @@ class User < ActiveRecord::Base
 		Rails.logger.debug lattitude
 		Rails.logger.debug RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
+		Rails.logger.debug self.location
 		save
 	end
 
