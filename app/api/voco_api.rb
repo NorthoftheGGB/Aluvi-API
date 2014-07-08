@@ -14,12 +14,15 @@ class VocoAPI < Grape::API
 		headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 	end
 
-	include VocoApiHelper
+	helpers do
+		include VocoApiHelper
+	end
 
 	mount RidesAPI
 	mount GeoAPI
 	mount DevicesAPI
 	mount UsersAPI
 	mount DriversAPI
+	mount WebAPI
 	add_swagger_documentation :base_path => "http://localhost:3000/api/"
 end

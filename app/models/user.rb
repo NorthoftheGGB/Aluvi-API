@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
 		User.where( :token => token ).first
 	end
 
-	def self.web_authorize!(token)
+	def self.authorize_web!(token)
 		User.where( :webtoken => token ).first
 	end
 

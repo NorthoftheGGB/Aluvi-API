@@ -1,7 +1,6 @@
 VocoApi::Application.routes.draw do
 
 	mount VocoAPI => '/api/'
-	mount WebAPI => '/api/web/'
 
   resources :offered_rides
   resources :rider_rides

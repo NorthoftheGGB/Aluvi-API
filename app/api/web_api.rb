@@ -1,14 +1,14 @@
 require 'grape-swagger'
 
 class WebAPI < Grape::API
-	version 'v1', using: :header, vendor: 'voco', cascade: false
+	version 'v1', using: :header, vendor: 'voco' #, cascade: false
 	format :json
 	formatter :json, Grape::Formatter::Jbuilder
 	content_type :json, "application/json"
 
-	include VocoApiHelper
-
 	helpers do
+		include VocoApiHelper
+	
 		def current_user
 			auth = token_and_options(headers['Authorization'])
 			@current_user ||= User.authorize_web!(auth[0])
@@ -19,7 +19,11 @@ class WebAPI < Grape::API
 	resources :web do
 
 		desc "Log the user in"
-		post "authenicate" do
+		params do
+			requires :phone, type: String
+			requires :password, type: String
+		end
+		post "authenticate" do
 			begin
 				user = User.where(:phone => params['phone']).first
 				if user.nil?
@@ -71,12 +75,13 @@ class WebAPI < Grape::API
 				@rides = current_user.fares
 			elsif ( params[:role] == :admin )
 
+				@rides = Ride.order('rides.id')
 				if params['rider_id']
-					@rides.includes(:riders).where( :riders => { rider_id: params['rider_id'] } )
+					@rides = Ride.includes(:riders).where( :users => { id: params['rider_id'] } )
 				end
 
 				if params['driver_id']
-					@rides.includes(:driver).where( :drivers => { driver_id: params['driver_id'] } )
+					@rides = Ride.includes(:driver).where( :users => { id: params['driver_id'] } )
 				end
 
 			else
