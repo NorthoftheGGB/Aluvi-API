@@ -117,6 +117,9 @@ class User < ActiveRecord::Base
 	# rider model
 	# 
 	def update_location!(longitude, latitude)
+		Rails.logger.debug longitude
+		Rails.logger.debug lattitude
+		Rails.logger.debug RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		save
 	end
