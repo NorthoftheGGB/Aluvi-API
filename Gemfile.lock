@@ -274,8 +274,6 @@ DEPENDENCIES
   mysql2
   paperclip (~> 4.1)
   rails (= 3.2.13)
-  rgeo
-  rgeo-activerecord
   rpush
   rspec
   rspec-rails (~> 3.0.0)
