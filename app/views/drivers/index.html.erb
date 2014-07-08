@@ -6,6 +6,7 @@
     <th>First name</th>
     <th>Last name</th>
     <th>Driver State</th>
+    <th>Demo</th>
     <th></th>
     <th></th>
     <th></th>
@@ -17,6 +18,7 @@
     <td><%= driver.first_name %></td>
     <td><%= driver.last_name %></td>
     <td><%= driver.driver_role.nil? ? "" : driver.driver_role.state %></td>
+		<td><%= driver.demo %></td>
     <td><%= link_to 'Show', driver_path(driver) %></td>
     <td><%= link_to 'Edit', edit_driver_path(driver) %></td>
     <td><%= link_to 'Destroy', driver_path(driver), method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -14,8 +14,14 @@ class RideRequestObserver < ActiveRecord::Observer
 
 	# this would be a callback from the schdduler somewhere
 	def offer_to_drivers(ride)
-		#User.available_drivers.each do |driver|
-		User.drivers.each do |driver|
+
+		if(ride.riders[0].demo)
+			drivers = User.demo_drivers
+		else
+			drivers = User.available_drivers
+		end
+
+		drivers.each do |driver|
 			if ride.riders.include?(driver)
 				next
 			end

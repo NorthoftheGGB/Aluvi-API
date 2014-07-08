@@ -10,11 +10,12 @@ class User < ActiveRecord::Base
 	has_many :offered_rides, :foreign_key => :driver_id  
 	has_one :driver_role
 	has_one :rider_role
-  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state, :webtoken
+  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :salt, :token, :phone, :email, :driver_state, :rider_state, :webtoken, :demo
 
 	scope :drivers, -> { joins(:driver_role).readonly(false) }
 	scope :available_drivers, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
 	scope :on_duty, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
+	scope :demo_drivers, ->{ drivers.where(:demo => true) }
 
 	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
 
@@ -117,14 +118,10 @@ class User < ActiveRecord::Base
 	# rider model
 	# 
 	def update_location!(longitude, latitude)
-		Rails.logger.debug longitude
 		puts longitude
-		Rails.logger.debug latitude
 		puts latitude
-		Rails.logger.debug RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		puts  RGeo::Geographic.spherical_factory.point(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
-		Rails.logger.debug self.location
 		puts self.location
 		save
 	end

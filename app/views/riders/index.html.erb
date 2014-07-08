@@ -9,6 +9,7 @@
     <th>Rider State</th>
     <th>Commuter balance cents</th>
     <th>Commuter refill amount cents</th>
+    <th>Demo</th>
     <th></th>
     <th></th>
     <th></th>
@@ -23,6 +24,7 @@
     <td><%= rider.rider_role.nil? ? "" : rider.rider_role.state %></td>
     <td><%= rider.commuter_balance_cents %></td>
     <td><%= rider.commuter_refill_amount_cents %></td>
+    <td><%= rider.demo %></td>
 		<td><%= link_to 'Show', rider_path(rider)  %></td>
     <td><%= link_to 'Edit', edit_rider_path(rider) %></td>
     <td><%= link_to 'Destroy', rider_path(rider), method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -54,7 +54,7 @@ class RidersController < ApplicationController
   # POST /riders
   # POST /riders.json
   def create
-    @rider = User.new(params[:rider])
+    @rider = User.new(params[:user])
 
     respond_to do |format|
       if @rider.save
@@ -72,7 +72,7 @@ class RidersController < ApplicationController
   def update
     @rider = User.find(params[:id])
     respond_to do |format|
-      if @rider.update_attributes(params[:rider])
+      if @rider.update_attributes(params[:user])
         format.html { redirect_to rider_path(@rider), notice: 'User was successfully updated.' }
         format.json { head :no_content }
       else

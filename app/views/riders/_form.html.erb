@@ -24,6 +24,10 @@
     <%= f.text_field :last_name %>
   </div>
   <div class="field">
+    <%= f.label :demo %><br />
+		<%= f.select :demo, [ true, false], :include_blank => true %>
+  </div>
+  <div class="field">
     <%= f.label "Rider State" %><br />
 		<% unless @rider.rider_role.nil? %>
     <%= f.label @rider.rider_role.state %><br />

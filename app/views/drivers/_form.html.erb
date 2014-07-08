@@ -23,6 +23,10 @@
     <%= f.label :last_name %><br />
     <%= f.text_field :last_name %>
   </div>
+  <div class="field">
+    <%= f.label :demo %><br />
+		<%= f.select :demo, [ true, false], :include_blank => true %>
+  </div>
 	<h2>Driver Role</h2>
   <div class="field">
     <%= f.label "Driver State" %><br />

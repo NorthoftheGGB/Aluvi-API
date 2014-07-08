@@ -42,6 +42,25 @@ class RidesAPI< Grape::API
 			end
 
 			ride_request.request!
+
+			if params[:type] == 'commuter'
+				if current_user.demo
+					# demoing subsystem
+					demo_ride_requests = RideRequest.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } ) 
+					if demo_ride_requests.count > 2
+						Rails.logger.debug 'scheduling DEMO commuter ride'
+						ActiveRecord::Base.transaction do
+							# need to DRY this with the commuter ride requests controller
+							ride = Ride.assemble_ride_from_requests demo_ride_requests		
+							ride.meeting_point_place_name = RidesHelper::reverse_geocode ride.meeting_point
+							ride.drop_off_point_place_name = RidesHelper::reverse_geocode  ride.drop_off_point
+							drivers = User.demo_drivers
+							ride.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
+						end
+					end
+				end
+			end
+
 			rval = Hash.new
 			rval[:request_id] = ride_request.id
 			rval
