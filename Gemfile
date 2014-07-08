@@ -33,9 +33,9 @@ gem 'monetize'
 gem 'stripe'
 
 # Geolocation
-gem 'rgeo'
-gem 'rgeo-activerecord'
-gem 'activerecord-mysql2spatial-adapter'
+#gem 'rgeo'
+#gem 'rgeo-activerecord'
+#gem 'activerecord-mysql2spatial-adapter'
 gem 'mapquest'
 
 # To use ActiveModel has_secure_password
