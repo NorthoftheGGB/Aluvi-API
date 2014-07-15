@@ -79,8 +79,5 @@ group :test do
 	gem 'rspec-rails', '~> 3.0.0'
 end
 
-# Deploy with Capistrano
-# gem 'capistrano'
-
 # To use debugger
 # gem 'debugger'
