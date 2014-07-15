@@ -24,7 +24,18 @@ CREATE TABLE `devices` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `driver_location_histories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `driver_id` int(11) DEFAULT NULL,
+  `fare_id` int(11) DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL,
+  `location` point DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `driver_roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -62,7 +73,7 @@ CREATE TABLE `offered_rides` (
   `updated_at` datetime NOT NULL,
   `state` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=618 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=619 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `ride_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -82,7 +93,7 @@ CREATE TABLE `ride_requests` (
   KEY `index_ride_requests_on_origin` (`origin`(25)),
   KEY `index_ride_requests_on_destination` (`destination`(25)),
   KEY `ride_requests_ride_id_fk` (`ride_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=566 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=592 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rider_rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -91,14 +102,14 @@ CREATE TABLE `rider_rides` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=336 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=363 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rider_roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `state` varchar(255) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rides` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -118,7 +129,7 @@ CREATE TABLE `rides` (
   PRIMARY KEY (`id`),
   KEY `index_rides_on_meeting_point` (`meeting_point`(25)),
   KEY `index_rides_on_destination` (`drop_off_point`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=562 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=573 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `rpush_apps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -177,7 +188,7 @@ CREATE TABLE `rpush_notifications` (
   `fail_after` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_rapns_notifications_multi` (`app_id`,`delivered`,`failed`,`deliver_after`)
-) ENGINE=InnoDB AUTO_INCREMENT=1160 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1179 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `schema_migrations` (
   `version` varchar(255) NOT NULL,
@@ -212,7 +223,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_users_on_email` (`email`),
   KEY `index_users_on_location` (`location`(25))
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 INSERT INTO schema_migrations (version) VALUES ('20140523011016');
 
@@ -291,3 +302,7 @@ INSERT INTO schema_migrations (version) VALUES ('20140703064003');
 INSERT INTO schema_migrations (version) VALUES ('20140707205309');
 
 INSERT INTO schema_migrations (version) VALUES ('20140708221243');
+
+INSERT INTO schema_migrations (version) VALUES ('20140715003700');
+
+INSERT INTO schema_migrations (version) VALUES ('20140715004033');

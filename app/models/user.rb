@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
 	end
 
 	#
-	# rider model
+	# driver model
 	# 
 	def update_location!(longitude, latitude)
 		puts longitude

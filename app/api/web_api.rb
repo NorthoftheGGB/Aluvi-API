@@ -114,11 +114,22 @@ class WebAPI < Grape::API
 			optional :last_name, type: String
 			optional :phone_number, type: String
 		end
+		# put/post of user documents
 		get "users", jbuilder: 'web_users' do
 			authenticate!
 			if role == :admin
-				unless params[:user_id].nil?
+				if !params[:user_id].nil?
 					user = User.find(params[:user_id])
+				elsif !params[:phone_number].nil?
+					user = User.user_with_phone(params['phone_number'])
+				elsif !params[:first_name].nil? || !params[:last_name].nil? || !params[:role].nil? 
+					user = User.order('id')
+					if !params[:first_name].nil? 
+						user.where(:first_name => params[:first_name])
+					end
+					if !params[:last_name].nil? 
+						user.where(:last_name => params[:last_name])
+					end
 				else
 					user = current_user
 				end

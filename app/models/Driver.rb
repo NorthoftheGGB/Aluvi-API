@@ -1,2 +1,0 @@
-class Driver < User
-end
