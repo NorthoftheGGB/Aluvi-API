@@ -1,9 +1,12 @@
-# SQLite version 3.x
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem 'sqlite3'
 development:
+  username: deepwinter1
+  adapter: postgis
+  host: localhost
+  database: voco
+  pool: 5
+  timeout: 5000
+
+development_mysql:
   adapter: mysql2spatial
   username: root
   password: root
@@ -16,37 +19,19 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  adapter: mysql2spatial
-  username: root
-  password: root
+  adapter: postgis
+  username: deepwinter1
   host: localhost
   database: voco_test
   pool: 5
   timeout: 5000
 
-production:
-  adapter: mysql2spatial
-  username: voco
-  password: voco
-  host: localhost
-  database: voco_alpha
-  pool: 5
-  timeout: 5000
-
 alpha:
-  adapter: mysql2spatial
-  username: voco
-  password: voco
-  host: localhost
-  database: voco_alpha
+  adapter: postgis
   pool: 5
   timeout: 5000
 
 alpha_dev:
-  adapter: mysql2spatial
-  username: voco
-  password: voco
-  host: localhost
-  database: voco_alpha
+  adapter: postgis
   pool: 5
   timeout: 5000

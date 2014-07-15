@@ -4,7 +4,7 @@ class CreateDriverLocationHistories < ActiveRecord::Migration
       t.integer :driver_id
       t.integer :fare_id
       t.datetime :datetime
-      t.point :location
+      t.point :location, :geographic => true
 
       t.timestamps
     end

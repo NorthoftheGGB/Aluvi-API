@@ -1,6 +1,6 @@
 class CreateRiderRides < ActiveRecord::Migration
   def change
-    create_table :rider_rides, :options => 'ENGINE=InnoDB' do |t|
+    create_table :rider_rides do |t|
       t.references :user
       t.references :ride
 

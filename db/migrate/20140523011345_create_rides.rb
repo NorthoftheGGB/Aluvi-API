@@ -1,15 +1,15 @@
 class CreateRides < ActiveRecord::Migration
   def change
-    create_table :rides, :options => 'ENGINE=InnoDB' do |t|
+    create_table :rides do |t|
       t.references :user
       t.references :car
       t.string :state
       t.datetime :scheduled
       t.datetime :started
       t.datetime :finished
-      t.column :meeting_point, :point
+      t.point :meeting_point, :geographic => true
       t.string :meeting_point_place_name
-      t.column :destination, :point
+      t.point :destination, :geographic => true
       t.string :destination_place_name
 
       t.timestamps

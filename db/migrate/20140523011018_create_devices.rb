@@ -1,6 +1,6 @@
 class CreateDevices < ActiveRecord::Migration
   def change
-    create_table :devices, :options => 'ENGINE=InnoDB' do |t|
+    create_table :devices do |t|
       t.references :user
       t.string :hardware
       t.string :os

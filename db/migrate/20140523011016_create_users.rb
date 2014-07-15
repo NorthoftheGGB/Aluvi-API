@@ -1,6 +1,6 @@
 class CreateUsers < ActiveRecord::Migration
   def change
-    create_table :users, :options => 'ENGINE=InnoDB' do |t|
+    create_table :users do |t|
       t.integer :stripe_customer_id
       t.integer :stripe_recipient_id
       t.integer :company_id
@@ -11,7 +11,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :state
       t.integer :commuter_balance_cents
       t.integer :commuter_refill_amount_cents
-      t.column :location, :point
+      t.point :location, :geographic => true
 
       t.timestamps
     end

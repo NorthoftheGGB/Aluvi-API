@@ -4,8 +4,10 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.13'
 
 # database
-gem 'mysql2'
+#gem 'mysql2'
 gem 'foreigner', :git => 'git://github.com/deepwinter/foreigner.git'
+gem 'pg'
+gem 'activerecord-postgis-adapter', '~> 0.6.6'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -34,8 +36,8 @@ gem 'stripe'
 
 # Geolocation
 gem 'rgeo'
-gem 'rgeo-activerecord'
-gem 'activerecord-mysql2spatial-adapter'
+#gem 'rgeo-activerecord'
+#gem 'activerecord-mysql2spatial-adapter'
 gem 'mapquest'
 
 # To use ActiveModel has_secure_password
