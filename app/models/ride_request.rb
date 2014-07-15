@@ -32,7 +32,7 @@ class RideRequest < ActiveRecord::Base
 
 	end
 
-	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
+	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	private
 	def ride_requested
