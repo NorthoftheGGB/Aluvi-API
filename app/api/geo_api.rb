@@ -9,18 +9,23 @@ class GeoAPI < Grape::API
 		params do
 			requires :latitude, type: BigDecimal
 			requires :longitude, type: BigDecimal
+			optional :current_fare_id, type: BigDecimal
 		end
 		put 'drivers/:id' do
 			authenticate!
-			current_user.update_location!( params[:longitude], params[:latitude] )
+			unless params[:current_fare_id].nil?
+				current_user.update_location!( params[:longitude], params[:latitude], params[:current_fare_id])
+			else
+				current_user.update_location!( params[:longitude], params[:latitude] )
+			end
 			ok
 		end
 
 		desc "Get driver location"
-		get 'drivers/:id', jbuilder: :coordinates do
+		get 'drivers/:id', jbuilder: :driver_geo do
 			authenticate!
 			begin
-				@object = Driver.find(params[:id])
+				@driver = Driver.find(params[:id])
 			rescue ActiveRecord::RecordNotFound
 				error! 'Driver not found', 404
 			end

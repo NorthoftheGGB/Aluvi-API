@@ -220,6 +220,7 @@ CREATE TABLE `users` (
   `driver_referral_code` varchar(255) DEFAULT NULL,
   `webtoken` varchar(255) DEFAULT NULL,
   `demo` tinyint(1) DEFAULT NULL,
+  `current_fare_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_users_on_email` (`email`),
   KEY `index_users_on_location` (`location`(25))
@@ -306,3 +307,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140708221243');
 INSERT INTO schema_migrations (version) VALUES ('20140715003700');
 
 INSERT INTO schema_migrations (version) VALUES ('20140715004033');
+
+INSERT INTO schema_migrations (version) VALUES ('20140715011119');

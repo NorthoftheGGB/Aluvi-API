@@ -221,6 +221,19 @@ class Ride < ActiveRecord::Base
 		save
 	end
 
+	def cost
+		unless self.started.nil?
+			cost = 2.5 # base
+			unless self.started.nil?
+				minutes = (Time.now - Time.parse(self.started.to_s)) / 60
+				cost = cost + 0.25 * minutes
+			end
+			#miles
+			cost
+		end
+
+	end
+
 	private
 	def ride_was_scheduled 
 		update_ride_requests_to_scheduled
