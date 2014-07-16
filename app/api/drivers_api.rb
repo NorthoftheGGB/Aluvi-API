@@ -42,6 +42,7 @@ class DriversAPI < Grape::API
 				# need to handle referral codes	
 
 				# directly set up Stripe recipient, don't store banking information on our server
+				# TODO: Refactor, this should be moved to it's own class and happen via a delayed job
 				recipient = Stripe::Recipient.create(
 					:name => current_user.full_name,
 					:type => 'individual',

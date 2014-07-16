@@ -17,19 +17,40 @@ class UsersAPI < Grape::API
 			optional :referral_code, type: String
 		end
 		post do
-			user = User.user_with_phone params[:phone]
-			unless(user.rider_role.nil? || user.rider_role.state == 'registered')
-				error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
-				return
+
+			ActiveRecord::Base.transaction do 
+				user = User.user_with_phone params[:phone]
+				unless(user.rider_role.nil? || user.rider_role.state == 'registered')
+					error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
+					return
+				end
+				user.first_name = params[:first_name]
+				user.last_name = params[:last_name]
+				user.email = params[:email]
+				user.password = user.hash_password(params[:password])
+				user.referral_code = params[:referral_code]
+				user.registered_for_riding
+				user.save
+				user.rider_role.activate!
+
+				# directly set up Stripe customer
+				# TODO: Refactor, this should be moved to it's own class and happen via a delayed job
+				customer = Stripe::Customer.create(
+					:email => user.email,
+					:metadata => {
+						:voco_id => user.id,
+						:phone => user.phone
+					}
+				)
+				if customer.nil?
+					Rails.logger.debug customer
+					raise "Stripe customer not created"
+				end
+				user.stripe_customer_id = customer.id
+				user.save
+
 			end
-			user.first_name = params[:first_name]
-			user.last_name = params[:last_name]
-			user.email = params[:email]
-			user.password = user.hash_password(params[:password])
-			user.referral_code = params[:referral_code]
-			user.registered_for_riding
-			user.save
-			user.rider_role.activate!
+
 			ok
 		end
 
@@ -122,10 +143,46 @@ class UsersAPI < Grape::API
 			response
 		end
 
-	end
-
-	def driver_interested params
+		desc "Update profile"
+		params do
+			optional :default_card_token, type: String
 		end
+		post "profile" do
+			unless params[:default_card_token].nil?
+				# TODO handle in background, delayed job
+
+				# delete cards because we only hold one
+				cards = Stripe::Customer.retrieve(current_user.stripe_customer_id).cards.all()
+				cards.each do |card|
+					card.delete()
+				end
+
+				customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+				customer.cards.create({:card => params[:default_card_token]})
+
+				default_card = customer.cards.all().data[0]
+
+				current_user.cards.each do |card|
+					card.delete
+				end
+
+				card = Card.new
+				card.user = current_user
+				card.stripe_card_id = default_card.id
+				card.last4 = default_card.last4
+				card.brand = default_card.brand
+				card.funding = default_card.funding
+				card.exp_month = default_card.exp_month
+				card.exp_year = default_card.exp_year
+				card.save
+
+				ok
+
+			end
+
+		end
+
+	end
 
 end
 

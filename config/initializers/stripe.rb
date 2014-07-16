@@ -4,7 +4,7 @@ Rails.configuration.stripe = {
 	#:secret_key      => ENV['SECRET_KEY']
 	
 	# these are testing keys
-	:publishable_key => 'sk_test_biM5maZqf0SnHR2Eyfo7uy0X',
+	:publishable_key => 'pk_test_4Gt6M02YRqmpk7yoBud7y5Ah',
 	:secret_key => 'sk_test_biM5maZqf0SnHR2Eyfo7uy0X'
 }
 
