@@ -2,7 +2,7 @@ class Ride < ActiveRecord::Base
 
 	has_many :rider_rides
 	has_many :riders, through: :rider_rides
-	belongs_to :driver, :class_name => 'User', inverse_of: :driver_rides
+	belongs_to :driver, :class_name => 'Driver', inverse_of: :driver_rides
 	has_many :ride_requests, inverse_of: :ride
 	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
@@ -10,7 +10,7 @@ class Ride < ActiveRecord::Base
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
 
-	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
+	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	include AASM
 	aasm_column :state
@@ -101,9 +101,9 @@ class Ride < ActiveRecord::Base
 		drop_off_point_latitude = drop_off_point_latitude / requests.size
 		drop_off_point_longitude = drop_off_point_longitude / requests.size
 		ride = self.create( nil, 
-								RGeo::Geographic.spherical_factory.point(meeting_point_longitude, meeting_point_latitude),
+								RGeo::Geographic.spherical_factory( :srid => 4326 ).point(meeting_point_longitude, meeting_point_latitude),
 								"unnamed location",
-								RGeo::Geographic.spherical_factory.point(drop_off_point_longitude, drop_off_point_latitude),
+								RGeo::Geographic.spherical_factory( :srid => 4326 ).point(drop_off_point_longitude, drop_off_point_latitude),
 								"unnamed location");
 		requests.each do |request|
 			ride.ride_requests << request
@@ -209,6 +209,7 @@ class Ride < ActiveRecord::Base
 	end
 
 	def pickup!(rider = nil)
+		Rails.logger.debug 'pickup'
 		pickup(rider)
 		save
 	end
@@ -244,20 +245,30 @@ class Ride < ActiveRecord::Base
 	def driver_cancelled_ride
 		self.finished = Time.now
 		save
+		self.driver.current_fare = nil
+		self.driver.save
 		notify_observers :ride_cancelled_by_driver
 	end
 
 
 	def started_ride
+		Rails.logger.debug 'started_ride callback'
 		if(@started.nil?)
 			self.started = Time.now
 		end
+		Rails.logger.debug self.driver_id
+		self.driver.current_fare_id = self.id
+		Rails.logger.debug 'after current fare thing'
+		self.driver.save
+		Rails.logger.debug 'ended started_ride callback'
 		save
 	end
 
 	def completed_ride
 		self.finished = Time.now
 		save
+		self.driver.current_fare = nil
+		self.driver.save
 		notify_observers :ride_completed
 	end
 

@@ -29,7 +29,11 @@ CREATE TABLE cars (
     location geography(Point,4326),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    year character varying(255)
+    year character varying(255),
+    car_photo_file_name character varying(255),
+    car_photo_content_type character varying(255),
+    car_photo_file_size integer,
+    car_photo_updated_at timestamp without time zone
 );
 
 
@@ -513,7 +517,8 @@ CREATE TABLE users (
     driver_referral_code character varying(255),
     webtoken character varying(255),
     demo boolean,
-    current_fare_id integer
+    current_fare_id integer,
+    car_id integer
 );
 
 

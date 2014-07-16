@@ -38,6 +38,17 @@
 			<%= f.select :driver_state, [ :initalize ], :include_blank => true %>
 		<% end %>
   </div>
+
+	<div class="field">
+		<%= f.label "Currently Driving Car:" %>
+		<% unless @driver.car.nil? %>
+			<%= link_to @driver.car.summary, car_path(@driver.car) %>
+		<%= f.select :car, @driver.cars, :include_blank => true %>
+		<% else %>
+			No Car Assigned
+		<% end %>
+	</div>
+
 	<div class="field">
 		<%= f.label :drivers_license %><br />
 		<%= f.file_field :drivers_license %>
@@ -59,14 +70,6 @@
 		<%= f.file_field :proof_of_insurance %>
 		<% unless @driver.driver_role.nil? %>
 			<%= image_tag @driver.driver_role.proof_of_insurance.url(:thumb) %>
-		<% end %>
-	</div>
-
-	<div class="field">
-		<%= f.label :car_photo %><br />
-		<%= f.file_field :car_photo %>
-		<% unless @driver.driver_role.nil? %>
-			<%= image_tag @driver.driver_role.car_photo.url(:thumb) %>
 		<% end %>
 	</div>
 

@@ -22,6 +22,7 @@ json.array! @requests do |request|
 			json.year request.ride.car.year
 			json.license_plate request.ride.car.license_plate
 			json.state request.ride.car.state
+			json.car_photo request.ride.car.car_photo.url( :thumb )
 		end
 	end
 	unless request.ride.nil? || request.ride.driver.nil?
@@ -29,9 +30,9 @@ json.array! @requests do |request|
 			json.id request.ride.driver.id
 			json.first_name request.ride.driver.first_name
 			json.last_name request.ride.driver.last_name
+			json.phone request.ride.driver.phone
 			unless request.ride.driver.driver_role.nil?
 				json.drivers_license_number request.ride.driver.driver_role.drivers_license_number
-				json.drivers_license_url request.ride.driver.driver_role.drivers_license.url(:thumb)
 			end
 		end
 	end

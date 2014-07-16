@@ -4,7 +4,8 @@ class User < ActiveRecord::Base
 	has_many :rides, through: :rider_rides
 	has_many :driver_rides, :class_name => 'Ride', :foreign_key => :driver_id
 	has_many :fares, :class_name => 'Ride', :foreign_key => :driver_id
-	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver
+	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver # Refactor: :associated_cars
+	belongs_to :car
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
 	has_many :offered_rides, :foreign_key => :driver_id  
@@ -17,7 +18,7 @@ class User < ActiveRecord::Base
 	scope :on_duty, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
 	scope :demo_drivers, ->{ drivers.where(:demo => true) }
 
-	self.rgeo_factory_generator = RGeo::Geographic.method(:spherical_factory)
+	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	def self.new_driver
 		user = User.new
@@ -112,6 +113,8 @@ class User < ActiveRecord::Base
 	def accepted_ride( ride )
 		offer_for_ride(ride).accepted!
 		ride.accepted!(self)
+		self.current_fare_id = ride.id
+		save
 	end
 
 	#
@@ -120,8 +123,8 @@ class User < ActiveRecord::Base
 	def update_location!(longitude, latitude)
 		puts longitude
 		puts latitude
-		puts  RGeo::Geographic.spherical_factory.point(longitude, latitude)
-		self.location = RGeo::Geographic.spherical_factory.point(longitude, latitude)
+		puts  RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
+		self.location = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
 		puts self.location
 		save
 	end
@@ -193,10 +196,6 @@ class User < ActiveRecord::Base
 	# prep for refactor
 	def drivers_license_number
 		self.driver_role.drivers_license_number
-	end
-
-	def car
-		self.cars[1]
 	end
 
 end

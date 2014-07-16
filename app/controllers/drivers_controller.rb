@@ -77,7 +77,7 @@ class DriversController < ApplicationController
 		driver_role_params = Hash.new
 		driver_role_attachments.each do |attachment|
 			unless params[:user][attachment].nil?
-				driver_role_params[attachment] = params[:driver][attachment]
+				driver_role_params[attachment] = params[:user][attachment]
 			end
 			params[:user].delete(attachment)
 		end

@@ -22,17 +22,17 @@ class RidesAPI< Grape::API
 			case params[:type]
 			when 'on_demand'
 					ride_request = OnDemandRideRequest.create!(params[:type],
-																						 RGeo::Geographic.spherical_factory.point(params[:departure_longitude], params[:departure_latitude]),
+																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
-																						 RGeo::Geographic.spherical_factory.point(params[:destination_longitude], params[:destination_latitude]),
+																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
 																						 current_user.id
 																						)
 			when 'commuter'
 					ride_request = CommuterRideRequest.create!(params[:type],
-																						 RGeo::Geographic.spherical_factory.point(params[:departure_longitude], params[:departure_latitude]),
+																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
-																						 RGeo::Geographic.spherical_factory.point(params[:destination_longitude], params[:destination_latitude]),
+																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
 																						 params[:desired_arrival],
 																						 current_user.id
@@ -161,7 +161,8 @@ class RidesAPI< Grape::API
 					return
 				end
 			else 
-				current_user.accepted_ride(ride)
+				driver = Driver.find(current_user.id)
+				driver.accepted_ride(ride)
 				ok
 			end
 
@@ -197,7 +198,7 @@ class RidesAPI< Grape::API
 			authenticate!
 			ride = Ride.find(params[:ride_id])
 			begin
-				if ride.driver != current_user
+				if ride.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 				ride.driver_cancelled!
@@ -252,7 +253,9 @@ class RidesAPI< Grape::API
 			# TODO validate driver and or rider is matched to ride
 			begin
 				ride = Ride.find(params[:ride_id])
-				if ride.driver != current_user
+				Rails.logger.debug ride.driver.id
+				Rails.logger.debug current_user.id
+				if ride.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
@@ -280,7 +283,7 @@ class RidesAPI< Grape::API
 				Rails.logger.debug params
 				Rails.logger.debug current_user.id
 				ride = Ride.find(params[:ride_id])
-				if ride.driver != current_user
+				if ride.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 

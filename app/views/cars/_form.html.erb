@@ -12,10 +12,6 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :user %><br />
-    <%= f.text_field :user %>
-  </div>
-  <div class="field">
     <%= f.label :make %><br />
     <%= f.text_field :make %>
   </div>
@@ -31,6 +27,12 @@
     <%= f.label :state %><br />
     <%= f.text_field :state %>
   </div>
+	<div class="field">
+		<%= f.label :car_photo %><br />
+		<%= f.file_field :car_photo %>
+		<%= image_tag @car.car_photo.url(:thumb) %>
+	</div>
+
   <div class="actions">
     <%= f.submit %>
   </div>

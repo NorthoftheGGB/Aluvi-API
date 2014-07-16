@@ -13,11 +13,9 @@ class GeoAPI < Grape::API
 		end
 		put 'drivers/:id' do
 			authenticate!
-			unless params[:current_fare_id].nil?
-				current_user.update_location!( params[:longitude], params[:latitude], params[:current_fare_id])
-			else
-				current_user.update_location!( params[:longitude], params[:latitude] )
-			end
+			driver = Driver.find(current_user.id)
+			driver.update_location!(params[:longitude], params[:latitude])
+			driver.drop_pearl!(params[:longitude], params[:latitude])
 			ok
 		end
 

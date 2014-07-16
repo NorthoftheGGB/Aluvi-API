@@ -21,6 +21,10 @@ class RideRequestObserver < ActiveRecord::Observer
 			drivers = User.available_drivers
 		end
 
+		if drivers.count == 0
+			# notify rider that there are no drivers available at this time
+		end
+
 		drivers.each do |driver|
 			if ride.riders.include?(driver)
 				next
