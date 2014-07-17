@@ -29,6 +29,10 @@ VocoApi::Application.routes.draw do
 
 	match 'panel' => 'panel#index'
 
+	resources :payouts
+
+	resources :payments
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

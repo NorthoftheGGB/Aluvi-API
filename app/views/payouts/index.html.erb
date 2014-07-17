@@ -1,0 +1,27 @@
+<h1>Listing payouts</h1>
+
+<table>
+  <tr>
+    <th>Driver</th>
+    <th>Date</th>
+    <th>Amount cents</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @payouts.each do |payout| %>
+  <tr>
+    <td><%= payout.driver_id %></td>
+    <td><%= payout.date %></td>
+    <td><%= payout.amount_cents %></td>
+    <td><%= link_to 'Show', payout %></td>
+    <td><%= link_to 'Edit', edit_payout_path(payout) %></td>
+    <td><%= link_to 'Destroy', payout, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Payout', new_payout_path %>

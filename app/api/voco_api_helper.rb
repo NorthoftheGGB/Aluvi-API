@@ -1,6 +1,7 @@
 module VocoApiHelper
 	def current_user
 		auth = token_and_options(headers['Authorization'])
+		token = auth[0]
 		@current_user ||= User.authorize!(auth[0])
 	end
 

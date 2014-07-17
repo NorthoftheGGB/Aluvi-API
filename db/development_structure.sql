@@ -264,7 +264,8 @@ CREATE TABLE payments (
     captured_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    driver_earnings_cents integer
+    driver_earnings_cents integer,
+    ride_id integer
 );
 
 

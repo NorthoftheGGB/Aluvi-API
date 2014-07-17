@@ -127,6 +127,13 @@ class RidesAPI< Grape::API
 			@requests
 		end
 
+		desc "Payment Details"
+		get :payments do
+			authenticate!
+			rider = Rider.find(current_user.id)
+			rider.payments
+		end
+
 		desc "Get specific ride details"
 		get ':id' do
 			authenticate!
@@ -291,12 +298,14 @@ class RidesAPI< Grape::API
 				ride.riders.each do |rider|
 					begin
 						payment = Payment.new
+						payment.driver = ride.driver
 						payment.fare = ride
 						payment.rider = rider
-						payment.driver = ride.driver
+						payment.ride = rider.ride_requests.where( :ride_id => ride.id ).first 
 						payment.amount_cents = ride.cost / ride.riders.count	
 						payment.driver_earnings_cents = earnings / ride.riders.count
 						payment.stripe_customer_id = rider.stripe_customer_id
+						payment.initiation = 'On Demand Payment'
 
 						customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
 						charge = Stripe::Charge.create(
@@ -333,5 +342,5 @@ class RidesAPI< Grape::API
 			end
 		end
 
-	end
+		end
 end

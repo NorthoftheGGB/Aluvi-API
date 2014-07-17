@@ -1,0 +1,45 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Driver:</b>
+  <%= @payment.driver_id %>
+</p>
+
+<p>
+  <b>Fare:</b>
+  <%= @payment.fare_id %>
+</p>
+
+<p>
+  <b>Rider:</b>
+  <%= @payment.rider_id %>
+</p>
+
+<p>
+  <b>Ride:</b>
+  <%= @payment.ride_id %>
+</p>
+
+<p>
+  <b>Amount cents:</b>
+  <%= @payment.amount_cents %>
+</p>
+
+<p>
+  <b>Stripe charge status:</b>
+  <%= @payment.stripe_charge_status %>
+</p>
+
+<p>
+  <b>Initiation:</b>
+  <%= @payment.initiation %>
+</p>
+
+<p>
+  <b>Captured at:</b>
+  <%= @payment.captured_at %>
+</p>
+
+
+<%= link_to 'Edit', edit_payment_path(@payment) %> |
+<%= link_to 'Back', payments_path %>

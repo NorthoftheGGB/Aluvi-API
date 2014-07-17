@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Driver:</b>
+  <%= @payout.driver_id %>
+</p>
+
+<p>
+  <b>Date:</b>
+  <%= @payout.date %>
+</p>
+
+<p>
+  <b>Amount cents:</b>
+  <%= @payout.amount_cents %>
+</p>
+
+
+<%= link_to 'Edit', edit_payout_path(@payout) %> |
+<%= link_to 'Back', payouts_path %>
