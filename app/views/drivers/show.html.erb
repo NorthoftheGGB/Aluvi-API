@@ -39,15 +39,26 @@
 </p>
 
 <p>
-  <b>Commuter balance cents:</b>
-  <%= @driver.commuter_balance_cents %>
+  <b>Total Payouts:</b>
+  $<%= @driver.total_payouts.to_f / 100 %>
 </p>
 
 <p>
-  <b>Commuter refill amount cents:</b>
-  <%= @driver.commuter_refill_amount_cents %>
+  <b>Total Earnings:</b>
+  $<%= @driver.total_earnings.to_f / 100 %>
 </p>
 
+<%= form_tag( "/drivers/" + @driver.id.to_s + "/payout" )  do %>
+
+  <div class="field">
+    <%= label_tag "Process a Payout for this Driver" %><br />
+		<%= text_field_tag :payout_amount %>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag("Process Payout") %>
+  </div>
+<% end %>
 
 <%= link_to 'Edit', edit_driver_path(@driver) %> |
 <%= link_to 'Back', drivers_path %>

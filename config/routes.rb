@@ -9,12 +9,9 @@ VocoApi::Application.routes.draw do
   resources :commuter_ride_requests
 	match 'commuter_ride_requests/assemble_ride' => 'commuter_ride_requests#assemble_ride'
 
-
   resources :rides
 
-
   resources :cars
-
 
   resources :devices
 
@@ -23,6 +20,7 @@ VocoApi::Application.routes.draw do
   resources :riders
 	match 'riders/csv_import' => 'riders#csv_import'
 
+	match 'drivers/:id/payout' => 'drivers#payout'
   resources :drivers
 	match 'drivers/csv_import' => 'drivers#csv_import'
 

@@ -5,6 +5,8 @@ class Driver < User
 	#TODO put state machine from driver_roles into this class
 	
 	belongs_to :current_fare, :class_name => 'Ride', :foreign_key => 'current_fare_id'
+	has_many :payouts
+	has_many :earnings, :class_name => 'Payment'
 
 	def update_location!(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
@@ -20,6 +22,22 @@ class Driver < User
 			location_history.fare_id = current_fare.id
 		end
 		location_history.save
+	end
+
+	def total_payouts
+		sum = 0
+		self.payouts.each do |payout|
+			sum += payout.amount_cents
+		end
+		sum
+	end
+
+	def total_earnings
+		sum = 0
+		self.earnings.each do |earning|
+			sum += earning.driver_earnings_cents
+		end
+		sum
 	end
 
 end

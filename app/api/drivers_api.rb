@@ -37,30 +37,32 @@ class DriversAPI < Grape::API
 				car.year = params[:car_year]
 				car.license_plate = params[:car_license_plate]
 				car.save
-				current_user.cars << car
-				current_user.driver_role.drivers_license_number = params[:drivers_license_number]
+				driver = Driver.find(current_user.id)
+				driver.cars << car
+				driver.car = car	
+				driver.driver_role.drivers_license_number = params[:drivers_license_number]
 				# need to handle referral codes	
 
 				# directly set up Stripe recipient, don't store banking information on our server
 				# TODO: Refactor, this should be moved to it's own class and happen via a delayed job
 				recipient = Stripe::Recipient.create(
-					:name => current_user.full_name,
+					:name => driver.full_name,
 					:type => 'individual',
 					:bank_account => {
 						:country => 'US',
 						:routing_number => params[:bank_account_routing],
 						:account_number => params[:bank_account_number]
 					},
-					:email => current_user.email
+					:email => driver.email
 				)
 				Rails.logger.debug recipient
 				if recipient.nil?
 					raise "Stripe recipient not created"
 				end
-				current_user.stripe_recipient_id = recipient.id
+				driver.stripe_recipient_id = recipient.id
 
-				current_user.save
-				current_user.driver_role.register!
+				driver.save
+				driver.driver_role.register!
 				ok
 			rescue
 				Rails.logger.debug $!
