@@ -346,25 +346,8 @@ class RidesAPI< Grape::API
 										raise "Commuter refill not set"
 									end
 
-									customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
-									charge = Stripe::Charge.create(
-										:amount => rider.commuter_refill_amount_cents,
-										:currency => "usd",
-										:customer => customer.id,
-										:description => "Refill for Voco Commuter Card"
-									)
-									if charge.paid == true
-										refill_payment = Payment.new
-										refill_payment.initiation = 'Commuter Refill'
-										refill_payment.rider = rider
-										refill_payment.stripe_charge_status = 'Success'
-										refill_payment.captured_at = DateTime.now
-										refill_payment.stripe_customer_id = rider.stripe_customer_id
-										refill_payment.amount_cents = rider.commuter_refill_amount_cents
-										refill_payment.save
-
-										rider.commuter_balance_cents += rider.commuter_refill_amount_cents
-										rider.save
+									paid = PaymentsHelper.autofill_commuter_card rider
+									if paid == true
 										raise "retry"
 									else
 										raise "Failed to refill commuter card"

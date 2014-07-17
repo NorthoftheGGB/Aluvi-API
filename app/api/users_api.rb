@@ -148,6 +148,7 @@ class UsersAPI < Grape::API
 			optional :default_card_token, type: String
 		end
 		post "profile" do
+			authenticate!
 			unless params[:default_card_token].nil?
 				# TODO handle in background, delayed job
 
@@ -180,6 +181,31 @@ class UsersAPI < Grape::API
 
 			end
 
+		end
+
+		desc "Get Profile"
+		get "profile" do
+			authenticate!
+			current_user
+		end
+
+		desc "Fill Commuter Pass"
+		params do
+			requires :amount_cents 
+		end
+		post "fill_commuter_pass" do
+			authenticate!
+
+			begin
+				paid = PaymentsHelper.fill_commuter_pass( current_user, params[:amount_cents] )
+				if paid == true
+					current_user.commuter_balance_cents += params[:amount_cents]
+					current_user.save
+					ok
+				end
+			rescue
+					error! 'Problem charging this card', 406
+			end
 		end
 
 	end
