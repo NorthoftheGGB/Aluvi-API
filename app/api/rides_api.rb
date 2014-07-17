@@ -18,7 +18,6 @@ class RidesAPI< Grape::API
 		end
 		post :request do
 			authenticate!
-			Rails.logger.debug params
 			case params[:type]
 			when 'on_demand'
 					ride_request = OnDemandRideRequest.create!(params[:type],
@@ -275,27 +274,60 @@ class RidesAPI< Grape::API
 		desc "Driver dropped off rider(s)"
 		params do
 			requires :ride_id, type: Integer
-			optional :rider_id, type: Integer
 		end
 		post :arrived do
 			authenticate!
 			begin
-				Rails.logger.debug params
-				Rails.logger.debug current_user.id
 				ride = Ride.find(params[:ride_id])
 				if ride.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
 				ride = Ride.find(params[:ride_id])
-				if(params[:rider_id].nil?)
-					ride.arrived!
-				else
-					rider = Rider.find(params[:rider_id])
-					#ride.arrived! rider
-					ride.arrived! # separate arrivals per ride not currently supported
+				earnings = ride.cost * 0.8
+				# process the payment
+				# TODO Refactor into delayed job
+				# and move this code to a model layer
+				ride.riders.each do |rider|
+					begin
+						payment = Payment.new
+						payment.fare = ride
+						payment.rider = rider
+						payment.driver = ride.driver
+						payment.amount_cents = ride.cost / ride.riders.count	
+						payment.driver_earnings_cents = earnings / ride.riders.count
+						payment.stripe_customer_id = rider.stripe_customer_id
+
+						customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
+						charge = Stripe::Charge.create(
+							:amount => payment.amount_cents,
+							:currency => "usd",
+							:customer => customer.id,
+							:description => "Charge for Voco Ride: " + ride.meeting_point_place_name + " to " + ride.drop_off_point_place_name
+						)
+						if charge.paid == true
+							payment.stripe_charge_status = 'success'
+							payment.captured_at = DateTime.now
+						else
+							payment.stripe_charge_status = 'failed'
+						end
+
+					rescue
+						payment.stripe_charge_status = 'error ' + $!.message
+
+					ensure
+						payment.save
+					end
+
 				end
-				ok
+				ride.arrived!
+
+				# either way notify the driver
+				response = Hash.new
+				response['amount'] = ride.cost
+				response['driver_earnings'] = earnings
+				response
+
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end

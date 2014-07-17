@@ -37,5 +37,9 @@ module VocoApiHelper
 	def not_found
 		error! 'Resource not found', 403, 'X-Error-Detail' => 'Resource not found'
 	end
+
+	def server_error entity
+		error! entity, 500
+	end
 end
 

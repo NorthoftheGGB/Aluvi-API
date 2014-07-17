@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  fare_id: 1
+  rider_id: 1
+  driver_id: 1
+  stripe_customer_id: MyString
+  stripe_charge_id: MyString
+  amount_cents: 1
+  string_charge_status: MyString
+  initiation: MyString
+  catpured_at: 2014-07-16 16:26:20
+
+two:
+  fare_id: 1
+  rider_id: 1
+  driver_id: 1
+  stripe_customer_id: MyString
+  stripe_charge_id: MyString
+  amount_cents: 1
+  string_charge_status: MyString
+  initiation: MyString
+  catpured_at: 2014-07-16 16:26:20

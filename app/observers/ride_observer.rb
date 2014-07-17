@@ -76,13 +76,21 @@ class RideObserver < ActiveRecord::Observer
 	def ride_completed(ride)
 		Rails.logger.debug('RideObserver::ride_completed')
 		ride.riders.each do |rider|
+
+			payment = ride.payments.where( :rider_id => rider.id ).first
+
 			rider.devices.each do |d|
 				if(d.push_token.nil?)
 					next	
 				end
 				n = PushHelper::push_message(d)
-				n.alert = "Receipt For Your Ride"
-				n.data = { type: :ride_receipt, ride_id: ride.id }
+				if payment.stripe_charge_status == 'success'
+					n.alert = "Receipt For Your Ride"
+					n.data = { type: :ride_receipt, ride_id: ride.id, amount: payment.amount_cents }
+				else
+					n.alert = "Problem Processing Payment For Your Ride"
+					n.data = { type: :ride_payment_problem, ride_id: ride.id, amount: payment.amount_cents }
+				end
 				n.save!
 			end
 		end

@@ -16,6 +16,7 @@ module PushHelper
 		n.content_available = true
 		n
 	end
+
 end
 
 

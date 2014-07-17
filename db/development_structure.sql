@@ -248,6 +248,46 @@ ALTER SEQUENCE offered_rides_id_seq OWNED BY offered_rides.id;
 
 
 --
+-- Name: payments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE payments (
+    id integer NOT NULL,
+    fare_id integer,
+    rider_id integer,
+    driver_id integer,
+    stripe_customer_id character varying(255),
+    stripe_charge_id character varying(255),
+    amount_cents integer,
+    stripe_charge_status character varying(255),
+    initiation character varying(255),
+    captured_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    driver_earnings_cents integer
+);
+
+
+--
+-- Name: payments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE payments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE payments_id_seq OWNED BY payments.id;
+
+
+--
 -- Name: ride_requests; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -624,6 +664,13 @@ ALTER TABLE ONLY offered_rides ALTER COLUMN id SET DEFAULT nextval('offered_ride
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY ride_requests ALTER COLUMN id SET DEFAULT nextval('ride_requests_id_seq'::regclass);
 
 
@@ -722,6 +769,14 @@ ALTER TABLE ONLY driver_roles
 
 ALTER TABLE ONLY offered_rides
     ADD CONSTRAINT offered_rides_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY payments
+    ADD CONSTRAINT payments_pkey PRIMARY KEY (id);
 
 
 --

@@ -6,6 +6,7 @@ class Ride < ActiveRecord::Base
 	has_many :ride_requests, inverse_of: :ride
 	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
 	belongs_to :car, inverse_of: :rides
+	has_many :payments, :foreign_key => :fare_id
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
@@ -224,15 +225,23 @@ class Ride < ActiveRecord::Base
 
 	def cost
 		unless self.started.nil?
-			cost = 2.5 # base
-			unless self.started.nil?
+			cost = 250 # base
+			unless self.finished.nil?
+				minutes = (Time.parse(self.finished.to_s) - Time.parse(self.started.to_s)) / 60
+			else 
 				minutes = (Time.now - Time.parse(self.started.to_s)) / 60
-				cost = cost + 0.25 * minutes
 			end
+			minutes = minutes.to_i
+			cost = cost + 25 * minutes
 			#miles
 			cost
 		end
+	end
 
+	def cost_per_rider
+		unless self.cost.nil?
+			self.cost / self.riders.count
+		end
 	end
 
 	private
