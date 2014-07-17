@@ -46,14 +46,20 @@ class RidesAPI< Grape::API
 				if current_user.demo
 					# demoing subsystem
 					demo_ride_requests = RideRequest.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } ) 
-					if demo_ride_requests.count > 2
+
+					threshold = Rails.application.config.voco_demo_commuter_assembly_trigger_threshold 
+					if threshold.nil?
+						threshold = 3
+					end
+					Rails.logger.debug threshold
+					if demo_ride_requests.count > threshold 
 						Rails.logger.debug 'scheduling DEMO commuter ride'
 						ActiveRecord::Base.transaction do
 							# need to DRY this with the commuter ride requests controller
 							ride = Ride.assemble_ride_from_requests demo_ride_requests		
 							ride.meeting_point_place_name = RidesHelper::reverse_geocode ride.meeting_point
 							ride.drop_off_point_place_name = RidesHelper::reverse_geocode  ride.drop_off_point
-							drivers = User.demo_drivers
+							drivers = Driver.demo_drivers
 							ride.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
 						end
 					end
@@ -294,35 +300,100 @@ class RidesAPI< Grape::API
 				earnings = ride.cost * 0.8
 				# process the payment
 				# TODO Refactor into delayed job
-				# and move this code to a model layer
+				# and move this code to a model layer, and separate into better units
 				ride.riders.each do |rider|
 					begin
+						request = rider.ride_requests.where( :ride_id => ride.id ).first
+
 						payment = Payment.new
 						payment.driver = ride.driver
 						payment.fare = ride
 						payment.rider = rider
-						payment.ride = rider.ride_requests.where( :ride_id => ride.id ).first 
-						payment.amount_cents = ride.cost / ride.riders.count	
+						payment.ride = request
+						payment.amount_cents = ride.cost_per_rider
 						payment.driver_earnings_cents = earnings / ride.riders.count
 						payment.stripe_customer_id = rider.stripe_customer_id
-						payment.initiation = 'On Demand Payment'
 
-						customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
-						charge = Stripe::Charge.create(
-							:amount => payment.amount_cents,
-							:currency => "usd",
-							:customer => customer.id,
-							:description => "Charge for Voco Ride: " + ride.meeting_point_place_name + " to " + ride.drop_off_point_place_name
-						)
-						if charge.paid == true
-							payment.stripe_charge_status = 'success'
-							payment.captured_at = DateTime.now
-						else
-							payment.stripe_charge_status = 'failed'
+						case request.request_type
+						when 'on_demand'
+							payment.initiation = 'On Demand Payment'
+
+							customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
+							charge = Stripe::Charge.create(
+								:amount => payment.amount_cents,
+								:currency => "usd",
+								:customer => customer.id,
+								:description => "Charge for Voco Ride: " + ride.meeting_point_place_name + " to " + ride.drop_off_point_place_name
+							)
+							if charge.paid == true
+								payment.stripe_charge_status = 'Success'
+								payment.captured_at = DateTime.now
+								payment.paid = true
+							else
+								payment.stripe_charge_status = 'Failed'
+							end
+
+						when 'commuter'
+
+							payment.initiation = 'Commuter Card'
+
+							# refill commuter card if necessary
+							tries = 0
+							begin
+								if rider.commuter_balance_cents < ride.cost_per_rider 
+									# fill the commuter card
+									if rider.commuter_refill_amount_cents <= 0
+										raise "Commuter refill not set"
+									end
+
+									customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
+									charge = Stripe::Charge.create(
+										:amount => rider.commuter_refill_amount_cents,
+										:currency => "usd",
+										:customer => customer.id,
+										:description => "Refill for Voco Commuter Card"
+									)
+									if charge.paid == true
+										refill_payment = Payment.new
+										refill_payment.initiation = 'Commuter Refill'
+										refill_payment.rider = rider
+										refill_payment.stripe_charge_status = 'Success'
+										refill_payment.captured_at = DateTime.now
+										refill_payment.stripe_customer_id = rider.stripe_customer_id
+										refill_payment.amount_cents = rider.commuter_refill_amount_cents
+										refill_payment.save
+
+										rider.commuter_balance_cents += rider.commuter_refill_amount_cents
+										rider.save
+										raise "retry"
+									else
+										raise "Failed to refill commuter card"
+									end
+								end
+							rescue
+								if $!.to_s == 'retry'
+									Rails.logger.debug 'rescuing for retry'
+									tries += 1
+									if tries > 2 
+										raise "Commuter card refill did not reach required amount after 2 iterations"
+									end
+									retry
+								else
+									raise $!
+								end
+							end
+
+							# pay via commuter card
+							payment.stripe_charge_status = 'Paid By Commuter Card'
+							payment.paid = true
+							rider.commuter_balance_cents -= payment.amount_cents
+							rider.save
+							
 						end
-
+					
 					rescue
-						payment.stripe_charge_status = 'error ' + $!.message
+						payment.stripe_charge_status = 'Error: ' + $!.message
+						Rails.logger.debug $!.message
 
 					ensure
 						payment.save

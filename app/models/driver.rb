@@ -8,6 +8,13 @@ class Driver < User
 	has_many :payouts
 	has_many :earnings, :class_name => 'Payment'
 
+	default_scope { joins(:driver_role).readonly(false) }
+	scope :drivers, -> { joins(:driver_role).readonly(false) }
+	scope :available_drivers, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
+	scope :on_duty, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
+	scope :demo_drivers, ->{ drivers.where(:demo => true) }
+
+
 	def update_location!(longitude, latitude)
 		self.location = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
 		save

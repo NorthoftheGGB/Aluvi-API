@@ -84,7 +84,7 @@ class RideObserver < ActiveRecord::Observer
 					next	
 				end
 				n = PushHelper::push_message(d)
-				if payment.stripe_charge_status == 'success'
+				if payment.paid == true
 					n.alert = "Receipt For Your Ride"
 					n.data = { type: :ride_receipt, ride_id: ride.id, amount: payment.amount_cents }
 				else

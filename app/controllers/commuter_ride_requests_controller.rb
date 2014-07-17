@@ -2,7 +2,7 @@ class CommuterRideRequestsController < ApplicationController
   # GET commuter_ride_requests
   # GET commuter_ride_requests.json
   def index
-    @ride_requests = CommuterRideRequest.order(desired_arrival: :desc).all
+    @ride_requests = CommuterRideRequest.order("created_at DESC").all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -94,7 +94,7 @@ class CommuterRideRequestsController < ApplicationController
 			@ride = Ride.assemble_ride_from_requests request_ids
 			@ride.meeting_point_place_name = RidesHelper::reverse_geocode	@ride.meeting_point
 			@ride.drop_off_point_place_name = RidesHelper::reverse_geocode	@ride.drop_off_point
-			drivers = User.available_drivers
+			drivers = Driver.available_drivers
 			driver = drivers.first
 			@ride.schedule!( nil, DateTime.now, driver, driver.cars.first ) 
 		end

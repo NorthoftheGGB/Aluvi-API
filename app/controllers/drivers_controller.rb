@@ -73,6 +73,9 @@ class DriversController < ApplicationController
     @driver = Driver.find(params[:id])
 		Rails.logger.debug params
 
+		if params[:driver][:car] == ""
+			params[:driver].delete('car')
+		end
 		driver_role_attachments = [ :drivers_license, :vehicle_registration, :proof_of_insurance, :car_photo, :national_database_check ]
 		driver_role_params = Hash.new
 		driver_role_attachments.each do |attachment|
