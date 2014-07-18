@@ -1,4 +1,4 @@
-class AddTestAppToRpush < ActiveRecord::Migration
+class AddTestAppIdToRpush < ActiveRecord::Migration
 	def up
 		app = Rpush::Apns::App.new
 		app.name = "com.vocotransportation.testing"
