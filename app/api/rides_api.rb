@@ -20,6 +20,11 @@ class RidesAPI< Grape::API
 			authenticate!
 			case params[:type]
 			when 'on_demand'
+					stale_requests = current_user.ride_requests.where( state: :requested).all
+					stale_requests.each do |request|
+						request.cancel!
+					end
+
 					ride_request = OnDemandRideRequest.create!(params[:type],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
