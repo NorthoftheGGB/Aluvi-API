@@ -631,7 +631,8 @@ CREATE TABLE users (
     webtoken character varying(255),
     demo boolean,
     current_fare_id integer,
-    car_id integer
+    car_id integer,
+    commuter_refill_enabled boolean
 );
 
 
