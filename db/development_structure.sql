@@ -632,7 +632,8 @@ CREATE TABLE users (
     demo boolean,
     current_fare_id integer,
     car_id integer,
-    commuter_refill_enabled boolean
+    commuter_refill_enabled boolean,
+    bank_account_name character varying(255)
 );
 
 

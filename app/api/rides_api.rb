@@ -140,6 +140,13 @@ class RidesAPI< Grape::API
 			rider.payments
 		end
 
+		desc "Receipt for Drivers"
+		get :earnings do
+			authenticate!
+			driver = Driver.find(current_user.id)
+			driver.earnings
+		end
+
 		desc "Get specific ride details"
 		get ':id' do
 			authenticate!

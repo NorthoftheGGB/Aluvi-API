@@ -60,6 +60,7 @@ class DriversAPI < Grape::API
 					raise "Stripe recipient not created"
 				end
 				driver.stripe_recipient_id = recipient.id
+				driver.bank_account_name = recipient.active_account.bank_name
 
 				driver.save
 				driver.driver_role.register!
