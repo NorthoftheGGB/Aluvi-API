@@ -1,7 +1,7 @@
 class AddTestAppToRpush < ActiveRecord::Migration
 	def up
 		app = Rpush::Apns::App.new
-		app.name = "com.vocotransporation.testing"
+		app.name = "com.vocotransportation.testing"
 		app.certificate = File.read("testing_push_certificate.pem")
 		app.environment = "sandbox" # APNs environment.
 		app.password = ""
