@@ -4,6 +4,7 @@ require 'gmail_sender'
 class UsersAPI < Grape::API
 	version 'v1', using: :header, vendor: 'voco'
 	format :json
+	formatter :json, Grape::Formatter::Jbuilder
 
 	resources :users do
 
@@ -147,7 +148,7 @@ class UsersAPI < Grape::API
 		params do
 			optional :default_card_token, type: String
 		end
-		post "profile" do
+		post "profile", jbuilder: "profile" do
 			authenticate!
 			unless params[:default_card_token].nil?
 				# TODO handle in background, delayed job
@@ -187,30 +188,27 @@ class UsersAPI < Grape::API
 				end
 			end
 			current_user.save
-			current_user
+			@user = current_user
 
 		end
 
 		desc "Get Profile"
-		get "profile" do
+		get "profile", jbuilder: "profile" do
 			authenticate!
-			current_user
+			@user = current_user
 		end
 
 		desc "Fill Commuter Pass"
 		params do
 			requires :amount_cents 
 		end
-		post "fill_commuter_pass" do
+		post "fill_commuter_pass", jbuilder: "profile" do
 			authenticate!
 
 			begin
+				Rails.logger.debug "add funding to commputer pass " + params[:amount_cents]
 				paid = PaymentsHelper.fill_commuter_pass( current_user, params[:amount_cents].to_i )
-				if paid == true
-					current_user.commuter_balance_cents += params[:amount_cents].to_i
-					current_user.save
-					current_user
-				end
+				@user = current_user
 			rescue
 	        Rails.logger.debug $!.message
 					error! 'Problem charging this card', 406
