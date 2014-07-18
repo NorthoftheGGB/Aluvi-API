@@ -1,10 +1,10 @@
 module PaymentsHelper
 
-	def autofill_commuter_pass( user )
+	def self.autofill_commuter_pass( user )
 		self.fill_commuter_pass( user, user.commuter_refill_amount_cents )
 	end
 
-	def fill_commuter_pass ( user, amount_cents )
+	def self.fill_commuter_pass ( user, amount_cents )
 
 		customer = Stripe::Customer.retrieve(user.stripe_customer_id)
 		charge = Stripe::Charge.create(
@@ -16,7 +16,7 @@ module PaymentsHelper
 
 		refill_payment = Payment.new
 		refill_payment.initiation = 'Commuter Refill'
-		refill_payment.user = user
+		refill_payment.rider = user
 		refill_payment.stripe_charge_status = 'Success'
 		refill_payment.captured_at = DateTime.now
 		refill_payment.stripe_customer_id = user.stripe_customer_id

@@ -178,8 +178,16 @@ class UsersAPI < Grape::API
 				card.save
 
 				ok
-
 			end
+
+			fields = ['commuter_refill_amount_cents', 'commuter_refill_enabled']
+			fields.each do |field|
+				unless params[field].nil?
+					current_user.send("#{field}=", params[field])
+				end
+			end
+			current_user.save
+			current_user
 
 		end
 
@@ -197,13 +205,14 @@ class UsersAPI < Grape::API
 			authenticate!
 
 			begin
-				paid = PaymentsHelper.fill_commuter_pass( current_user, params[:amount_cents] )
+				paid = PaymentsHelper.fill_commuter_pass( current_user, params[:amount_cents].to_i )
 				if paid == true
-					current_user.commuter_balance_cents += params[:amount_cents]
+					current_user.commuter_balance_cents += params[:amount_cents].to_i
 					current_user.save
-					ok
+					current_user
 				end
 			rescue
+	        Rails.logger.debug $!.message
 					error! 'Problem charging this card', 406
 			end
 		end
