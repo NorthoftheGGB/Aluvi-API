@@ -94,6 +94,7 @@ class CommuterRideRequestsController < ApplicationController
 			@ride = Ride.assemble_ride_from_requests request_ids
 			@ride.meeting_point_place_name = RidesHelper::reverse_geocode	@ride.meeting_point
 			@ride.drop_off_point_place_name = RidesHelper::reverse_geocode	@ride.drop_off_point
+			raise "No on duty, available riders!"
 			drivers = Driver.available_drivers
 			driver = drivers.first
 			@ride.schedule!( nil, DateTime.now, driver, driver.cars.first ) 
