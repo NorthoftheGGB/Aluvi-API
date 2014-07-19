@@ -139,6 +139,8 @@ GEM
       money (~> 5.1.0)
       railties (>= 3.0)
     multi_json (1.10.1)
+    multi_logger (0.1.0)
+      railties
     multi_xml (0.5.5)
     net-http-persistent (2.9.4)
     nokogiri (1.6.2.1)
@@ -271,6 +273,7 @@ DEPENDENCIES
   mapquest
   monetize
   money-rails
+  multi_logger
   paperclip (~> 4.1)
   pg
   rails (= 3.2.13)

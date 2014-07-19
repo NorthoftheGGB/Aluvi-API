@@ -38,4 +38,7 @@ class OfferedRide < ActiveRecord::Base
 
 	end
 
+	def to_s
+		"offer { " + self.id.to_s + " } " 
+	end
 end

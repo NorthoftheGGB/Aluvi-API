@@ -48,6 +48,7 @@ class RideObserver < ActiveRecord::Observer
 	end
 
 	def ride_cancelled_by_rider(ride)
+		Rails.logger.stack.debug 'ride_cancelled_by_rider ' + ride.to_s
 		ride.driver.devices.each do |d|
 				if(d.push_token.nil?)
 					next	
@@ -56,6 +57,7 @@ class RideObserver < ActiveRecord::Observer
 				n.alert = "Ride Cancelled!"
 				n.data = { type: :ride_cancelled_by_rider, ride_id: ride.id }
 				n.save!
+				Rails.logger.stack.debug "push sent " + n.data
 		end
 	end
 
@@ -98,6 +100,7 @@ class RideObserver < ActiveRecord::Observer
 
 	def send_offer_closed_messages ride 	
 		ride.offers.offer_closed_delivered.each do |offer|
+			Rails.logger.stack.debug 'ride_offer_closed ' + ride.to_s + offer.to_s
 			driver = offer.driver	
 			driver.devices.each do |d|
 				if(d.push_token.nil?)

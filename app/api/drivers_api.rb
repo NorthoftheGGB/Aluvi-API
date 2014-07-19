@@ -77,7 +77,9 @@ class DriversAPI < Grape::API
 		end
 		post "clock_on" do
 			authenticate!
-			current_user.driver_role.clock_on!
+			unless current_user.driver_role.state == 'on_duty'
+				current_user.driver_role.clock_on!
+			end
 			ok
 		end
 
@@ -86,7 +88,9 @@ class DriversAPI < Grape::API
 		end
 		post "clock_off" do
 			authenticate!
-			current_user.driver_role.clock_off!
+			if current_user.driver_role.state == 'on_duty'
+				current_user.driver_role.clock_off!
+			end
 			ok
 		end
 

@@ -244,6 +244,10 @@ class Ride < ActiveRecord::Base
 		end
 	end
 
+	def to_s
+		"ride: { " + self.id.to_s + " } " 
+	end
+
 	private
 	def ride_was_scheduled 
 		update_ride_requests_to_scheduled
@@ -300,5 +304,5 @@ class Ride < ActiveRecord::Base
 		end
 	end
 
-	  
+  
 end

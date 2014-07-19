@@ -79,5 +79,5 @@ group :test do
 	gem 'rspec-rails', '~> 3.0.0'
 end
 
-# To use debugger
-# gem 'debugger'
+# QA
+gem 'multi_logger'
