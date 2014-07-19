@@ -210,7 +210,7 @@ class UsersAPI < Grape::API
 				paid = PaymentsHelper.fill_commuter_pass( current_user, params[:amount_cents].to_i )
 				@user = current_user
 			rescue
-	        Rails.logger.debug $!.message
+	        Rails.logger.error $!.message
 					error! 'Problem charging this card', 406
 			end
 		end
