@@ -67,6 +67,12 @@ VocoApi::Application.configure do
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 	
 
+	config.paperclip_defaults = {
+		:s3_credentials => {
+			:bucket => 'alpha'
+		}
+	}
+
 	# production is the current 'staging' which is actually 'testing' for the mobile app
 	config.mobile_app_identifier = 'com.vocotransportation.testing'
 	
