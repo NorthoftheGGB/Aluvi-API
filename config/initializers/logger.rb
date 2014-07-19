@@ -1,1 +1,1 @@
-MultiLogger.add_logger('stack')
+#MultiLogger.add_logger('stack')
