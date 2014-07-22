@@ -43,7 +43,7 @@ VocoApi::Application.configure do
 		}
 	}
 
-	config.mobile_app_identifier = 'com.vocotransportation.alpha'
+	config.mobile_app_identifier = 'com.vocotransportation.dev'
 
 	config.voco_demo_commuter_assembly_trigger_threshold = 0
 
