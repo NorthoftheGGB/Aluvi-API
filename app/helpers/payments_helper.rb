@@ -23,13 +23,12 @@ module PaymentsHelper
 
 			customer = Stripe::Customer.retrieve(user.stripe_customer_id)
 			charge = Stripe::Charge.create(
-				:amount => user.commuter_refill_amount_cents,
+				:amount => amount_cents,
 				:currency => "usd",
 				:customer => customer.id,
 				:description => "Refill for Voco Commuter Card"
 			)
 
-			Rails.logger.debug "added  " + amount_cents.to_s
 			true
 		end
 
