@@ -5,7 +5,7 @@
     <th>Company</th>
     <th>First name</th>
     <th>Last name</th>
-    <th>Driver State</th>
+    <th>Phone Number</th>
     <th>Rider State</th>
     <th>Commuter balance cents</th>
     <th>Commuter refill amount cents</th>
@@ -20,7 +20,7 @@
     <td><%= rider.company_id %></td>
     <td><%= rider.first_name %></td>
     <td><%= rider.last_name %></td>
-    <td><%= rider.driver_role.nil? ? "" : rider.driver_role.state %></td>
+    <td><%= rider.phone %></td>
     <td><%= rider.rider_role.nil? ? "" : rider.rider_role.state %></td>
     <td><%= rider.commuter_balance_cents %></td>
     <td><%= rider.commuter_refill_amount_cents %></td>
