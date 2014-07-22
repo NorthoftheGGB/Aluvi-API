@@ -66,15 +66,15 @@ VocoApi::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 	
-
 	config.paperclip_defaults = {
 		:s3_credentials => {
-			:bucket => 'alpha'
+			:bucket => ENV['S3_BUCKET'] #'alpha'
 		}
 	}
 
 	# production is the current 'staging' which is actually 'testing' for the mobile app
-	config.mobile_app_identifier = 'com.vocotransportation.alpha'
+	# config.mobile_app_identifier = 'com.vocotransportation.alpha'
+	config.mobile_app_identifier = ENV['MOBILE_APP_IDENTIFIER']
 	
 	config.voco_demo_commuter_assembly_trigger_threshold = 0
 
