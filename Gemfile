@@ -81,3 +81,7 @@ end
 
 # QA
 gem 'multi_logger'
+
+# Deploymnet
+gem 'dalli'
+gem 'memcachier'
