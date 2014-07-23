@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
 	belongs_to :car
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
-	has_many :offered_rides, :foreign_key => :driver_id  
+	has_many :offers, :foreign_key => :driver_id
 	has_one :driver_role
 	has_one :rider_role
 	has_many :cards
@@ -102,16 +102,16 @@ class User < ActiveRecord::Base
 	# driver model
 	#
 	def offer_ride( ride )
-		offered_ride = OfferedRide.new
+		offered_ride = Offer.new
 		offered_ride.fare = ride
 		offered_ride.fare.save
-		self.offered_rides << offered_ride
+		self.offers << offered_ride
 		save
 		offered_ride
 	end
 
 	def offer_for_ride( ride )
-		offered_ride = OfferedRide.where(:driver_id => id).where(:ride_id => ride.id).first
+		offered_ride = Offer.where(:driver_id => id).where(:ride_id => ride.id).first
 	end
 
 	def declined_ride( ride )

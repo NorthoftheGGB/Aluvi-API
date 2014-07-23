@@ -2,54 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82638c06-9f03-4cd7-a45b-dc466e5f2b2d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/functional/fares_controller_test.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/unit/helpers/fares_helper_test.rb" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test/functional/rides_controller_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test/unit/helpers/rides_helper_test.rb" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/assets/javascripts/rides.js.coffee" afterPath="$PROJECT_DIR$/app/assets/javascripts/fares.js.coffee" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/assets/stylesheets/rides.css.scss" afterPath="$PROJECT_DIR$/app/assets/stylesheets/fares.css.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/controllers/rides_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/fares_controller.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/helpers/rides_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/fares_helper.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/models/ride.rb" afterPath="$PROJECT_DIR$/app/models/fare.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/rides/_form.html.erb" afterPath="$PROJECT_DIR$/app/views/fares/_form.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/rides/edit.html.erb" afterPath="$PROJECT_DIR$/app/views/fares/edit.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/rides/index.html.erb" afterPath="$PROJECT_DIR$/app/views/fares/index.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/rides/new.html.erb" afterPath="$PROJECT_DIR$/app/views/fares/new.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/rides/show.html.erb" afterPath="$PROJECT_DIR$/app/views/fares/show.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/test/unit/ride_test.rb" afterPath="$PROJECT_DIR$/test/unit/fare_test.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/migrate/20140523011347_create_ride_requests.rb" afterPath="$PROJECT_DIR$/db/migrate/20140523011347_create_ride_requests.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/migrate/20140523011350_create_rider_rides.rb" afterPath="$PROJECT_DIR$/db/migrate/20140523011350_create_rider_rides.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/commuter_ride_requests/_form.html.erb" afterPath="$PROJECT_DIR$/app/views/commuter_ride_requests/_form.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/ride_requests/_form.html.erb" afterPath="$PROJECT_DIR$/app/views/ride_requests/_form.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/rider_rides/_form.html.erb" afterPath="$PROJECT_DIR$/app/views/rider_rides/_form.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/car.rb" afterPath="$PROJECT_DIR$/app/models/car.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/commuter_ride_requests_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/commuter_ride_requests_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/driver.rb" afterPath="$PROJECT_DIR$/app/models/driver.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/drivers_api.rb" afterPath="$PROJECT_DIR$/app/api/drivers_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/scheduler/index.erb" afterPath="$PROJECT_DIR$/app/views/scheduler/index.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/commuter_ride_requests/index.html.erb" afterPath="$PROJECT_DIR$/app/views/commuter_ride_requests/index.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/rider_rides/index.html.erb" afterPath="$PROJECT_DIR$/app/views/rider_rides/index.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/offer.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/offer.jbuilder" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/offered_ride.rb" afterPath="$PROJECT_DIR$/app/models/offered_ride.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/payment.rb" afterPath="$PROJECT_DIR$/app/models/payment.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/requests.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/requests.jbuilder" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/ride.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/ride.jbuilder" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/ride.rb" afterPath="$PROJECT_DIR$/test/factories/ride.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ride_request.rb" afterPath="$PROJECT_DIR$/app/models/ride_request.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/observers/ride_request_observer.rb" afterPath="$PROJECT_DIR$/app/observers/ride_request_observer.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/controllers/offers_controller.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/helpers/offers_helper.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/unit/helpers/offers_helper_test.rb" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/controllers/offered_rides_controller.rb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/helpers/offered_rides_helper.rb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test/unit/helpers/offered_rides_helper_test.rb" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/assets/javascripts/offered_rides.js.coffee" afterPath="$PROJECT_DIR$/app/assets/javascripts/offers.js.coffee" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/assets/stylesheets/offered_rides.css.scss" afterPath="$PROJECT_DIR$/app/assets/stylesheets/offers.css.scss" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/models/offered_ride.rb" afterPath="$PROJECT_DIR$/app/models/offer.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/offered_rides/_form.html.erb" afterPath="$PROJECT_DIR$/app/views/offers/_form.html.erb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/offered_rides/edit.html.erb" afterPath="$PROJECT_DIR$/app/views/offers/edit.html.erb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/offered_rides/index.html.erb" afterPath="$PROJECT_DIR$/app/views/offers/index.html.erb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/offered_rides/new.html.erb" afterPath="$PROJECT_DIR$/app/views/offers/new.html.erb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/offered_rides/show.html.erb" afterPath="$PROJECT_DIR$/app/views/offers/show.html.erb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/test/functional/offered_rides_controller_test.rb" afterPath="$PROJECT_DIR$/test/functional/offers_controller_test.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/test/unit/offered_ride_test.rb" afterPath="$PROJECT_DIR$/test/unit/offer_test.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/fare.rb" afterPath="$PROJECT_DIR$/app/models/fare.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/unit/ride_request_test.rb" afterPath="$PROJECT_DIR$/test/unit/ride_request_test.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/rider_ride.rb" afterPath="$PROJECT_DIR$/app/models/rider_ride.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/rides.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/rides.jbuilder" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/rides_api.rb" afterPath="$PROJECT_DIR$/app/api/rides_api.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/scheduler_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/scheduler_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/commuter_ride_requests/show.html.erb" afterPath="$PROJECT_DIR$/app/views/commuter_ride_requests/show.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/ride_requests/show.html.erb" afterPath="$PROJECT_DIR$/app/views/ride_requests/show.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/rider_rides/show.html.erb" afterPath="$PROJECT_DIR$/app/views/rider_rides/show.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/riders/show.html.erb" afterPath="$PROJECT_DIR$/app/views/riders/show.html.erb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user.rb" afterPath="$PROJECT_DIR$/app/models/user.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/web_api.rb" afterPath="$PROJECT_DIR$/app/api/web_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/web_rides.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/web_rides.jbuilder" />
     </list>
     <ignored path="voco-api.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -72,11 +46,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="fare.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="fare.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/fare.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4710">
               <caret line="0" column="8" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="10" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="offer.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/offer.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750">
+              <caret line="0" column="10" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="environment.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/environment.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.09771987" vertical-offset="0" max-vertical-offset="614">
+              <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -99,11 +93,12 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/app/models/fare.rb" />
+        <option value="$PROJECT_DIR$/app/models/offer.rb" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="399" />
+    <option name="x" value="398" />
     <option name="y" value="24" />
     <option name="width" value="1400" />
     <option name="height" value="1000" />
@@ -285,7 +280,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="399" y="24" width="1400" height="1000" extended-state="0" />
+    <frame x="398" y="24" width="1400" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -298,7 +293,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3291536" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3291536" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3291536" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -341,6 +336,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4710">
           <caret line="0" column="8" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/offer.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750">
+          <caret line="0" column="10" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/environment.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.09771987" vertical-offset="0" max-vertical-offset="614">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>

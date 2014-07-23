@@ -4,7 +4,7 @@ class Fare < ActiveRecord::Base
 	has_many :riders, through: :rider_rides
 	belongs_to :driver, :class_name => 'Driver', inverse_of: :driver_rides
 	has_many :ride_requests, inverse_of: :Fare
-	has_many :offers, :class_name => 'OfferedRide', inverse_of: :Fare
+	has_many :offers, :class_name => 'Offer', inverse_of: :Fare
 	belongs_to :car, inverse_of: :Fare
 	has_many :payments, :foreign_key => :fare_id
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state

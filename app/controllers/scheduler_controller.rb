@@ -54,7 +54,7 @@ class SchedulerController < ApplicationController
 		# how important is this?
 		# it should probably be here
 		notified_drivers.each do |d|
-			d.offered_ride ride
+			d.offer ride
 		end
 
 		render text: 'done'

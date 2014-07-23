@@ -110,8 +110,8 @@ class RidesAPI< Grape::API
 		desc "Update list of offered rides"
 		get 'offers', jbuilder: 'offer' do
 			authenticate!
-			@offers = current_user.offered_rides.open_offers
-			current_user.offered_rides.undelivered_offers.each do |offer|
+			@offers = current_user.offers.open_offers
+			current_user.offers.undelivered_offers.each do |offer|
 				offer.offer_delivered!
 			end
 			@offers

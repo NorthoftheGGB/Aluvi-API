@@ -32,7 +32,7 @@ class RideRequestTest < ActiveSupport::TestCase
 
 		ride.accepted!(driver)
 		
-		offer = driver.offered_rides.where(:ride_id => ride.id).first
+		offer = driver.offers.where(:ride_id => ride.id).first
 		assert_not_nil(offer)
 
 		offer.accepted!
@@ -56,9 +56,9 @@ class RideRequestTest < ActiveSupport::TestCase
 		end
 
 		driver = drivers[0]
-		offer = driver.offered_rides.where(:ride_id => ride.id).first
+		offer = driver.offers.where(:ride_id => ride.id).first
 		offer.declined!
-		offer2 = drivers[1].offered_rides.where(:ride_id => ride.id).first
+		offer2 = drivers[1].offers.where(:ride_id => ride.id).first
 
 		assert_equal("declined", offer.state)
 		assert_equal("offered", offer2.state)

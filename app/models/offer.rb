@@ -1,4 +1,4 @@
-class OfferedRide < ActiveRecord::Base
+class Offer < ActiveRecord::Base
 	belongs_to :driver, :class_name => 'User', :foreign_key => 'driver_id'
 	belongs_to :fare, :class_name => 'Fare', :foreign_key => 'ride_id'
   attr_accessible :driver_id, :ride_id
