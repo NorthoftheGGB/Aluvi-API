@@ -70,18 +70,18 @@ class WebAPI < Grape::API
 		get "trips", jbuilder: 'web_rides' do
 			authenticate!
 			if( params[:role] == :rider )
-				@rides = current_user.rides
+				@fares = current_user.fares
 			elsif ( params[:role] == :driver )
-				@rides = current_user.fares
+				@fares = current_user.fares
 			elsif ( params[:role] == :admin )
 
-				@rides = Ride.order('rides.id')
+				@fares = Fare.order('rides.id')
 				if params['rider_id']
-					@rides = Ride.includes(:riders).where( :users => { id: params['rider_id'] } )
+					@fares = Fare.includes(:riders).where( :users => { id: params['rider_id'] } )
 				end
 
 				if params['driver_id']
-					@rides = Ride.includes(:driver).where( :users => { id: params['driver_id'] } )
+					@fares = Fare.includes(:driver).where( :users => { id: params['driver_id'] } )
 				end
 
 			else
@@ -89,19 +89,19 @@ class WebAPI < Grape::API
 			end
 
 			if params['begin_date']
-				@rides.where( "started >", params['begin_date'])
+				@fares.where( "started >", params['begin_date'])
 			else 
-				@rides.where( "started >", 3.months.ago)
+				@fares.where( "started >", 3.months.ago)
 			end
 
 			if params['end_date']
-				@rides.where( "started <", params['end_date'])
+				@fares.where( "started <", params['end_date'])
 			else 
-				@rides.where( "started >", DateTime.now)
+				@fares.where( "started >", DateTime.now)
 			end
 
 			if params['ride_id']
-				@rides.where( :id => params['ride_id'])
+				@fares.where( :id => params['ride_id'])
 			end
 
 		end

@@ -1,10 +1,10 @@
-<%= form_for(@ride) do |f| %>
-  <% if @ride.errors.any? %>
+<%= form_for(@fare) do |f| %>
+  <% if @fare.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@ride.errors.count, "error") %> prohibited this ride from being saved:</h2>
+      <h2><%= pluralize(@fare.errors.count, "error") %> prohibited this ride from being saved:</h2>
 
       <ul>
-      <% @ride.errors.full_messages.each do |msg| %>
+      <% @fare.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
       </ul>
@@ -13,16 +13,16 @@
 
   <div class="field">
     Driver<br />
-		<% if @ride.driver == nil  %>
+		<% if @fare.driver == nil  %>
 			Schedule driver for this ride: 
 			<%= f.collection_select :driver, User.drivers, :id, :full_name, :include_blank => true %>
 		<% else %>
-			<%= f.label @ride.driver.full_name %>
+			<%= f.label @fare.driver.full_name %>
 		<% end %>
   </div>
   <div class="field">
 		Riders<br />
-		<% @ride.riders.each do |r| %>
+		<% @fare.riders.each do |r| %>
 		<%= r.full_name %>
 		<% end %>
 	</div>
@@ -32,19 +32,19 @@
   </div>
   <div class="field">
     <%= f.label :state %><br />
-		<%= @ride.state %>
+		<%= @fare.state %>
   </div>
   <div class="field">
     <%= f.label :scheduled %><br />
-    <%= @ride.scheduled %>
+    <%= @fare.scheduled %>
   </div>
   <div class="field">
     <%= f.label :started %><br />
-    <%= @ride.started %>
+    <%= @fare.started %>
   </div>
   <div class="field">
     <%= f.label :finished %><br />
-    <%= @ride.finished %>
+    <%= @fare.finished %>
   </div>
   <div class="field">
     <%= f.label :meeting_point_place_name %><br />

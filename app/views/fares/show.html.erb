@@ -2,61 +2,61 @@
 
 <p>
   <b>Driver:</b>
-	<%= @ride.driver != nil ? @ride.driver.full_name : '' %>
+	<%= @fare.driver != nil ? @fare.driver.full_name : '' %>
 </p>
 
 <p>
   <b>Car:</b>
-	<% unless @ride.car.nil? %>
-  <%= link_to @ride.car %>
+	<% unless @fare.car.nil? %>
+  <%= link_to @fare.car %>
 	<% end %>
 </p>
 
 <p>
   <b>State:</b>
-  <%= @ride.state %>
+  <%= @fare.state %>
 </p>
 
 <p>
 	<b>Pickup Time</b>
-	<%= @ride.pickup_time %>
+	<%= @fare.pickup_time %>
 </p>
 
 <p>
   <b>Processed by Scheduler At:</b>
-  <%= @ride.scheduled %>
+  <%= @fare.scheduled %>
 </p>
 
 <p>
   <b>Started At:</b>
-  <%= @ride.started %>
+  <%= @fare.started %>
 </p>
 
 <p>
   <b>Finished At:</b>
-  <%= @ride.finished %>
+  <%= @fare.finished %>
 </p>
 
 <p>
   <b>Meeting point:</b>
-  <%= @ride.meeting_point %>
+  <%= @fare.meeting_point %>
 </p>
 
 <p>
   <b>Meeting point place name:</b>
-  <%= @ride.meeting_point_place_name %>
+  <%= @fare.meeting_point_place_name %>
 </p>
 
 <p>
   <b>Drop Off:</b>
-  <%= @ride.drop_off_point %>
+  <%= @fare.drop_off_point %>
 </p>
 
 <p>
   <b>Drop off place name:</b>
-  <%= @ride.drop_off_point_place_name %>
+  <%= @fare.drop_off_point_place_name %>
 </p>
 
 
-<%= link_to 'Edit', edit_ride_path(@ride) %> |
+<%= link_to 'Edit', edit_ride_path(@fare) %> |
 <%= link_to 'Back', rides_path %>

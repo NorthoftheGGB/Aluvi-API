@@ -1,5 +1,5 @@
 json.array! @requests do |request|
-  json.ride_id request.ride.id
+  json.ride_id request.fare.id
 	json.request_id request.request_id
   json.origin_place_name request.origin_place_name
   json.origin_latitude request.origin.latitude

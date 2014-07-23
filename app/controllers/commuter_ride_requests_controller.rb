@@ -91,20 +91,20 @@ class CommuterRideRequestsController < ApplicationController
 
 		#TODO this logic should be moved to a helper or model
 		ActiveRecord::Base.transaction do
-			@ride = Ride.assemble_ride_from_requests request_ids
-			@ride.meeting_point_place_name = RidesHelper::reverse_geocode	@ride.meeting_point
-			@ride.drop_off_point_place_name = RidesHelper::reverse_geocode	@ride.drop_off_point
+			@fare = Fare.assemble_ride_from_requests request_ids
+			@fare.meeting_point_place_name = FaresHelper::reverse_geocode	@fare.meeting_point
+			@fare.drop_off_point_place_name = FaresHelper::reverse_geocode	@fare.drop_off_point
 			drivers = Driver.available_drivers
 			if drivers.first.nil?
 				raise "No on duty, available drivers!"
 			end
 			driver = drivers.first
-			@ride.schedule!( nil, DateTime.now, driver, driver.cars.first ) 
+			@fare.schedule!( nil, DateTime.now, driver, driver.cars.first )
 		end
 
 		respond_to do |format|
-			format.html { redirect_to @ride, notice: 'Ride was created.' }
-			format.json { render json: @ride }
+			format.html { redirect_to @fare, notice: 'Ride was created.' }
+			format.json { render json: @fare }
 		end
 	end
 end

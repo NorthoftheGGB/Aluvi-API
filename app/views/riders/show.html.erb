@@ -38,7 +38,7 @@
 <%= link_to 'Edit', edit_rider_path(@rider) %> |
 <%= link_to 'Back', riders_path %>
 <br /><br />
-<%= simple_table_for @rider.rides do |t| %>
+<%= simple_table_for @rider.fares do |t| %>
 		<%# t.column :origin_place_name %>
 		<% t.column :meeting_point_place_name %>
 		<% t.column :drop_off_point_place_name %>

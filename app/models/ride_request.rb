@@ -38,12 +38,12 @@ class RideRequest < ActiveRecord::Base
 	def ride_requested
 		if( request_type == TransportType::ON_DEMAND )
 			# go ahead and create the associated ride if it's on demand
-			self.ride = Ride.create( Time.now, origin, origin_place_name, destination, destination_place_name )
-			self.ride.meeting_point = origin
-			self.ride.meeting_point_place_name = origin_place_name
+			self.fare = Fare.create( Time.now, origin, origin_place_name, destination, destination_place_name )
+			self.fare.meeting_point = origin
+			self.fare.meeting_point_place_name = origin_place_name
 			rider = User.find(user_id)
-			self.ride.riders << rider
-			self.ride.save
+			self.fare.riders << rider
+			self.fare.save
 			save
 		elsif( request_type == TransportType::COMMUTER )
 
@@ -53,8 +53,8 @@ class RideRequest < ActiveRecord::Base
 	end
 
 	def request_cancelled
-		if self.ride != nil && self.ride.unscheduled?
-			self.ride.retracted_by_rider! self.user
+		if self.fare != nil && self.fare.unscheduled?
+			self.fare.retracted_by_rider! self.user
 		end
 	end
 

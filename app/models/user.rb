@@ -1,9 +1,9 @@
 class User < ActiveRecord::Base
 	has_many :ride_requests, :foreign_key => :user_id, :inverse_of => :user
 	has_many :rider_rides, :foreign_key => :rider_id
-	has_many :rides, through: :rider_rides
-	has_many :driver_rides, :class_name => 'Ride', :foreign_key => :driver_id
-	has_many :fares, :class_name => 'Ride', :foreign_key => :driver_id
+	has_many :fares, through: :rider_rides
+	has_many :driver_rides, :class_name => 'Fare', :foreign_key => :driver_id
+	has_many :fares, :class_name => 'Fare', :foreign_key => :driver_id
 	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver # Refactor: :associated_cars
 	belongs_to :car
 	has_many :devices
@@ -103,8 +103,8 @@ class User < ActiveRecord::Base
 	#
 	def offer_ride( ride )
 		offered_ride = OfferedRide.new
-		offered_ride.ride = ride
-		offered_ride.ride.save
+		offered_ride.fare = ride
+		offered_ride.fare.save
 		self.offered_rides << offered_ride
 		save
 		offered_ride

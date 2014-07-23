@@ -12,7 +12,7 @@
 <% @rider_rides.each do |rider_ride| %>
   <tr>
     <td><%= rider_ride.user %></td>
-    <td><%= rider_ride.ride %></td>
+    <td><%= rider_ride.fare %></td>
     <td><%= link_to 'Show', rider_ride %></td>
     <td><%= link_to 'Edit', edit_rider_ride_path(rider_ride) %></td>
     <td><%= link_to 'Destroy', rider_ride, method: :delete, data: { confirm: 'Are you sure?' } %></td>

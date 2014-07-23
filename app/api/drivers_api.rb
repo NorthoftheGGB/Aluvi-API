@@ -114,9 +114,9 @@ class DriversAPI < Grape::API
 		desc "Load Ride Details for Driver"
 		get "rides/:id", jbuilder: 'ride' do
 			authenticate!
-			@ride = Ride.find(params[:id])
-			unless @ride.nil?
-				@ride		
+			@fare = Fare.find(params[:id])
+			unless @fare.nil?
+				@fare
 			else
 				not_found
 			end

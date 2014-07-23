@@ -83,7 +83,7 @@
     <td><%= ride_request.origin_place_name %></td>
     <td><%= ride_request.destination_place_name %></td>
     <td><%= ride_request.desired_arrival %></td>
-		<td><%= ride_request.ride.nil? ? '' : ( link_to ride_request.ride.driver.full_name, ride_request.ride ) %></td>
+		<td><%= ride_request.fare.nil? ? '' : ( link_to ride_request.ride.driver.full_name, ride_request.ride ) %></td>
     <td><%= link_to 'Show', ride_request %></td>
     <td><%= link_to 'Edit', edit_ride_request_path(ride_request) %></td>
     <td><%= link_to 'Destroy', ride_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>

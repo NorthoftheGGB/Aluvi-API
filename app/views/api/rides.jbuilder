@@ -1,4 +1,4 @@
-json.array! @rides do |ride|
+json.array! @fares do |ride|
 
 	json.id ride.id
 	json.meeting_point_place_name ride.meeting_point_place_name

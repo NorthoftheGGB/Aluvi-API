@@ -1,5 +1,5 @@
 require 'mapquest'
-module RidesHelper
+module FaresHelper
 
 	def self.reverse_geocode location 
 		mapquest = MapQuest.new "Fmjtd|luur2guan0,b5=o5-9azxgz"	

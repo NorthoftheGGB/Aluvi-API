@@ -1,11 +1,11 @@
-class Ride < ActiveRecord::Base
+class Fare < ActiveRecord::Base
 
 	has_many :rider_rides
 	has_many :riders, through: :rider_rides
 	belongs_to :driver, :class_name => 'Driver', inverse_of: :driver_rides
-	has_many :ride_requests, inverse_of: :ride
-	has_many :offers, :class_name => 'OfferedRide', inverse_of: :ride
-	belongs_to :car, inverse_of: :rides
+	has_many :ride_requests, inverse_of: :Fare
+	has_many :offers, :class_name => 'OfferedRide', inverse_of: :Fare
+	belongs_to :car, inverse_of: :Fare
 	has_many :payments, :foreign_key => :fare_id
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
@@ -116,7 +116,7 @@ class Ride < ActiveRecord::Base
 	end
  
 	def self.create ( pickup_time, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name )
-		ride = Ride.new
+		ride = Fare.new
 		ride.pickup_time = pickup_time
 		ride.meeting_point = meeting_point
 		ride.meeting_point_place_name = meeting_point_place_name

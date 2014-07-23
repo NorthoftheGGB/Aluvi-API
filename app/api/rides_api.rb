@@ -3,7 +3,7 @@ class RidesAPI< Grape::API
 	format :json
 	formatter :json, Grape::Formatter::Jbuilder
 
-	resources :rides do
+	resources :fares do
 
 		desc "Request a ride"
 		params do
@@ -61,9 +61,9 @@ class RidesAPI< Grape::API
 						Rails.logger.debug 'scheduling DEMO commuter ride'
 						ActiveRecord::Base.transaction do
 							# need to DRY this with the commuter ride requests controller
-							ride = Ride.assemble_ride_from_requests demo_ride_requests		
-							ride.meeting_point_place_name = RidesHelper::reverse_geocode ride.meeting_point
-							ride.drop_off_point_place_name = RidesHelper::reverse_geocode  ride.drop_off_point
+							ride = Fare.assemble_ride_from_requests demo_ride_requests
+							ride.meeting_point_place_name = FaresHelper::reverse_geocode ride.meeting_point
+							ride.drop_off_point_place_name = FaresHelper::reverse_geocode  ride.drop_off_point
 							drivers = Driver.demo_drivers
 							ride.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
 						end
@@ -88,9 +88,9 @@ class RidesAPI< Grape::API
 				if(ride_request.user != current_user )
 					raise ApiExceptions::WrongUserForEntityException
 				end
-				if !ride_request.ride.nil? && ride_request.ride.scheduled?
+				if !ride_request.fare.nil? && ride_request.fare.scheduled?
 					#if ride found has yet been delivered to phone, cancel ride instead of request anyway
-					ride_request.ride.rider_cancelled! ride_request.user
+					ride_request.fare.rider_cancelled! ride_request.user
 				else
 					ride_request.cancel!
 				end
@@ -124,7 +124,7 @@ class RidesAPI< Grape::API
 				forbidden
 				return
 			end
-			@rides = current_user.driver_rides.active
+			@fares = current_user.driver_rides.active
 
 		end
 
@@ -155,7 +155,7 @@ class RidesAPI< Grape::API
 		desc "Get specific ride details"
 		get ':id' do
 			authenticate!
-			ride = Ride.find(params[:id])
+			ride = Fare.find(params[:id])
 			unless ride.nil?
 				if current_user.involved_in_ride ride
 					ride		
@@ -174,7 +174,7 @@ class RidesAPI< Grape::API
 		end
 		post :accepted do
 			authenticate!
-			ride = Ride.find(params[:ride_id])
+			ride = Fare.find(params[:ride_id])
 
 			unless(["created", "unscheduled"].include? ride.state)
 				if( ride.driver == current_user )
@@ -198,7 +198,7 @@ class RidesAPI< Grape::API
 		end
 		post :declined do
 			authenticate!
-			ride = Ride.find(params[:ride_id])
+			ride = Fare.find(params[:ride_id])
 			if(ride.state != "created")
 				if( ride.driver == current_user )
 					error! 'Already assigned to this driver', 404, 'X-Error-Detail' => 'Already assigned to this driver'
@@ -220,7 +220,7 @@ class RidesAPI< Grape::API
 		end
 		post :driver_cancelled do
 			authenticate!
-			ride = Ride.find(params[:ride_id])
+			ride = Fare.find(params[:ride_id])
 			begin
 				if ride.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
@@ -246,7 +246,7 @@ class RidesAPI< Grape::API
 		post :rider_cancelled do
 			authenticate!
 			# TODO rider should only be able to cancel their own ride
-			ride = Ride.find(params[:ride_id])
+			ride = Fare.find(params[:ride_id])
 			begin
 
 				if( !ride.riders.any?{ |r| current_user.id = ride.id } )
@@ -276,7 +276,7 @@ class RidesAPI< Grape::API
 			authenticate!
 			# TODO validate driver and or rider is matched to ride
 			begin
-				ride = Ride.find(params[:ride_id])
+				ride = Fare.find(params[:ride_id])
 				Rails.logger.debug ride.driver.id
 				Rails.logger.debug current_user.id
 				if ride.driver.id != current_user.id
@@ -303,12 +303,12 @@ class RidesAPI< Grape::API
 		post :arrived do
 			authenticate!
 			begin
-				ride = Ride.find(params[:ride_id])
+				ride = Fare.find(params[:ride_id])
 				if ride.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
-				ride = Ride.find(params[:ride_id])
+				ride = Fare.find(params[:ride_id])
 				earnings = ride.cost * 0.8
 				# process the payment
 				# TODO Refactor into delayed job

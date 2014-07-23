@@ -1,5 +1,5 @@
 FactoryGirl.define do
-	factory :ride do
+	factory :fare do
 
 		factory :scheduled_ride do
 			state "scheduled"

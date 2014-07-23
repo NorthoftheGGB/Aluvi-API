@@ -19,7 +19,7 @@ class SchedulerController < ApplicationController
 	# get all the drivers who are in the idle state and send them a push message inviting them
 	def offer_to_drivers 
 
-		ride = Ride.find(params[:ride_id])
+		ride = Fare.find(params[:ride_id])
 
 		push_tokens = Array.new
 		notified_drivers = Array.new

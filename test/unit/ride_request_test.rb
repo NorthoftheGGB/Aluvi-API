@@ -10,7 +10,7 @@ class RideRequestTest < ActiveSupport::TestCase
 		ride_request.save
 		ride_request.request!
 
-		ride = ride_request.ride
+		ride = ride_request.fare
 		assert_not_nil(ride, "Ride should not be nil" )
 		assert_not_nil(ride.meeting_point, "Ride should have origin" )
 		assert_not_nil(ride.destination, "Ride should have destination" )
@@ -23,7 +23,7 @@ class RideRequestTest < ActiveSupport::TestCase
 		ride_request = RideRequest.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
 		ride_request.save
 		ride_request.request!
-		ride = ride_request.ride
+		ride = ride_request.fare
 
 		driver = User.available_drivers.first # from the factory calls above
 
@@ -48,7 +48,7 @@ class RideRequestTest < ActiveSupport::TestCase
 		ride_request = RideRequest.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
 		ride_request.save
 		ride_request.request!
-		ride = ride_request.ride
+		ride = ride_request.fare
 
 		drivers = User.available_drivers
 		drivers.each do |d|
