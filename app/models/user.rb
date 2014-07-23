@@ -14,12 +14,6 @@ class User < ActiveRecord::Base
 	has_many :cards
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :bank_account_name, :salt, :token, :phone, :password, :email, :driver_state, :rider_state, :webtoken, :demo
 
-	# TODO finish moving these scopes to driver model
-	scope :drivers, -> { joins(:driver_role).readonly(false) }
-	scope :available_drivers, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
-	scope :on_duty, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
-	scope :demo_drivers, ->{ drivers.where(:demo => true) }
-
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	def self.new_driver

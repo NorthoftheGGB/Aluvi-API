@@ -8,22 +8,34 @@ class RideRequestObserver < ActiveRecord::Observer
 		if(ride_request.request_type == "on_demand")
 			# for now, sidestep the scheduler and just send push notifications out to the drivers
 			# when this is an on demand request, for commuter it MUST go through the scheduler to work at all
-			offer_to_drivers(ride_request.ride)
+			
+			if self.get_potential_drivers(ride_request.ride).count == 0
+				ride_request.user.devices.each do |d|
+					n = PushHelper::push_message(d)	
+					n.alert = "Ride Requested!"
+					n.data = { type: :no_drivers_available, request_id: ride_request.id }
+					n.save!
+				end
+			else
+				offer_to_drivers(ride_request.ride)
+			end
 		end	
 	end
 
-	# this would be a callback from the schdduler somewhere
+	def get_potential_drivers ride
+		if(ride.riders[0].demo)
+			drivers = Driver.demo_drivers
+		else
+			drivers = Driver.available_drivers
+		end
+		drivers
+	end
+
+	# this would be a callback from the scheduler somewhere
 	def offer_to_drivers(ride)
 
-		if(ride.riders[0].demo)
-			drivers = User.demo_drivers
-		else
-			drivers = User.available_drivers
-		end
 
-		if drivers.count == 0
-			# notify rider that there are no drivers available at this time
-		end
+		drivers = self.get_potential_drivers(ride)
 
 		drivers.each do |driver|
 			if ride.riders.include?(driver)
