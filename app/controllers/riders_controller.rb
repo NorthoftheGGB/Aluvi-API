@@ -71,6 +71,7 @@ class RidersController < ApplicationController
   # PUT /riders/1.json
   def update
     @rider = User.find(params[:id])
+		password = params[:user][:password]
     respond_to do |format|
       if @rider.update_attributes(params[:user])
         format.html { redirect_to rider_path(@rider), notice: 'User was successfully updated.' }
