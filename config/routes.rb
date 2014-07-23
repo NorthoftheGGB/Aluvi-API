@@ -3,7 +3,7 @@ VocoApi::Application.routes.draw do
 	mount VocoAPI => '/api/'
 
   resources :offers
-  resources :rider_rides
+  resources :rider_fares
 
   resources :rides
   resources :commuter_ride_requests

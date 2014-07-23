@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RiderRideTest < ActiveSupport::TestCase
+class RiderFareTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
