@@ -7,6 +7,8 @@ class Driver < User
 	belongs_to :current_fare, :class_name => 'Fare', :foreign_key => 'current_fare_id'
 	has_many :payouts
 	has_many :earnings, :class_name => 'Payment'
+	has_many :fares
+	has_many :offers
 
 	default_scope { joins(:driver_role).readonly(false) }
 	scope :drivers, -> { joins(:driver_role).readonly(false) }

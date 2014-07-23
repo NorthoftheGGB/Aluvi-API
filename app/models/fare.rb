@@ -2,7 +2,7 @@ class Fare < ActiveRecord::Base
 
 	has_many :rider_rides
 	has_many :riders, through: :rider_rides
-	belongs_to :driver, :class_name => 'Driver', inverse_of: :driver_rides
+	belongs_to :driver, inverse_of: :fares
 	has_many :ride_requests, inverse_of: :Fare
 	has_many :offers, :class_name => 'Offer', inverse_of: :Fare
 	belongs_to :car, inverse_of: :Fare
