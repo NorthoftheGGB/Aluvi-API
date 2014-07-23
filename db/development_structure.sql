@@ -215,10 +215,51 @@ ALTER SEQUENCE driver_roles_id_seq OWNED BY driver_roles.id;
 
 
 --
--- Name: offered_rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE offered_rides (
+CREATE TABLE fares (
+    id integer NOT NULL,
+    driver_id integer,
+    car_id integer,
+    state character varying(255),
+    scheduled timestamp without time zone,
+    started timestamp without time zone,
+    finished timestamp without time zone,
+    meeting_point geography(Point,4326),
+    meeting_point_place_name character varying(255),
+    drop_off_point geography(Point,4326),
+    drop_off_point_place_name character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    pickup_time timestamp without time zone
+);
+
+
+--
+-- Name: fares_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE fares_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: fares_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE fares_id_seq OWNED BY fares.id;
+
+
+--
+-- Name: offers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE offers (
     id integer NOT NULL,
     driver_id integer,
     ride_id integer,
@@ -229,10 +270,10 @@ CREATE TABLE offered_rides (
 
 
 --
--- Name: offered_rides_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: offers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE offered_rides_id_seq
+CREATE SEQUENCE offers_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -241,10 +282,10 @@ CREATE SEQUENCE offered_rides_id_seq
 
 
 --
--- Name: offered_rides_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: offers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE offered_rides_id_seq OWNED BY offered_rides.id;
+ALTER SEQUENCE offers_id_seq OWNED BY offers.id;
 
 
 --
@@ -324,46 +365,6 @@ ALTER SEQUENCE payouts_id_seq OWNED BY payouts.id;
 
 
 --
--- Name: ride_requests; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE ride_requests (
-    id integer NOT NULL,
-    user_id integer,
-    ride_id integer,
-    state character varying(255),
-    request_type character varying(255),
-    requested_datetime timestamp without time zone,
-    origin geography(Point,4326),
-    origin_place_name character varying(255),
-    destination geography(Point,4326),
-    destination_place_name character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    desired_arrival timestamp without time zone
-);
-
-
---
--- Name: ride_requests_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE ride_requests_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: ride_requests_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE ride_requests_id_seq OWNED BY ride_requests.id;
-
-
---
 -- Name: rider_rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -431,19 +432,18 @@ ALTER SEQUENCE rider_roles_id_seq OWNED BY rider_roles.id;
 
 CREATE TABLE rides (
     id integer NOT NULL,
-    driver_id integer,
-    car_id integer,
+    user_id integer,
+    ride_id integer,
     state character varying(255),
-    scheduled timestamp without time zone,
-    started timestamp without time zone,
-    finished timestamp without time zone,
-    meeting_point geography(Point,4326),
-    meeting_point_place_name character varying(255),
-    drop_off_point geography(Point,4326),
-    drop_off_point_place_name character varying(255),
+    request_type character varying(255),
+    requested_datetime timestamp without time zone,
+    origin geography(Point,4326),
+    origin_place_name character varying(255),
+    destination geography(Point,4326),
+    destination_place_name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    pickup_time timestamp without time zone
+    desired_arrival timestamp without time zone
 );
 
 
@@ -695,7 +695,14 @@ ALTER TABLE ONLY driver_roles ALTER COLUMN id SET DEFAULT nextval('driver_roles_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY offered_rides ALTER COLUMN id SET DEFAULT nextval('offered_rides_id_seq'::regclass);
+ALTER TABLE ONLY fares ALTER COLUMN id SET DEFAULT nextval('fares_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY offers ALTER COLUMN id SET DEFAULT nextval('offers_id_seq'::regclass);
 
 
 --
@@ -710,13 +717,6 @@ ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq':
 --
 
 ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY ride_requests ALTER COLUMN id SET DEFAULT nextval('ride_requests_id_seq'::regclass);
 
 
 --
@@ -812,7 +812,7 @@ ALTER TABLE ONLY driver_roles
 -- Name: offered_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY offered_rides
+ALTER TABLE ONLY offers
     ADD CONSTRAINT offered_rides_pkey PRIMARY KEY (id);
 
 
@@ -860,7 +860,7 @@ ALTER TABLE ONLY rpush_notifications
 -- Name: ride_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY ride_requests
+ALTER TABLE ONLY rides
     ADD CONSTRAINT ride_requests_pkey PRIMARY KEY (id);
 
 
@@ -884,7 +884,7 @@ ALTER TABLE ONLY rider_roles
 -- Name: rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY rides
+ALTER TABLE ONLY fares
     ADD CONSTRAINT rides_pkey PRIMARY KEY (id);
 
 
