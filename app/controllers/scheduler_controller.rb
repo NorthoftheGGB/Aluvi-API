@@ -2,7 +2,7 @@ class SchedulerController < ApplicationController
   # GET /devices
   # GET /devices.json
   def index
-    @ride_requests = RideRequest.requested
+    @rides = Ride.requested
 
     respond_to do |format|
       format.html # index.html.erb
@@ -11,8 +11,8 @@ class SchedulerController < ApplicationController
   end
 
 	def failed
-		@ride_request = RideRequest.find(params[:id])
-		@ride_request.failed!
+		@ride = Ride.find(params[:id])
+		@ride.failed!
 		redirect_to action: "index"
 	end
 

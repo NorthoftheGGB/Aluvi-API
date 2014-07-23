@@ -20,7 +20,7 @@ class RidesAPI< Grape::API
 			authenticate!
 			case params[:type]
 			when 'on_demand'
-					stale_requests = current_user.ride_requests.where( state: :requested).all
+					stale_requests = current_user.rides.where( state: :requested).all
 					stale_requests.each do |request|
 						request.cancel!
 					end
@@ -50,7 +50,7 @@ class RidesAPI< Grape::API
 			if params[:type] == 'commuter'
 				if current_user.demo
 					# demoing subsystem
-					demo_ride_requests = RideRequest.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } ) 
+					demo_ride_requests = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } )
 
 					threshold = Rails.application.config.voco_demo_commuter_assembly_trigger_threshold 
 					if threshold.nil?
@@ -84,7 +84,7 @@ class RidesAPI< Grape::API
 		post "request/cancel" do
 			authenticate!
 			begin
-				ride_request = RideRequest.find(params[:request_id])
+				ride_request = Ride.find(params[:request_id])
 				if(ride_request.user != current_user )
 					raise ApiExceptions::WrongUserForEntityException
 				end
@@ -131,7 +131,7 @@ class RidesAPI< Grape::API
 		desc "Get requested and underway ride requests"
 		get 'requests', jbuilder: 'requests' do
 			authenticate!
-			@requests = current_user.ride_requests.select('*, ride_requests.id as request_id').joins('JOIN rides ON rides.id = ride_requests.ride_id').where( state: ["requested", "scheduled"])
+			@requests = current_user.rides.select('*, ride_requests.id as request_id').joins('JOIN rides ON rides.id = ride_requests.ride_id').where( state: ["requested", "scheduled"])
 			@requests.each do |ride|
 				# mark as delivered here if we like
 			end
@@ -315,7 +315,7 @@ class RidesAPI< Grape::API
 				# and move this code to a model layer, and separate into better units
 				ride.riders.each do |rider|
 					begin
-						request = rider.ride_requests.where( :ride_id => ride.id ).first
+						request = rider.rides.where( :ride_id => ride.id ).first
 
 						payment = Payment.new
 						payment.driver = ride.driver

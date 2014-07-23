@@ -1,4 +1,4 @@
-class OnDemandRideRequest < RideRequest
+class OnDemandRideRequest < Ride
 
 	def self.create( type, origin, origin_place_name, destination, destination_place_name, rider_id )
 		ride_request = OnDemandRideRequest.new

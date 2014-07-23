@@ -1,4 +1,4 @@
-class CommuterRideRequest < RideRequest
+class CommuterRideRequest < Ride
 
 	self.table_name = "ride_requests"
 	default_scope { where request_type: "commuter" }

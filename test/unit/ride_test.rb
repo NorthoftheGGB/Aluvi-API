@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class RideRequestTest < ActiveSupport::TestCase
+class RideTest < ActiveSupport::TestCase
 
 	# disable the transactions if we want to, just for fun
 	# self.use_transactional_fixtures = false
 	
 	test "request on demand ride" do
-		ride_request = RideRequest.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
+		ride_request = Ride.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
 		ride_request.save
 		ride_request.request!
 
@@ -20,7 +20,7 @@ class RideRequestTest < ActiveSupport::TestCase
 		FactoryGirl.create(:available_driver)	
 		FactoryGirl.create(:available_driver)	
 
-		ride_request = RideRequest.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
+		ride_request = Ride.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
 		ride_request.save
 		ride_request.request!
 		ride = ride_request.fare
@@ -45,7 +45,7 @@ class RideRequestTest < ActiveSupport::TestCase
 	test "driver declines ride" do
 		FactoryGirl.create(:available_driver)	
 		FactoryGirl.create(:available_driver)	
-		ride_request = RideRequest.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
+		ride_request = Ride.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
 		ride_request.save
 		ride_request.request!
 		ride = ride_request.fare

@@ -3,7 +3,7 @@ class Fare < ActiveRecord::Base
 	has_many :rider_rides
 	has_many :riders, through: :rider_rides
 	belongs_to :driver, inverse_of: :fares
-	has_many :ride_requests, inverse_of: :Fare
+	has_many :rides, inverse_of: :Fare
 	has_many :offers, :class_name => 'Offer', inverse_of: :Fare
 	belongs_to :car, inverse_of: :Fare
 	has_many :payments, :foreign_key => :fare_id
@@ -78,9 +78,9 @@ class Fare < ActiveRecord::Base
 		requests = Array.new
 		requests_arg.each do |r|
 			if(r.is_a? Integer)
-				requests << RideRequest.find(r)
+				requests << Ride.find(r)
 			elsif (r.is_a? String)
-				requests << RideRequest.find(r.to_i)
+				requests << Ride.find(r.to_i)
 			else
 				requests << r	
 			end
@@ -107,7 +107,7 @@ class Fare < ActiveRecord::Base
 								RGeo::Geographic.spherical_factory( :srid => 4326 ).point(drop_off_point_longitude, drop_off_point_latitude),
 								"unnamed location");
 		requests.each do |request|
-			ride.ride_requests << request
+			ride.rides << request
 			ride.riders << request.user
 		end
 		ride.save
@@ -299,7 +299,7 @@ class Fare < ActiveRecord::Base
 	end
 
 	def update_ride_requests_to_scheduled
-		ride_requests.each do |rr|
+		rides.each do |rr|
 			rr.scheduled!
 		end
 	end
