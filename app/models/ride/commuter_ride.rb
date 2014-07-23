@@ -1,10 +1,10 @@
-class CommuterRideRequest < Ride
+class CommuterRide < Ride
 
 	self.table_name = "ride_requests"
 	default_scope { where request_type: "commuter" }
 
 	def self.create( type, origin, origin_place_name, destination, destination_place_name, desired_arrival, rider_id )
-		ride_request = CommuterRideRequest.new
+		ride_request = CommuterRide.new
 		ride_request.request_type = type
 		ride_request.origin = origin
 		ride_request.origin_place_name = origin_place_name
@@ -17,7 +17,7 @@ class CommuterRideRequest < Ride
 	end
 
 	def self.create!( type, origin, origin_place_name, destination, destination_place_name, desired_arrival, rider_id )
-		ride_request = CommuterRideRequest.create( type, origin, origin_place_name, destination, destination_place_name, desired_arrival, rider_id )
+		ride_request = CommuterRide.create( type, origin, origin_place_name, destination, destination_place_name, desired_arrival, rider_id )
 		ride_request.save
 		ride_request
 	end

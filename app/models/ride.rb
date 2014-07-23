@@ -1,7 +1,7 @@
 class Ride < ActiveRecord::Base
 
-	belongs_to :user, inverse_of: :Ride
-	belongs_to :ride, inverse_of: :Ride
+	belongs_to :rider, inverse_of: :rides
+	belongs_to :fare, inverse_of: :rides
   attr_accessible :aasm_state, :user_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :desired_arrival
 
 	include AASM

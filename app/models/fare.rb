@@ -1,12 +1,13 @@
 class Fare < ActiveRecord::Base
 
+	belongs_to :driver, inverse_of: :fares
+	belongs_to :car, inverse_of: :fare
 	has_many :rider_fares
 	has_many :riders, through: :rider_rides
-	belongs_to :driver, inverse_of: :fares
-	has_many :rides, inverse_of: :Fare
-	has_many :offers, :class_name => 'Offer', inverse_of: :Fare
-	belongs_to :car, inverse_of: :Fare
-	has_many :payments, :foreign_key => :fare_id
+	has_many :rides, inverse_of: :fare
+	has_many :offers, inverse_of: :fare
+	has_many :payments
+
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }

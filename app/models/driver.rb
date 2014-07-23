@@ -4,11 +4,13 @@ class Driver < User
 	#TODO pull all data from driver_roles into this class, and consider removing driver_roles table
 	#TODO put state machine from driver_roles into this class
 	
+	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver # Refactor: :associated_cars
+	belongs_to :car
+	has_many :fares
+	has_many :offers
 	belongs_to :current_fare, :class_name => 'Fare', :foreign_key => 'current_fare_id'
 	has_many :payouts
 	has_many :earnings, :class_name => 'Payment'
-	has_many :fares
-	has_many :offers
 
 	default_scope { joins(:driver_role).readonly(false) }
 	scope :drivers, -> { joins(:driver_role).readonly(false) }
