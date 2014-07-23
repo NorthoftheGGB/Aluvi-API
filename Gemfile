@@ -36,8 +36,6 @@ gem 'stripe'
 
 # Geolocation
 gem 'rgeo'
-#gem 'rgeo-activerecord'
-#gem 'activerecord-mysql2spatial-adapter'
 gem 'mapquest'
 
 # To use ActiveModel has_secure_password
@@ -71,6 +69,10 @@ gem 'grape-swagger'
 
 # HTML
 gem 'table_cloth'
+
+# Jobs
+gem 'resque'
+gem 'resque-scheduler'
 
 # Testing
 group :test do
