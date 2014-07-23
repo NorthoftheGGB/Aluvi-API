@@ -51,19 +51,18 @@ class DriversAPI < Grape::API
 					# need to handle referral codes	
 
 					# directly set up Stripe recipient, don't store banking information on our server
-					# TODO: Refactor, this should be moved to it's own class and happen via a delayed job
-					Rails.logger.debug 'hieloi'
+					# TODO: Refactor, this should be moved to its own class and happen via a delayed job
 					recipient = Stripe::Recipient.create(
 						:name => driver.full_name,
 						:type => 'individual',
 						:bank_account => {
-							:country => 'US',
-							:routing_number => params[:bank_account_routing],
-							:account_number => params[:bank_account_number]
-						},
+						:country => 'US',
+						:routing_number => params[:bank_account_routing],
+						:account_number => params[:bank_account_number]
+					},
 						:email => driver.email
 					)
-					Rails.logger.debug recipient
+
 					if recipient.nil?
 						raise "Stripe recipient not created"
 					end
