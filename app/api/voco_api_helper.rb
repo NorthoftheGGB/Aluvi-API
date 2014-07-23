@@ -42,5 +42,9 @@ module VocoApiHelper
 	def server_error entity
 		error! entity, 500
 	end
+
+	def client_error message
+		error! message, 400
+	end
 end
 
