@@ -154,6 +154,7 @@
     <orderEntry type="library" scope="PROVIDED" name="execjs (v2.2.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="factory_girl (v4.4.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="factory_girl_rails (v4.4.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="foreigner (v1.6.1@762ffe, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="gcm (v0.0.7, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="gmail_sender (v1.1.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="grape (v0.7.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
@@ -184,28 +185,52 @@
     <orderEntry type="library" scope="PROVIDED" name="multi_logger (v0.1.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="multi_xml (v0.5.5, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-http-persistent (v2.9.4, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.6.2.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="paperclip (v4.1.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pg (v0.17.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="polyglot (v0.3.4, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack (v1.4.5, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-accept (v0.4.5, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-cache (v1.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-mount (v0.8.3, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack-protection (v1.5.3, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-ssl (v1.3.4, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-test (v0.6.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rails (v3.2.13, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="railties (v3.2.13, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rake (v10.3.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rdoc (v3.12.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="redis (v3.1.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="redis-namespace (v1.5.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="resque (v1.25.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="resque-scheduler (v3.0.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rest-client (v1.6.7, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rgeo (v0.3.20, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rgeo-activerecord (v0.5.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rpush (v1.0.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rspec (v3.0.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rspec-core (v3.0.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v3.0.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rspec-mocks (v3.0.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rspec-rails (v3.0.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rspec-support (v3.0.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rufus-scheduler (v2.0.24, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sass (v3.3.7, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sass-rails (v3.2.6, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sinatra (v1.4.5, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets (v2.2.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="stripe (v1.14.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="table_cloth (v0.4.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="thin (v1.6.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thor (v0.19.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thread_safe (v0.3.3, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tilt (v1.4.1, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tilt-jbuilder (v0.6.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="treetop (v1.4.15, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tzinfo (v0.3.39, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="uglifier (v2.5.0, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="uuidtools (v2.1.4, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="vegas (v0.1.11, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="virtus (v1.0.2, RVM: ruby-1.9.3-p125 [global]) [gem]" level="application" />
   </component>
   <component name="RModuleSettingsStorage">
