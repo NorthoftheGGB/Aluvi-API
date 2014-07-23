@@ -188,7 +188,7 @@ class UsersAPI < Grape::API
 				end
 			end
 			current_user.save
-			@user = current_user
+			@user = User.find(current_user.id)
 
 		end
 
