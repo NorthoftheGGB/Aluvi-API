@@ -1,6 +1,10 @@
 module VocoApiHelper
 	def current_user
+    if headers['Authorization'].nil?
+      return nil
+    end
 		auth = token_and_options(headers['Authorization'])
+		Rails.logger.info auth
 		token = auth[0]
 		@current_user ||= User.authorize!(auth[0])
 	end
