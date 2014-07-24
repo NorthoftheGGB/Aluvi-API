@@ -1,8 +1,7 @@
+CREATE EXTENSION postgis; 
 --
 -- PostgreSQL database dump
 --
-
-create extension postgis;
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -367,23 +366,23 @@ ALTER SEQUENCE payouts_id_seq OWNED BY payouts.id;
 
 
 --
--- Name: rider_rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rider_fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE rider_rides (
+CREATE TABLE rider_fares (
     id integer NOT NULL,
     rider_id integer,
-    ride_id integer,
+    fare_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
 
 
 --
--- Name: rider_rides_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: rider_fares_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE rider_rides_id_seq
+CREATE SEQUENCE rider_fares_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -392,10 +391,10 @@ CREATE SEQUENCE rider_rides_id_seq
 
 
 --
--- Name: rider_rides_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: rider_fares_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE rider_rides_id_seq OWNED BY rider_rides.id;
+ALTER SEQUENCE rider_fares_id_seq OWNED BY rider_fares.id;
 
 
 --
@@ -434,7 +433,7 @@ ALTER SEQUENCE rider_roles_id_seq OWNED BY rider_roles.id;
 
 CREATE TABLE rides (
     id integer NOT NULL,
-    user_id integer,
+    rider_id integer,
     ride_id integer,
     state character varying(255),
     request_type character varying(255),
@@ -725,7 +724,7 @@ ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY rider_rides ALTER COLUMN id SET DEFAULT nextval('rider_rides_id_seq'::regclass);
+ALTER TABLE ONLY rider_fares ALTER COLUMN id SET DEFAULT nextval('rider_fares_id_seq'::regclass);
 
 
 --
@@ -870,7 +869,7 @@ ALTER TABLE ONLY rides
 -- Name: rider_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY rider_rides
+ALTER TABLE ONLY rider_fares
     ADD CONSTRAINT rider_rides_pkey PRIMARY KEY (id);
 
 

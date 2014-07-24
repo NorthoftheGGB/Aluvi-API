@@ -2,7 +2,7 @@ class Ride < ActiveRecord::Base
 
 	belongs_to :rider, inverse_of: :rides
 	belongs_to :fare, inverse_of: :rides
-  attr_accessible :aasm_state, :user_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :desired_arrival
+  attr_accessible :aasm_state, :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :desired_arrival
 
 	include AASM
 	aasm_column :state
@@ -41,7 +41,7 @@ class Ride < ActiveRecord::Base
 			self.fare = Fare.create( Time.now, origin, origin_place_name, destination, destination_place_name )
 			self.fare.meeting_point = origin
 			self.fare.meeting_point_place_name = origin_place_name
-			rider = User.find(user_id)
+			rider = Rider.find(rider_id)
 			self.fare.riders << rider
 			self.fare.save
 			save

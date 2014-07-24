@@ -10,7 +10,7 @@ class RideObserver < ActiveRecord::Observer
 			# when this is an on demand request, for commuter it MUST go through the scheduler to work at all
 			
 			if self.get_potential_drivers(ride.fare).count == 0
-				ride.user.devices.each do |d|
+				ride.rider.devices.each do |d|
 					n = PushHelper::push_message(d)	
 					n.alert = "Ride Requested!"
 					n.data = { type: :no_drivers_available, request_id: ride.id }

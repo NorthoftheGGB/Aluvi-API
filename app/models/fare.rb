@@ -3,7 +3,7 @@ class Fare < ActiveRecord::Base
 	belongs_to :driver, inverse_of: :fares
 	belongs_to :car, inverse_of: :fare
 	has_many :rider_fares
-	has_many :riders, through: :rider_rides
+	has_many :riders, through: :rider_fares
 	has_many :rides, inverse_of: :fare
 	has_many :offers, inverse_of: :fare
 	has_many :payments
@@ -187,13 +187,18 @@ class Fare < ActiveRecord::Base
 
 	
 	def rider_cancelled rider
-		if( riders.count == 1 ) 
+		Rails.logger.info "RIDER_CANCELLED: riders count"
+		Rails.logger.info self.riders
+		Rails.logger.info self.riders.count
+		if( self.riders.count == 1 ) 
+			Rails.logger.info 'last rider cancelled ' + rider.id.to_s
 			# this is the only rider, cancel the whole ride
 			aasm_rider_cancelled
 			self.finished = Time.now
-			notify_ride_cancelled_by_rider
+			notify_fare_cancelled_by_rider
 		else 
-			riders.delete(rider)
+			Rails.logger.info 'RIDER_CANCELLED: one rider cancelled'
+			self.riders.delete(rider)
 		end
 	end
 
@@ -291,11 +296,11 @@ class Fare < ActiveRecord::Base
 		notify_observers :scheduled
 	end
 
-	def notify_ride_cancelled_by_rider
+	def notify_fare_cancelled_by_rider
 		notify_observers :fare_cancelled_by_rider
 	end
 
-	def notify_ride_cancelled_by_driver
+	def notify_fare_cancelled_by_driver
 		notify_observers :fare_cancelled_by_driver
 	end
 

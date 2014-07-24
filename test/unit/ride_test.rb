@@ -6,33 +6,47 @@ class RideTest < ActiveSupport::TestCase
 	# self.use_transactional_fixtures = false
 	
 	test "request on demand ride" do
-		ride_request = Ride.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
-		ride_request.save
-		ride_request.request!
+		rider = FactoryGirl.create(:rider)
+		ride = OnDemandRide.create!(
+																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
+																'place name',
+																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
+																'place_name',
+																rider
+															 )
+		ride.save
+		ride.request!
 
-		ride = ride_request.fare
-		assert_not_nil(ride, "Ride should not be nil" )
-		assert_not_nil(ride.meeting_point, "Ride should have origin" )
-		assert_not_nil(ride.destination, "Ride should have destination" )
+		fare = ride.fare
+		assert_not_nil(fare, "Ride should not be nil" )
+		assert_not_nil(fare.meeting_point, "Ride should have origin" )
+		assert_not_nil(fare.drop_off_point, "Ride should have destination" )
 	end
 
 	test "driver accepts ride" do
 		FactoryGirl.create(:available_driver)	
 		FactoryGirl.create(:available_driver)	
 
-		ride_request = Ride.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
-		ride_request.save
-		ride_request.request!
-		ride = ride_request.fare
+		ride = OnDemandRide.create!(
+																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
+																'place name',
+																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
+																'place_name',
+																rider
+															 )
+		ride.save
+		ride.save
+		ride.request!
+		fare = ride.fare
 
 		driver = User.available_drivers.first # from the factory calls above
 
 		# offer the ride to the driver
 		driver.offer_fare(ride)
 
-		ride.accepted!(driver)
+		fare.accepted!(driver)
 		
-		offer = driver.offers.where(:ride_id => ride.id).first
+		offer = driver.offers.where(:fare_id => fare.id).first
 		assert_not_nil(offer)
 
 		offer.accepted!
@@ -45,78 +59,89 @@ class RideTest < ActiveSupport::TestCase
 	test "driver declines ride" do
 		FactoryGirl.create(:available_driver)	
 		FactoryGirl.create(:available_driver)	
-		ride_request = Ride.create(TransportType::ON_DEMAND,'POINT(-122 47)','POINT(-123 45)')
-		ride_request.save
-		ride_request.request!
-		ride = ride_request.fare
+
+		ride = OnDemandRide.create!(
+																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
+																'place name',
+																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
+																'place_name',
+																rider
+															 )
+		ride.save
+		ride.request!
+		fare = ride.fare
 
 		drivers = User.available_drivers
 		drivers.each do |d|
-			d.offer_fare(ride)
+			d.offer_fare(fare)
 		end
 
 		driver = drivers[0]
-		offer = driver.offers.where(:ride_id => ride.id).first
+		offer = driver.offers.where(:fare_id => fare.id).first
 		offer.declined!
-		offer2 = drivers[1].offers.where(:ride_id => ride.id).first
+		offer2 = drivers[1].offers.where(:fare_id => fare.id).first
 
 		assert_equal("declined", offer.state)
 		assert_equal("offered", offer2.state)
 	end
 
-	test "driver cancels scheduled ride" do
-		ride = FactoryGirl.create(:scheduled_ride)
-		ride.driver_cancelled!
-		assert_equal("driver_cancelled", ride.state)
-		assert_not_nil(ride.finished)
+	test "driver cancels scheduled fare" do
+		fare = FactoryGirl.create(:scheduled_fare)
+		fare.driver_cancelled!
+		assert_equal("driver_cancelled", fare.state)
+		assert_not_nil(fare.finished)
 	end
 
-	test "rider cancels single rider ride" do
-		ride = FactoryGirl.create(:scheduled_ride)
-		ride.rider_cancelled!(ride.riders.first)
-		assert_equal("rider_cancelled", ride.state)
-		assert_not_nil(ride.finished)
+	test "rider cancels single rider fare" do
+		fare = FactoryGirl.create(:scheduled_fare)
+		fare.rider_cancelled!(fare.riders.first)
+		assert_equal("rider_cancelled", fare.state)
+		assert_not_nil(fare.finished)
 	end
 
-	test "rider cancels multi rider ride" do
-		ride = FactoryGirl.create(:scheduled_multirider_ride)
-		ride.rider_cancelled!(ride.riders.first)
-		assert_equal("scheduled", ride.state)
-		assert_nil(ride.finished)
+	test "rider cancels multi rider fare" do
+		fare = FactoryGirl.create(:scheduled_multirider_fare)
+		fare.rider_cancelled!(fare.riders.first)
+		assert_equal("scheduled", fare.state)
+		assert_nil(fare.finished)
 	end
 
-	test "both riders cancel multi rider ride" do
-		ride = FactoryGirl.create(:scheduled_multirider_ride)
+	test "both riders cancel multi rider fare" do
+		Rails.logger.info "both riders cancel multi rider fare" 
+		fare = FactoryGirl.create(:scheduled_multirider_fare)
 
 		riders = Array.new
-		ride.riders.each do |r|
+		fare.riders.each do |r|
 			riders.push(r)
 		end
+		Rails.logger.info "riders count"
+		Rails.logger.info fare.riders.count
+		Rails.logger.info riders
 
 		riders.each do |r|
-			ride.rider_cancelled!(r)
+			fare.rider_cancelled!(r)
 		end
-		assert_equal("rider_cancelled", ride.state)
-		assert_not_nil(ride.finished)
+		assert_equal("rider_cancelled", fare.state)
+		assert_not_nil(fare.finished)
 	end
 
 	test "rider picked up" do
-		ride = FactoryGirl.create(:scheduled_ride)
-		ride.pickup!
+		fare = FactoryGirl.create(:scheduled_fare)
+		fare.pickup!
 
-		assert_equal("started", ride.state)
-		assert_not_nil(ride.started)
+		assert_equal("started", fare.state)
+		assert_not_nil(fare.started)
 
 	end
 
 	test "arrival" do
 
-		ride = FactoryGirl.create(:scheduled_ride)
-		ride.pickup!
-		ride.arrived!
+		fare = FactoryGirl.create(:scheduled_fare)
+		fare.pickup!
+		fare.arrived!
 
-		assert_equal("completed", ride.state)
-		assert_not_nil(ride.finished)
+		assert_equal("completed", fare.state)
+		assert_not_nil(fare.finished)
 
 	end
 

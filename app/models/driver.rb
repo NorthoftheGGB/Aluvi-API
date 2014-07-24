@@ -75,4 +75,25 @@ class Driver < User
     save
   end
 
+	
+	def state
+		unless self.driver_role.nil?
+			return self.driver_role.state
+		end
+	end
+
+	def state=(state_change)
+		unless state_change.nil? || state_change == ''
+			if state_change == :initialize
+				self.driver_role = DriverRole.new
+				self.driver_role.save
+				save
+			else
+				self.driver_role.method(state_change).call
+				self.driver_role.save
+			end
+		end
+	end
+
+
 end

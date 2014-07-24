@@ -25,21 +25,21 @@ class RidesAPI< Grape::API
 						request.cancel!
 					end
 
-					ride_request = OnDemandRide.create!(params[:type],
+					ride_request = OnDemandRide.create!(
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
-																						 current_user.id
+																						 current_user
 																						)
 			when 'commuter'
-					ride_request = CommuterRide.create!(params[:type],
+					ride_request = CommuterRide.create!(
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
 																						 params[:desired_arrival],
-																						 current_user.id
+																						 current_user
 																						)
 			else
 				raise "No request type set"
