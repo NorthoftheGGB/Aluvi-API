@@ -17,20 +17,20 @@
 
 <p>
   <b>Driver State:</b>
-	<%= @driver.driver_role.nil? ? "not configured" : @driver.driver_role.state %>
+	<%= @driver.state %>
 </p>
 <p>Driver's License: 
 	
-	<%= link_to image_tag(@driver.driver_role.drivers_license.url(:thumb)), @driver.driver_role.drivers_license.url  %>
+	<%= link_to image_tag(@driver.drivers_license.url(:thumb)), @driver.drivers_license.url  %>
 </p>
 <p>Vehicle Registration: 
-	<%= link_to image_tag(@driver.driver_role.vehicle_registration.url(:thumb)), @driver.driver_role.vehicle_registration.url %>
+	<%= link_to image_tag(@driver.vehicle_registration.url(:thumb)), @driver.vehicle_registration.url %>
 </p>
 <p>Proof of Insurance: 
-	<%= link_to image_tag(@driver.driver_role.proof_of_insurance.url(:thumb)), @driver.driver_role.proof_of_insurance.url %>
+	<%= link_to image_tag(@driver.proof_of_insurance.url(:thumb)), @driver.proof_of_insurance.url %>
 </p>
 <p>National Database Check: 
-	<%= link_to image_tag(@driver.driver_role.national_database_check.url(:thumb)), @driver.driver_role.national_database_check.url %>
+	<%= link_to image_tag(@driver.national_database_check.url(:thumb)), @driver.national_database_check.url %>
 </p>
 
 <p>

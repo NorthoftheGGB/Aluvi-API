@@ -60,7 +60,7 @@ module VocoApi
     config.assets.version = '1.0'
 
 		# Activate observers that should always be running
-		config.active_record.observers = [:ride_observer, :fare_observer, :driver_role_observer]
+		config.active_record.observers = [:ride_observer, :fare_observer, :driver_observer]
 
 		# Mount Grape API
 		config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')

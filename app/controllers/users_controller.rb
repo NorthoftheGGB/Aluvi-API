@@ -58,17 +58,6 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
 
-		driver_role_attachments = [ :drivers_license, :vehicle_registration, :proof_of_insurance, :car_photo, :national_database_check ]
-		driver_role_params = Hash.new
-		driver_role_attachments.each do |attachment|
-			unless params[:user][attachment].nil?
-				driver_role_params[attachment] = params[:user][attachment]
-			end
-			params[:user].delete(attachment)
-		end
-		@user.driver_role.update_attributes(driver_role_params)
-		@user.driver_role.save
-
     respond_to do |format|
       if @user.update_attributes(params[:user])
         format.html { redirect_to @user, notice: 'User was successfully updated.' }

@@ -165,57 +165,6 @@ ALTER SEQUENCE driver_location_histories_id_seq OWNED BY driver_location_histori
 
 
 --
--- Name: driver_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE driver_roles (
-    id integer NOT NULL,
-    state character varying(255),
-    user_id integer,
-    drivers_license_file_name character varying(255),
-    drivers_license_content_type character varying(255),
-    drivers_license_file_size integer,
-    drivers_license_updated_at timestamp without time zone,
-    vehicle_registration_file_name character varying(255),
-    vehicle_registration_content_type character varying(255),
-    vehicle_registration_file_size integer,
-    vehicle_registration_updated_at timestamp without time zone,
-    proof_of_insurance_file_name character varying(255),
-    proof_of_insurance_content_type character varying(255),
-    proof_of_insurance_file_size integer,
-    proof_of_insurance_updated_at timestamp without time zone,
-    car_photo_file_name character varying(255),
-    car_photo_content_type character varying(255),
-    car_photo_file_size integer,
-    car_photo_updated_at timestamp without time zone,
-    national_database_check_file_name character varying(255),
-    national_database_check_content_type character varying(255),
-    national_database_check_file_size integer,
-    national_database_check_updated_at timestamp without time zone,
-    drivers_license_number character varying(255)
-);
-
-
---
--- Name: driver_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE driver_roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: driver_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE driver_roles_id_seq OWNED BY driver_roles.id;
-
-
---
 -- Name: fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -395,36 +344,6 @@ CREATE SEQUENCE rider_fares_id_seq
 --
 
 ALTER SEQUENCE rider_fares_id_seq OWNED BY rider_fares.id;
-
-
---
--- Name: rider_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE rider_roles (
-    id integer NOT NULL,
-    state character varying(255),
-    user_id integer
-);
-
-
---
--- Name: rider_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE rider_roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: rider_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE rider_roles_id_seq OWNED BY rider_roles.id;
 
 
 --
@@ -634,7 +553,26 @@ CREATE TABLE users (
     current_fare_id integer,
     car_id integer,
     commuter_refill_enabled boolean,
-    bank_account_name character varying(255)
+    bank_account_name character varying(255),
+    driver_state character varying(255),
+    rider_state character varying(255),
+    drivers_license_file_name character varying(255),
+    drivers_license_content_type character varying(255),
+    drivers_license_file_size integer,
+    drivers_license_updated_at timestamp without time zone,
+    vehicle_registration_file_name character varying(255),
+    vehicle_registration_content_type character varying(255),
+    vehicle_registration_file_size integer,
+    vehicle_registration_updated_at timestamp without time zone,
+    proof_of_insurance_file_name character varying(255),
+    proof_of_insurance_content_type character varying(255),
+    proof_of_insurance_file_size integer,
+    proof_of_insurance_updated_at timestamp without time zone,
+    national_database_check_file_name character varying(255),
+    national_database_check_content_type character varying(255),
+    national_database_check_file_size integer,
+    national_database_check_updated_at timestamp without time zone,
+    drivers_license character varying(255)
 );
 
 
@@ -689,13 +627,6 @@ ALTER TABLE ONLY driver_location_histories ALTER COLUMN id SET DEFAULT nextval('
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY driver_roles ALTER COLUMN id SET DEFAULT nextval('driver_roles_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY fares ALTER COLUMN id SET DEFAULT nextval('fares_id_seq'::regclass);
 
 
@@ -725,13 +656,6 @@ ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::r
 --
 
 ALTER TABLE ONLY rider_fares ALTER COLUMN id SET DEFAULT nextval('rider_fares_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY rider_roles ALTER COLUMN id SET DEFAULT nextval('rider_roles_id_seq'::regclass);
 
 
 --
@@ -802,14 +726,6 @@ ALTER TABLE ONLY driver_location_histories
 
 
 --
--- Name: driver_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY driver_roles
-    ADD CONSTRAINT driver_roles_pkey PRIMARY KEY (id);
-
-
---
 -- Name: offered_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -871,14 +787,6 @@ ALTER TABLE ONLY rides
 
 ALTER TABLE ONLY rider_fares
     ADD CONSTRAINT rider_rides_pkey PRIMARY KEY (id);
-
-
---
--- Name: rider_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY rider_roles
-    ADD CONSTRAINT rider_roles_pkey PRIMARY KEY (id);
 
 
 --

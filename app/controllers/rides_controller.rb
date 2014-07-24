@@ -1,6 +1,6 @@
 class RidesController < ApplicationController
-  # GET /ride_requests
-  # GET /ride_requests.json
+  # GET /rides
+  # GET /rides.json
   def index
     @rides = Ride.all
 
@@ -10,8 +10,8 @@ class RidesController < ApplicationController
     end
   end
 
-  # GET /ride_requests/1
-  # GET /ride_requests/1.json
+  # GET /rides/1
+  # GET /rides/1.json
   def show
     @ride = Ride.find(params[:id])
 
@@ -21,8 +21,8 @@ class RidesController < ApplicationController
     end
   end
 
-  # GET /ride_requests/new
-  # GET /ride_requests/new.json
+  # GET /rides/new
+  # GET /rides/new.json
   def new
     @ride = Ride.new
 
@@ -32,13 +32,13 @@ class RidesController < ApplicationController
     end
   end
 
-  # GET /ride_requests/1/edit
+  # GET /rides/1/edit
   def edit
     @ride = Ride.find(params[:id])
   end
 
-  # POST /ride_requests
-  # POST /ride_requests.json
+  # POST /rides
+  # POST /rides.json
   def create
     @ride = Ride.new(params[:ride])
 
@@ -54,8 +54,8 @@ class RidesController < ApplicationController
     end
   end
 
-  # PUT /ride_requests/1
-  # PUT /ride_requests/1.json
+  # PUT /rides/1
+  # PUT /rides/1.json
   def update
     @ride = Ride.find(params[:id])
 
@@ -70,14 +70,14 @@ class RidesController < ApplicationController
     end
   end
 
-  # DELETE /ride_requests/1
-  # DELETE /ride_requests/1.json
+  # DELETE /rides/1
+  # DELETE /rides/1.json
   def destroy
     @ride = Ride.find(params[:id])
     @ride.destroy
 
     respond_to do |format|
-      format.html { redirect_to ride_requests_url }
+      format.html { redirect_to rides_url }
       format.json { head :no_content }
     end
   end

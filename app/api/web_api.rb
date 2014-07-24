@@ -39,7 +39,7 @@ class WebAPI < Grape::API
 				unless current_user.rider_role.nil?
 					roles << "rider"
 				end
-				unless current_user.driver_role.nil?
+				unless current_user.nil?
 					roles << "driver"
 				end
 				response["roles"] = roles

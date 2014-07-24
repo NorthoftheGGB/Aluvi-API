@@ -31,8 +31,8 @@ json.array! @requests do |request|
 			json.first_name request.ride.driver.first_name
 			json.last_name request.ride.driver.last_name
 			json.phone request.ride.driver.phone
-			unless request.ride.driver.driver_role.nil?
-				json.drivers_license_number request.ride.driver.driver_role.drivers_license_number
+			unless request.ride.driver.nil?
+				json.drivers_license_number request.ride.driver.drivers_license_number
 			end
 		end
 	end

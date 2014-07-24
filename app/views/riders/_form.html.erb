@@ -38,13 +38,8 @@
   </div>
   <div class="field">
     <%= f.label "Rider State" %><br />
-		<% unless @rider.rider_role.nil? %>
-    <%= f.label @rider.rider_role.state %><br />
-		<%= f.select :rider_state, @rider.rider_role.aasm.events, :include_blank => true %>
-		<% else %>
-		Not Configured
-		<%= f.select :rider_state, [ :initalize ], :include_blank => true %>
-		<% end %>
+    <%= f.label @rider.rider_state %><br />
+		<%= f.select :rider_state, @rider.aasm.events, :include_blank => true %>
   </div>
 
 	<h2>Commuter Card</h2>

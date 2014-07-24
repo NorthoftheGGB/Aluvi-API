@@ -4,6 +4,8 @@ class Ride < ActiveRecord::Base
 	belongs_to :fare, inverse_of: :rides
   attr_accessible :aasm_state, :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :desired_arrival
 
+	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
+
 	include AASM
 	aasm_column :state
 
@@ -32,7 +34,21 @@ class Ride < ActiveRecord::Base
 
 	end
 
-	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
+
+	def route_description
+		route = ''
+		unless self.origin_place_name.nil?
+			route += self.origin_place_name 
+		else
+			route += 'unspecified'
+		end
+		route += ' to '
+		unless self.destination_place_name.nil?
+			route += self.destination_place_name
+		else
+			route += 'unspecified'
+		end
+	end
 
 	private
 	def ride_requested
@@ -41,8 +57,7 @@ class Ride < ActiveRecord::Base
 			self.fare = Fare.create( Time.now, origin, origin_place_name, destination, destination_place_name )
 			self.fare.meeting_point = origin
 			self.fare.meeting_point_place_name = origin_place_name
-			rider = Rider.find(rider_id)
-			self.fare.riders << rider
+			self.fare.riders << self.rider
 			self.fare.save
 			save
 		elsif( request_type == TransportType::COMMUTER )
@@ -61,6 +76,5 @@ class Ride < ActiveRecord::Base
 	def notify_scheduled
 		notify_observers :scheduled
 	end
-
 
 end

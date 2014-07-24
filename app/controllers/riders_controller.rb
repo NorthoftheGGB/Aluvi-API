@@ -13,7 +13,6 @@ class RidersController < ApplicationController
 				Rails.logger.debug u.location
 				item[:latitude] = u.location.latitude
 				item[:longitude] = u.location.longitude
-				item[:is_driver] = u.is_driver
 			end
 			json.push item
 		end

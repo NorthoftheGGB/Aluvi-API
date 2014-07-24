@@ -120,7 +120,7 @@ class RidesAPI< Grape::API
 		desc "Update list of rides assigned to driver"
 		get 'rides', jbuilder: 'rides' do
 			authenticate!
-			if current_user.driver_role.nil?
+			if current_user.nil?
 				forbidden
 				return
 			end

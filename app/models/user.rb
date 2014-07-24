@@ -1,18 +1,9 @@
 class User < ActiveRecord::Base
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
-	has_one :rider_role
-	has_one :driver_role
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :bank_account_name, :salt, :token, :phone, :password, :email, :driver_state, :rider_state, :webtoken, :demo
 
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
-
-	def self.new_driver
-		user = User.new
-		user.driver_role = DriverRole.new
-		user.save!
-		user
-	end
 
 	def self.authorize!(token)
 		unless token == 'demo2398sdf09psd09f23'
@@ -59,21 +50,6 @@ class User < ActiveRecord::Base
 		self.webtoken
 	end
 
-
-	def interested_in_driving
-		if self.driver_role.nil?
-			self.driver_role = DriverRole.new
-			save
-		end
-	end
-
-	def registered_for_riding
-		if self.rider_role.nil?
-			self.rider_role = RiderRole.new
-			save
-		end
-	end
-
 	def password=(value)
 		write_attribute(:password, self.hash_password(value))
 	end
@@ -91,57 +67,7 @@ class User < ActiveRecord::Base
 
 
 
-	#
-	# driver model
-	# 
-	def update_location!(longitude, latitude)
-		puts longitude
-		puts latitude
-		puts  RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
-		self.location = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
-		puts self.location
-		save
-	end
-
-
-	def rider_state
-		unless self.rider_role.nil?
-			self.rider_role.state
-		end
-	end
-
-	def rider_state=(state_change)
-		unless state_change.nil? || state_change == ''
-			if state_change == :initialize
-				self.rider_role = RiderRole.new
-				self.rider_role.save
-				save
-			else
-				self.rider_role.method(state_change).call
-				self.rider_role.save
-			end
-		end
-	end
-
-	def driver_state
-		unless self.driver_role.nil?
-			return self.driver_role.state
-		end
-	end
-
-	def driver_state=(state_change)
-		unless state_change.nil? || state_change == ''
-			if state_change == :initialize
-				self.driver_role = DriverRole.new
-				self.driver_role.save
-				save
-			else
-				self.driver_role.method(state_change).call
-				self.driver_role.save
-			end
-		end
-	end
-
+	
 	# access
 	def involved_in_ride ride
 		if ride.riders.include? self || ride.driver == self
@@ -158,18 +84,13 @@ class User < ActiveRecord::Base
 
 	def roles
 	  roles = Array.new
-		unless current_user.rider_role.nil?
+		unless current_user.rider_state.nil?
 			roles << "rider"
 		end
-		unless current_user.driver_role.nil?
+		unless current_user.driver_state.nil?
 			roles << "driver"
 		end
 		roles
-	end
-
-	# prep for refactor
-	def drivers_license_number
-		self.driver_role.drivers_license_number
 	end
 
 end

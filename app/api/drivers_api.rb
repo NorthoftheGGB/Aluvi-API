@@ -47,7 +47,7 @@ class DriversAPI < Grape::API
 					driver = Driver.find(current_user.id)
 					driver.cars << car
 					driver.car = car	
-					driver.driver_role.drivers_license_number = params[:drivers_license_number]
+					driver.drivers_license_number = params[:drivers_license_number]
 					# need to handle referral codes	
 
 					# directly set up Stripe recipient, don't store banking information on our server
@@ -70,7 +70,7 @@ class DriversAPI < Grape::API
 					driver.bank_account_name = recipient.active_account.bank_name
 
 					driver.save
-					driver.driver_role.register!
+					driver.register!
 					ok
 				end
 
@@ -94,8 +94,8 @@ class DriversAPI < Grape::API
 		end
 		post "clock_on" do
 			authenticate!
-			unless current_user.driver_role.state == 'on_duty'
-				current_user.driver_role.clock_on!
+			unless current_user.state == 'on_duty'
+				current_user.clock_on!
 			end
 			ok
 		end
@@ -105,8 +105,8 @@ class DriversAPI < Grape::API
 		end
 		post "clock_off" do
 			authenticate!
-			if current_user.driver_role.state == 'on_duty'
-				current_user.driver_role.clock_off!
+			if current_user.state == 'on_duty'
+				current_user.clock_off!
 			end
 			ok
 		end

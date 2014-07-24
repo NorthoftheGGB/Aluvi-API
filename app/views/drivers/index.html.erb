@@ -19,7 +19,7 @@
     <td><%= driver.first_name %></td>
     <td><%= driver.last_name %></td>
     <td><%= driver.phone %></td>
-    <td><%= driver.driver_role.nil? ? "" : driver.driver_role.state %></td>
+    <td><%= driver.state %></td>
 		<td><%= driver.demo %></td>
     <td><%= link_to 'Show', driver_path(driver) %></td>
     <td><%= link_to 'Edit', edit_driver_path(driver) %></td>

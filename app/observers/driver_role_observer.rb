@@ -1,8 +1,8 @@
-class DriverRoleObserver < ActiveRecord::Observer
-	def driver_state_changed( driver_role )
+class DriverObserver < ActiveRecord::Observer
+	def driver_state_changed( driver )
 
-			if( driver_role.state == "approved" )
-				driver_role.user.devices.each do |d|
+			if( driver.state == "approved" )
+				driver.user.devices.each do |d|
 					if(d.push_token.nil?)
 						next	
 					end
@@ -11,8 +11,8 @@ class DriverRoleObserver < ActiveRecord::Observer
 					n.data = { type: :user_state_change }
 					n.save!
 				end
-			elsif(["registered", "suspended", "denied"].include?( driver_role.state ) )
-				driver_role.user.devices.each do |d|
+			elsif(["registered", "suspended", "denied"].include?( driver.state ) )
+				driver.user.devices.each do |d|
 					if(d.push_token.nil?)
 						next	
 					end
@@ -24,8 +24,8 @@ class DriverRoleObserver < ActiveRecord::Observer
 			end
 	end
 
-	def driver_activated( driver_role )
-		driver_role.user.devices.each do |d|
+	def driver_activated( driver )
+		driver.user.devices.each do |d|
 			if(d.push_token.nil?)
 				next	
 			end

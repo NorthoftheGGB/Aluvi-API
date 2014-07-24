@@ -1,8 +1,5 @@
 class Driver < User
 	self.table_name = 'users'
-	#TODO add default scope to find only drivers
-	#TODO pull all data from driver_roles into this class, and consider removing driver_roles table
-	#TODO put state machine from driver_roles into this class
 	
 	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver # Refactor: :associated_cars
 	belongs_to :car
@@ -12,11 +9,80 @@ class Driver < User
 	has_many :payouts
 	has_many :earnings, :class_name => 'Payment'
 
-	default_scope { joins(:driver_role).readonly(false) }
-	scope :drivers, -> { joins(:driver_role).readonly(false) }
-	scope :available_drivers, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
-	scope :on_duty, ->{ drivers.where(:driver_roles => {:state => :on_duty}) }
-	scope :demo_drivers, ->{ drivers.where(:demo => true) }
+	default_scope { where(:driver_state, 'IS NOT NULL') }
+	scope :available_drivers, ->{ where(:driver_state => :on_duty) }
+	scope :on_duty, ->{ where(:driver_state => :on_duty) }
+	scope :demo_drivers, ->{ where(:demo => true) }
+
+	attr_accessible :driver_state
+	attr_accessible :drivers_license, :drivers_license_number, :vehicle_registration, :proof_of_insurance, :car_photo, :national_database_check
+	has_attached_file :drivers_license, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
+	has_attached_file :vehicle_registration, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
+	has_attached_file :proof_of_insurance, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
+	has_attached_file :national_database_check, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
+	validates_attachment_content_type :drivers_license, :content_type => /\Aimage\/.*\Z/
+	validates_attachment_content_type :vehicle_registration, :content_type => /\Aimage\/.*\Z/
+	validates_attachment_content_type :proof_of_insurance, :content_type => /\Aimage\/.*\Z/
+	validates_attachment_content_type :national_database_check, :content_type => /\Aimage\/.*\Z/
+
+	def self.states
+		[ :interested, :approved, :denied, :registered, :active, :suspended, :on_duty ]
+	end
+
+	include AASM
+	aasm_column :driver_state
+
+	aasm do
+		state :interested, :initial => true, :after_enter => :notify_state_changed
+		state :approved, :after_enter => :notify_state_changed
+		state :denied, :after_enter => :notify_state_changed
+		state :registered, :after_enter => :notify_state_changed
+		state :active, :after_enter => :notify_state_changed
+		state :suspended, :after_enter => :notify_state_changed
+		state :on_duty, :after_enter => :notify_state_changed
+
+		event :approve do
+			transitions :from => :interested, :to => :approved
+			transitions :from => :denied, :to => :approved
+		end
+
+		event :deny do
+			transitions :from => :interested, :to => :denied
+		end
+
+		event :register do
+			transitions :from => :approved, :to => :registered
+		end
+
+		event :activate, :after => :notify_driver_activated do
+			transitions :from => :registered, :to => :active
+		end
+
+		event :suspend do
+			transitions :from => :registered, :to => :suspended
+			transitions :from => :active, :to => :suspended
+		end
+
+		event :reactivate do
+			transitions :from => :suspended, :to => :active
+		end
+
+		event :clock_on do
+			transitions :from => :active, :to => :on_duty
+		end
+
+		event :clock_off do
+			transitions :from => :on_duty, :to => :active
+		end
+	end
+
+	def notify_state_changed
+		notify_observers :driver_state_changed
+	end
+
+	def notify_driver_activated
+		notify_observers :driver_activated
+	end
 
 
 	def update_location!(longitude, latitude)
@@ -77,22 +143,11 @@ class Driver < User
 
 	
 	def state
-		unless self.driver_role.nil?
-			return self.driver_role.state
-		end
+		self.driver_state
 	end
 
 	def state=(state_change)
-		unless state_change.nil? || state_change == ''
-			if state_change == :initialize
-				self.driver_role = DriverRole.new
-				self.driver_role.save
-				save
-			else
-				self.driver_role.method(state_change).call
-				self.driver_role.save
-			end
-		end
+		self.driver_state = state_change
 	end
 
 

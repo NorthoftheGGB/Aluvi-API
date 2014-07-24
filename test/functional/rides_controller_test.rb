@@ -1,8 +1,8 @@
-require 'test_helper'
+ require 'test_helper'
 
 class RidesControllerTest < ActionController::TestCase
   setup do
-    @ride = ride_requests(:one)
+    @ride = FactoryGirl.create(:on_demand_ride)
   end
 
   test "should get index" do
@@ -16,15 +16,15 @@ class RidesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should create ride_request" do
-    assert_difference('RideRequest.count') do
-      post :create, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, origin: @ride.origin, origin_place_name: @ride.origin_place_name, requested_datetime: @ride.requested_datetime, state: @ride.state, type: @ride.type }
+  test "should create ride" do
+    assert_difference('Ride.count') do
+      post :create, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, origin: @ride.origin, origin_place_name: @ride.origin_place_name, requested_datetime: @ride.requested_datetime, state: @ride.state, request_type: @ride.request_type, rider_id: @ride.rider.id }
     end
 
-    assert_redirected_to ride_request_path(assigns(:ride))
+    assert_redirected_to ride_path(assigns(:ride))
   end
 
-  test "should show ride_request" do
+  test "should show ride" do
     get :show, id: @ride
     assert_response :success
   end
@@ -34,16 +34,16 @@ class RidesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should update ride_request" do
-    put :update, id: @ride, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, origin: @ride.origin, origin_place_name: @ride.origin_place_name, requested_datetime: @ride.requested_datetime, state: @ride.state, type: @ride.type }
-    assert_redirected_to ride_request_path(assigns(:ride))
+  test "should update ride" do
+    put :update, id: @ride, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, origin: @ride.origin, origin_place_name: @ride.origin_place_name, requested_datetime: @ride.requested_datetime, state: @ride.state, request_type: @ride.request_type }
+    assert_redirected_to ride_path(assigns(:ride))
   end
 
-  test "should destroy ride_request" do
-    assert_difference('RideRequest.count', -1) do
+  test "should destroy ride" do
+    assert_difference('Ride.count', -1) do
       delete :destroy, id: @ride
     end
 
-    assert_redirected_to ride_requests_path
+    assert_redirected_to rides_path
   end
 end

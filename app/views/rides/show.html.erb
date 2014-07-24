@@ -2,12 +2,12 @@
 
 <p>
   <b>User:</b>
-  <%= @ride.user %>
+  <%= @ride.rider.full_name %>
 </p>
 
 <p>
   <b>Ride:</b>
-  <%= @ride.fare %>
+  <%= @ride.route_description %>
 </p>
 
 <p>
@@ -17,7 +17,7 @@
 
 <p>
   <b>Type:</b>
-  <%= @ride.type %>
+  <%= @ride.request_type %>
 </p>
 
 <p>
@@ -46,5 +46,5 @@
 </p>
 
 
-<%= link_to 'Edit', edit_ride_request_path(@ride) %> |
-<%= link_to 'Back', ride_requests_path %>
+<%= link_to 'Edit', edit_ride_path(@ride) %> |
+<%= link_to 'Back', rides_path %>

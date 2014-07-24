@@ -1,4 +1,4 @@
-<h1>Listing ride_requests</h1>
+<h1>Listing rides</h1>
 
 <table>
   <tr>
@@ -14,23 +14,23 @@
     <th></th>
   </tr>
 
-<% @rides.each do |ride_request| %>
+<% @rides.each do |ride| %>
   <tr>
-    <td><%= ride_request.user.full_name %></td>
-    <td><%= ride_request.state %></td>
-    <td><%= ride_request.request_type %></td>
-    <td><%= ride_request.origin %></td>
-    <td><%= ride_request.origin_place_name %></td>
-    <td><%= ride_request.destination %></td>
-    <td><%= ride_request.destination_place_name %></td>
-    <td><%= ride_request.requested_datetime %></td>
-    <td><%= link_to 'Show', ride_request %></td>
-    <td><%= link_to 'Edit', edit_ride_request_path(ride_request) %></td>
-    <td><%= link_to 'Destroy', ride_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= ride.rider.full_name %></td>
+    <td><%= ride.state %></td>
+    <td><%= ride.request_type %></td>
+    <td><%= ride.origin %></td>
+    <td><%= ride.origin_place_name %></td>
+    <td><%= ride.destination %></td>
+    <td><%= ride.destination_place_name %></td>
+    <td><%= ride.requested_datetime %></td>
+    <td><%= link_to 'Show', ride %></td>
+    <td><%= link_to 'Edit', edit_ride_path(ride) %></td>
+    <td><%= link_to 'Destroy', ride, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Ride request', new_ride_request_path %>
+<%= link_to 'New Ride request', new_ride_path %>

@@ -254,6 +254,10 @@ class Fare < ActiveRecord::Base
 		"ride: { " + self.id.to_s + " } " 
 	end
 
+	def route_description
+		self.meeting_point_place_name + " to " + self.drop_off_point_place_name
+	end
+
 	private
 	def ride_was_scheduled 
 		update_ride_requests_to_scheduled
