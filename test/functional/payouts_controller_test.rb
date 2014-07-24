@@ -2,7 +2,7 @@ require 'test_helper'
 
 class PayoutsControllerTest < ActionController::TestCase
   setup do
-    @payout = payouts(:one)
+    @payout = FactoryGirl.create(:payout)
   end
 
   test "should get index" do

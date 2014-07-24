@@ -9,7 +9,7 @@ class Driver < User
 	has_many :payouts
 	has_many :earnings, :class_name => 'Payment'
 
-	default_scope { where(:driver_state, 'IS NOT NULL') }
+	default_scope { where('driver_state IS NOT NULL') }
 	scope :available_drivers, ->{ where(:driver_state => :on_duty) }
 	scope :on_duty, ->{ where(:driver_state => :on_duty) }
 	scope :demo_drivers, ->{ where(:demo => true) }
@@ -143,7 +143,11 @@ class Driver < User
 
 	
 	def state
-		self.driver_state
+		unless self.driver_state.nil?
+			self.driver_state
+		else 
+			'no state'
+		end
 	end
 
 	def state=(state_change)

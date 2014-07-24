@@ -2,6 +2,7 @@ class Rider < User
 	self.table_name = 'users'
 
 	has_many :rides, inverse_of: :rider
+	has_many :rider_fares
 	has_many :fares, through: :rider_fares
 	has_many :cards
 	has_many :payments
@@ -41,7 +42,11 @@ class Rider < User
 	end
 	
 	def state
-		self.rider_state
+		unless self.rider_state.nil?
+			self.rider_state
+		else 
+			'no state'
+		end
 	end
 
 	def state=(state_change)

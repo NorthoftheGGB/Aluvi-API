@@ -3,8 +3,6 @@ require 'test_helper'
 class DriversControllerTest < ActionController::TestCase
   setup do
     @driver = User.new 
-		@driver.driver_role = DriverRole.new
-		@driver.save
   end
 
   test "should get index" do

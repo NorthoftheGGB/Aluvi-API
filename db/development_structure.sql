@@ -212,7 +212,7 @@ ALTER SEQUENCE fares_id_seq OWNED BY fares.id;
 CREATE TABLE offers (
     id integer NOT NULL,
     driver_id integer,
-    ride_id integer,
+    fare_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     state character varying(255)
@@ -353,7 +353,7 @@ ALTER SEQUENCE rider_fares_id_seq OWNED BY rider_fares.id;
 CREATE TABLE rides (
     id integer NOT NULL,
     rider_id integer,
-    ride_id integer,
+    fare_id integer,
     state character varying(255),
     request_type character varying(255),
     requested_datetime timestamp without time zone,

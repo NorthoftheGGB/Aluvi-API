@@ -1,7 +1,7 @@
 class Offer < ActiveRecord::Base
-	belongs_to :driver, :class_name => 'User', :foreign_key => 'driver_id'
-	belongs_to :fare, :class_name => 'Fare', :foreign_key => 'ride_id'
-  attr_accessible :driver_id, :ride_id
+	belongs_to :driver
+	belongs_to :fare 
+  attr_accessible :driver_id, :fare_id
 
 	scope :undelivered_offers, where(state: [:offered]) 
 	scope :open_offers, where(state: [:offered, :offer_delivered]) 

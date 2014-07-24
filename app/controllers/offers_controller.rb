@@ -1,6 +1,6 @@
 class OffersController < ApplicationController
-  # GET /offered_rides
-  # GET /offered_rides.json
+  # GET /offers
+  # GET /offers.json
   def index
     @offers = Offer.all
 
@@ -10,8 +10,8 @@ class OffersController < ApplicationController
     end
   end
 
-  # GET /offered_rides/1
-  # GET /offered_rides/1.json
+  # GET /offers/1
+  # GET /offers/1.json
   def show
     @offer = Offer.find(params[:id])
 
@@ -21,8 +21,8 @@ class OffersController < ApplicationController
     end
   end
 
-  # GET /offered_rides/new
-  # GET /offered_rides/new.json
+  # GET /offers/new
+  # GET /offers/new.json
   def new
     @offer = Offer.new
 
@@ -32,13 +32,13 @@ class OffersController < ApplicationController
     end
   end
 
-  # GET /offered_rides/1/edit
+  # GET /offers/1/edit
   def edit
     @offer = Offer.find(params[:id])
   end
 
-  # POST /offered_rides
-  # POST /offered_rides.json
+  # POST /offers
+  # POST /offers.json
   def create
     @offer = Offer.new(params[:offer])
 
@@ -53,8 +53,8 @@ class OffersController < ApplicationController
     end
   end
 
-  # PUT /offered_rides/1
-  # PUT /offered_rides/1.json
+  # PUT /offers/1
+  # PUT /offers/1.json
   def update
     @offer = Offer.find(params[:id])
 
@@ -69,14 +69,14 @@ class OffersController < ApplicationController
     end
   end
 
-  # DELETE /offered_rides/1
-  # DELETE /offered_rides/1.json
+  # DELETE /offers/1
+  # DELETE /offers/1.json
   def destroy
     @offer = Offer.find(params[:id])
     @offer.destroy
 
     respond_to do |format|
-      format.html { redirect_to offered_rides_url }
+      format.html { redirect_to offers_url }
       format.json { head :no_content }
     end
   end
