@@ -261,7 +261,7 @@ class Fare < ActiveRecord::Base
 		save
 		self.driver.current_fare = nil
 		self.driver.save
-		notify_observers :ride_cancelled_by_driver
+		notify_observers :fare_cancelled_by_driver
 	end
 
 
@@ -283,7 +283,7 @@ class Fare < ActiveRecord::Base
 		save
 		self.driver.current_fare = nil
 		self.driver.save
-		notify_observers :ride_completed
+		notify_observers :fare_completed
 	end
 
 	def notify_scheduled
@@ -292,11 +292,11 @@ class Fare < ActiveRecord::Base
 	end
 
 	def notify_ride_cancelled_by_rider
-		notify_observers :ride_cancelled_by_rider
+		notify_observers :fare_cancelled_by_rider
 	end
 
 	def notify_ride_cancelled_by_driver
-		notify_observers :ride_cancelled_by_driver
+		notify_observers :fare_cancelled_by_driver
 	end
 
 	def update_ride_requests_to_scheduled

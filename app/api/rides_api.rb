@@ -25,7 +25,7 @@ class RidesAPI< Grape::API
 						request.cancel!
 					end
 
-					ride_request = OnDemandRideRequest.create!(params[:type],
+					ride_request = OnDemandRide.create!(params[:type],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
@@ -33,7 +33,7 @@ class RidesAPI< Grape::API
 																						 current_user.id
 																						)
 			when 'commuter'
-					ride_request = CommuterRideRequest.create!(params[:type],
+					ride_request = CommuterRide.create!(params[:type],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
@@ -186,7 +186,7 @@ class RidesAPI< Grape::API
 				end
 			else 
 				driver = Driver.find(current_user.id)
-				driver.accepted_ride(ride)
+				driver.accepted_fare(ride)
 				ok
 			end
 
@@ -208,7 +208,7 @@ class RidesAPI< Grape::API
 				end
 			end
 
-			current_user.declined_ride(ride)
+			current_user.declined_fare(ride)
 			ok
 
 		end

@@ -49,6 +49,30 @@ class Driver < User
 			sum += earning.driver_earnings_cents
 		end
 		sum
-	end
+  end
+
+  def offer_fare( fare )
+    offered_ride = Offer.new
+    offered_ride.fare = ride
+    offered_ride.fare.save
+    self.offers << offered_ride
+    save
+    offered_ride
+  end
+
+  def offer_for_fare( fare )
+    offered_ride = Offer.where(:driver_id => id).where(:fare_id => fare.id).first
+  end
+
+  def declined_fare( fare )
+    offer_for_fare(fare).declined!
+  end
+
+  def accepted_fare( fare )
+    offer_for_fare(fare).accepted!
+    fare.accepted!(self)
+    self.current_fare_id = fare.id
+    save
+  end
 
 end

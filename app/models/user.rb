@@ -89,32 +89,7 @@ class User < ActiveRecord::Base
 			Digest::SHA2.hexdigest salted_password
 	end
 
-	#
-	# driver model
-	#
-	def offer_ride( ride )
-		offered_ride = Offer.new
-		offered_ride.fare = ride
-		offered_ride.fare.save
-		self.offers << offered_ride
-		save
-		offered_ride
-	end
 
-	def offer_for_ride( ride )
-		offered_ride = Offer.where(:driver_id => id).where(:ride_id => ride.id).first
-	end
-
-	def declined_ride( ride )
-		offer_for_ride(ride).declined!
-	end
-
-	def accepted_ride( ride )
-		offer_for_ride(ride).accepted!
-		ride.accepted!(self)
-		self.current_fare_id = ride.id
-		save
-	end
 
 	#
 	# driver model

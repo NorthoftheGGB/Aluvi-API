@@ -1,8 +1,8 @@
-class CommuterRideRequestsController < ApplicationController
+class CommuterRidesController < ApplicationController
   # GET commuter_ride_requests
   # GET commuter_ride_requests.json
   def index
-    @rides = CommuterRideRequest.order("created_at DESC").all
+    @rides = CommuterRide.order("created_at DESC").all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,7 +13,7 @@ class CommuterRideRequestsController < ApplicationController
   # GET commuter_ride_requests/1
   # GET commuter_ride_requests/1.json
   def show
-    @ride = CommuterRideRequest.find(params[:id])
+    @ride = CommuterRide.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -24,7 +24,7 @@ class CommuterRideRequestsController < ApplicationController
   # GET commuter_ride_requests/new
   # GET commuter_ride_requests/new.json
   def new
-    @ride = CommuterRideRequest.new
+    @ride = CommuterRide.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -34,13 +34,13 @@ class CommuterRideRequestsController < ApplicationController
 
   # GET commuter_ride_requests/1/edit
   def edit
-    @ride = CommuterRideRequest.find(params[:id])
+    @ride = CommuterRide.find(params[:id])
   end
 
   # POST commuter_ride_requests
   # POST commuter_ride_requests.json
   def create
-    @ride = CommuterRideRequest.new(params[:ride])
+    @ride = CommuterRide.new(params[:ride])
 
     respond_to do |format|
       if @ride.save
@@ -57,7 +57,7 @@ class CommuterRideRequestsController < ApplicationController
   # PUT commuter_ride_requests/1
   # PUT commuter_ride_requests/1.json
   def update
-    @ride = CommuterRideRequest.find(params[:id])
+    @ride = CommuterRide.find(params[:id])
 
     respond_to do |format|
       if @ride.update_attributes(params[:ride])
@@ -73,7 +73,7 @@ class CommuterRideRequestsController < ApplicationController
   # DELETE commuter_ride_requests/1
   # DELETE commuter_ride_requests/1.json
   def destroy
-    @ride = CommuterRideRequest.find(params[:id])
+    @ride = CommuterRide.find(params[:id])
     @ride.destroy
 
     respond_to do |format|
