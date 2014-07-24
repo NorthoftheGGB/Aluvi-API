@@ -119,7 +119,7 @@ class Driver < User
 
   def offer_fare( fare )
     offered_ride = Offer.new
-    offered_ride.fare = ride
+    offered_ride.fare = fare
     offered_ride.fare.save
     self.offers << offered_ride
     save

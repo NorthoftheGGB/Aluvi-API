@@ -1,7 +1,7 @@
 class Fare < ActiveRecord::Base
 
 	belongs_to :driver, inverse_of: :fares
-	belongs_to :car, inverse_of: :fare
+	belongs_to :car, inverse_of: :fares
 	has_many :rider_fares
 	has_many :riders, through: :rider_fares
 	has_many :rides, inverse_of: :fare

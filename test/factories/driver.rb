@@ -4,7 +4,7 @@ FactoryGirl.define do
 		last_name "Doe"
 
 		factory :available_driver do
-			state "driver_idle"
+			state "on_duty"
 		end
 	end
 

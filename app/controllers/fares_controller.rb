@@ -1,6 +1,6 @@
 class FaresController < ApplicationController
-  # GET /rides
-  # GET /rides.json
+  # GET /fares
+  # GET /fares.json
   def index
     @fares = Fare.all
 
@@ -10,8 +10,8 @@ class FaresController < ApplicationController
     end
   end
 
-  # GET /rides/1
-  # GET /rides/1.json
+  # GET /fares/1
+  # GET /fares/1.json
   def show
     @fare = Fare.find(params[:id])
 
@@ -21,8 +21,8 @@ class FaresController < ApplicationController
     end
   end
 
-  # GET /rides/new
-  # GET /rides/new.json
+  # GET /fares/new
+  # GET /fares/new.json
   def new
     @fare = Fare.new
 
@@ -32,13 +32,13 @@ class FaresController < ApplicationController
     end
   end
 
-  # GET /rides/1/edit
+  # GET /fares/1/edit
   def edit
     @fare = Fare.find(params[:id])
   end
 
-  # POST /rides
-  # POST /rides.json
+  # POST /fares
+  # POST /fares.json
   def create
     @fare = Fare.new(params[:fare])
 
@@ -53,8 +53,8 @@ class FaresController < ApplicationController
     end
   end
 
-  # PUT /rides/1
-  # PUT /rides/1.json
+  # PUT /fares/1
+  # PUT /fares/1.json
   def update
     @fare = Fare.find(params[:id])
 
@@ -77,14 +77,14 @@ class FaresController < ApplicationController
     end
   end
 
-  # DELETE /rides/1
-  # DELETE /rides/1.json
+  # DELETE /fares/1
+  # DELETE /fares/1.json
   def destroy
     @fare = Fare.find(params[:id])
     @fare.destroy
 
     respond_to do |format|
-      format.html { redirect_to rides_url }
+      format.html { redirect_to fares_url }
       format.json { head :no_content }
     end
   end

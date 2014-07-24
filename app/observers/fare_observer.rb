@@ -9,7 +9,7 @@ class FareObserver < ActiveRecord::Observer
 		fare.riders.each do |rider|
 			Rails.logger.debug "notifying rider"
 			Rails.logger.debug rider
-			ride = fare.rides.where(user_id: rider.id).first
+			ride = fare.rides.where(rider_id: rider.id).first
 			rider.devices.each do |d|
 				if(d.push_token.nil?)
 					next	

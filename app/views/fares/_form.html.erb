@@ -1,7 +1,7 @@
 <%= form_for(@fare) do |f| %>
   <% if @fare.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@fare.errors.count, "error") %> prohibited this ride from being saved:</h2>
+      <h2><%= pluralize(@fare.errors.count, "error") %> prohibited this fare from being saved:</h2>
 
       <ul>
       <% @fare.errors.full_messages.each do |msg| %>
@@ -14,8 +14,8 @@
   <div class="field">
     Driver<br />
 		<% if @fare.driver == nil  %>
-			Schedule driver for this ride: 
-			<%= f.collection_select :driver, User.drivers, :id, :full_name, :include_blank => true %>
+			Schedule driver for this fare: 
+			<%= f.collection_select :driver, Driver.all, :id, :full_name, :include_blank => true %>
 		<% else %>
 			<%= f.label @fare.driver.full_name %>
 		<% end %>

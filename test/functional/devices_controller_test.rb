@@ -2,7 +2,7 @@ require 'test_helper'
 
 class DevicesControllerTest < ActionController::TestCase
   setup do
-    @device = devices(:one)
+		@device = FactoryGirl.create(:device)
   end
 
   test "should get index" do

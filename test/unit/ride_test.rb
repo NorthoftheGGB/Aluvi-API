@@ -2,9 +2,6 @@ require 'test_helper'
 
 class RideTest < ActiveSupport::TestCase
 
-	# disable the transactions if we want to, just for fun
-	# self.use_transactional_fixtures = false
-	
 	test "request on demand ride" do
 		rider = FactoryGirl.create(:rider)
 		ride = OnDemandRide.create!(
@@ -23,9 +20,10 @@ class RideTest < ActiveSupport::TestCase
 		assert_not_nil(fare.drop_off_point, "Ride should have destination" )
 	end
 
-	test "driver accepts ride" do
+	test "driver accepts fare" do
 		FactoryGirl.create(:available_driver)	
 		FactoryGirl.create(:available_driver)	
+		rider = FactoryGirl.create(:rider)
 
 		ride = OnDemandRide.create!(
 																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
@@ -39,26 +37,26 @@ class RideTest < ActiveSupport::TestCase
 		ride.request!
 		fare = ride.fare
 
-		driver = User.available_drivers.first # from the factory calls above
+		driver = Driver.available_drivers.first # from the factory calls above
 
-		# offer the ride to the driver
-		driver.offer_fare(ride)
-
-		fare.accepted!(driver)
-		
+		# offer the fare to the driver
+		driver.offer_fare(fare)
 		offer = driver.offers.where(:fare_id => fare.id).first
 		assert_not_nil(offer)
 
 		offer.accepted!
 
-		assert_equal(ride.state, "scheduled")
-		assert_equal(offer.state, "accepted")
+		fare.accepted!(driver)
+	
+		assert_equal("scheduled", fare.state)
+		assert_equal("accepted", offer.state)
 
 	end
 
-	test "driver declines ride" do
+	test "driver declines fare" do
 		FactoryGirl.create(:available_driver)	
 		FactoryGirl.create(:available_driver)	
+		rider = FactoryGirl.create(:rider)
 
 		ride = OnDemandRide.create!(
 																RGeo::Geographic.spherical_factory( :srid => 4326 ).point(-122, 47),
@@ -71,7 +69,7 @@ class RideTest < ActiveSupport::TestCase
 		ride.request!
 		fare = ride.fare
 
-		drivers = User.available_drivers
+		drivers = Driver.available_drivers
 		drivers.each do |d|
 			d.offer_fare(fare)
 		end

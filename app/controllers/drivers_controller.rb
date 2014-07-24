@@ -2,7 +2,7 @@ class DriversController < ApplicationController
   # GET /drivers
   # GET /drivers.json
   def index
-    @drivers = Driver.drivers
+    @drivers = Driver.all
 
 		#switch to jbuilder
 		json = Array.new

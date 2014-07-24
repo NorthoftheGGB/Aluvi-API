@@ -2,7 +2,7 @@ require 'test_helper'
 
 class DriversControllerTest < ActionController::TestCase
   setup do
-    @driver = User.new 
+    @driver = FactoryGirl.create(:driver)
   end
 
   test "should get index" do
@@ -18,7 +18,7 @@ class DriversControllerTest < ActionController::TestCase
 
   test "should create driver" do
     assert_difference('User.count') do
-      post :create, driver: { commuter_balance_cents: @driver.commuter_balance_cents, commuter_refill_amount_cents: @driver.commuter_refill_amount_cents, company_id: @driver.company_id, first_name: @driver.first_name, is_driver: @driver.is_driver, is_driver: @driver.is_driver, last_name: @driver.last_name, stripe_customer_id: @driver.stripe_customer_id, stripe_recipient_id: @driver.stripe_recipient_id }
+      post :create, driver: { commuter_balance_cents: @driver.commuter_balance_cents, commuter_refill_amount_cents: @driver.commuter_refill_amount_cents, company_id: @driver.company_id, first_name: @driver.first_name, last_name: @driver.last_name, stripe_customer_id: @driver.stripe_customer_id, stripe_recipient_id: @driver.stripe_recipient_id }
     end
 
     assert_redirected_to driver_path(assigns(:driver))
@@ -35,7 +35,7 @@ class DriversControllerTest < ActionController::TestCase
   end
 
   test "should update driver" do
-    put :update, id: @driver, driver: { commuter_balance_cents: @driver.commuter_balance_cents, commuter_refill_amount_cents: @driver.commuter_refill_amount_cents, company_id: @driver.company_id, first_name: @driver.first_name, is_driver: @driver.is_driver, is_driver: @driver.is_driver, last_name: @driver.last_name, stripe_customer_id: @driver.stripe_customer_id, stripe_recipient_id: @driver.stripe_recipient_id }
+    put :update, id: @driver, driver: { commuter_balance_cents: @driver.commuter_balance_cents, commuter_refill_amount_cents: @driver.commuter_refill_amount_cents, company_id: @driver.company_id, first_name: @driver.first_name, last_name: @driver.last_name, stripe_customer_id: @driver.stripe_customer_id, stripe_recipient_id: @driver.stripe_recipient_id }
     assert_redirected_to driver_path(assigns(:driver))
   end
 

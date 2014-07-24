@@ -2,7 +2,7 @@ require 'test_helper'
 
 class FaresControllerTest < ActionController::TestCase
   setup do
-    @fare = rides(:one)
+    @fare = FactoryGirl.create(:fare)
   end
 
   test "should get index" do
@@ -16,15 +16,15 @@ class FaresControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should create ride" do
-    assert_difference('Ride.count') do
-      post :create, fare: { destination: @fare.destination, destination_place_name: @fare.destination_place_name, finished: @fare.finished, meeting_point: @fare.meeting_point, meeting_point_place_name: @fare.meeting_point_place_name, scheduled: @fare.scheduled, started: @fare.started, state: @fare.state }
+  test "should create fare" do
+    assert_difference('Fare.count') do
+      post :create, fare: { drop_off_point: @fare.drop_off_point, drop_off_point_place_name: @fare.drop_off_point_place_name, finished: @fare.finished, meeting_point: @fare.meeting_point, meeting_point_place_name: @fare.meeting_point_place_name, scheduled: @fare.scheduled, started: @fare.started, state: @fare.state }
     end
 
-    assert_redirected_to ride_path(assigns(:fare))
+    assert_redirected_to fare_path(assigns(:fare))
   end
 
-  test "should show ride" do
+  test "should show fare" do
     get :show, id: @fare
     assert_response :success
   end
@@ -34,16 +34,16 @@ class FaresControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should update ride" do
-    put :update, id: @fare, fare: { destination: @fare.destination, destination_place_name: @fare.destination_place_name, finished: @fare.finished, meeting_point: @fare.meeting_point, meeting_point_place_name: @fare.meeting_point_place_name, scheduled: @fare.scheduled, started: @fare.started, state: @fare.state }
-    assert_redirected_to ride_path(assigns(:fare))
+  test "should update fare" do
+    put :update, id: @fare, fare: { drop_off_point: @fare.drop_off_point, drop_off_point_place_name: @fare.drop_off_point_place_name, finished: @fare.finished, meeting_point: @fare.meeting_point, meeting_point_place_name: @fare.meeting_point_place_name, scheduled: @fare.scheduled, started: @fare.started, state: @fare.state }
+    assert_redirected_to fare_path(assigns(:fare))
   end
 
-  test "should destroy ride" do
-    assert_difference('Ride.count', -1) do
+  test "should destroy fare" do
+    assert_difference('Fare.count', -1) do
       delete :destroy, id: @fare
     end
 
-    assert_redirected_to rides_path
+    assert_redirected_to fares_path
   end
 end

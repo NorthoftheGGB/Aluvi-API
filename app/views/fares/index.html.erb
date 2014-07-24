@@ -1,4 +1,4 @@
-<h1>Listing rides</h1>
+<h1>Listing fares</h1>
 
 <table>
   <tr>
@@ -15,23 +15,23 @@
     <th></th>
   </tr>
 
-<% @fares.each do |ride| %>
+<% @fares.each do |fare| %>
   <tr>
-    <td><%= ride.driver != nil ? ride.driver.full_name : '' %></td>
-    <td><%= ride.car %></td>
-    <td><%= ride.state %></td>
-    <td><%= ride.scheduled %></td>
-    <td><%= ride.started %></td>
-    <td><%= ride.finished %></td>
-    <td><%= ride.meeting_point_place_name %></td>
-    <td><%= ride.drop_off_point_place_name %></td>
-    <td><%= link_to 'Show', ride %></td>
-    <td><%= link_to 'Edit', edit_ride_path(ride) %></td>
-    <td><%= link_to 'Destroy', ride, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= fare.driver != nil ? fare.driver.full_name : '' %></td>
+    <td><%= fare.car %></td>
+    <td><%= fare.state %></td>
+    <td><%= fare.scheduled %></td>
+    <td><%= fare.started %></td>
+    <td><%= fare.finished %></td>
+    <td><%= fare.meeting_point_place_name %></td>
+    <td><%= fare.drop_off_point_place_name %></td>
+    <td><%= link_to 'Show', fare %></td>
+    <td><%= link_to 'Edit', edit_fare_path(fare) %></td>
+    <td><%= link_to 'Destroy', fare, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Ride', new_ride_path %>
+<%= link_to 'New Ride', new_fare_path %>
