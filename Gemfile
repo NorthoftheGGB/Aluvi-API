@@ -12,10 +12,15 @@ gem 'pg'
 gem 'activerecord-postgis-adapter'
 
 #web
+
+# Use SCSS for stylesheets
+gem 'sass-rails', '~> 4.0.3'
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+# Use CoffeeScript for .js.coffee assets and views
+gem 'coffee-rails', '~> 4.0.0'
+
 gem 'jquery-rails'
-gem 'sass-rails'
-gem 'uglifier'
-gem 'coffee-rails'
 
 # Non-blocking, single threaded server for concurrency
 gem 'thin'
@@ -74,6 +79,7 @@ group :test do
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.0.0'
 end
+gem "spring", group: :development
 
 # QA
 gem 'multi_logger'
