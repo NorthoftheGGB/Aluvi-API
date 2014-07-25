@@ -78,9 +78,7 @@ VocoApi::Application.configure do
 	# config.mobile_app_identifier = 'com.vocotransportation.alpha'
 	config.mobile_app_identifier = ENV['MOBILE_APP_IDENTIFIER']
 	
-	config.voco_demo_commuter_assembly_trigger_threshold = 0
-
 	config.assets.cache_store = :dalli_store
 
-	config.voco_demo_commuter_assembly_trigger_threshold = 0
+	config.voco_demo_commuter_assembly_trigger_threshold = 2
 end

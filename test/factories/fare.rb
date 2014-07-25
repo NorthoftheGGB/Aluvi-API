@@ -1,8 +1,10 @@
 FactoryGirl.define do
 	factory :fare do
 		driver
+    #meeting_point  'POINT(-122 47)'
+    #drop_off_point  'POINT(-122 47)'
 
-		factory :scheduled_fare do
+    factory :scheduled_fare do
 			state "scheduled"
       after(:create) do |fare|
         fare.riders << FactoryGirl.create(:rider)

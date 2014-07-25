@@ -62,20 +62,21 @@ class WebAPI < Grape::API
 		params do
 			optional :begin_date, type: DateTime
 			optional :end_date, type: DateTime
-			optional :ride_id, type: Integer
+			optional :fare_id, type: Integer
 			optional :rider_id, type: Integer
 			optional :driver_id, type: Integer
 			optional :role, type: Symbol, values: [:rider, :driver, :admin], default: :rider
 		end
-		get "trips", jbuilder: 'web_rides' do
+		get "trips", jbuilder: 'web_fares' do
 			authenticate!
+      rider = Rider.find(current_user.id)
 			if( params[:role] == :rider )
-				@fares = current_user.fares
+				@fares = rider.fares
 			elsif ( params[:role] == :driver )
-				@fares = current_user.fares
+				@fares = rider.fares
 			elsif ( params[:role] == :admin )
 
-				@fares = Fare.order('rides.id')
+				@fares = Fare.order('fares.id')
 				if params['rider_id']
 					@fares = Fare.includes(:riders).where( :users => { id: params['rider_id'] } )
 				end
@@ -100,9 +101,11 @@ class WebAPI < Grape::API
 				@fares.where( "started >", DateTime.now)
 			end
 
-			if params['ride_id']
-				@fares.where( :id => params['ride_id'])
-			end
+			if params['fare_id']
+				@fares.where( :id => params['fare_id'])
+      end
+
+      @fares
 
 		end
 
