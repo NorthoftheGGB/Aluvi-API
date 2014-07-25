@@ -3,8 +3,8 @@ class Offer < ActiveRecord::Base
 	belongs_to :fare 
   attr_accessible :driver_id, :fare_id
 
-	scope :undelivered_offers, where(state: [:offered]) 
-	scope :open_offers, where(state: [:offered, :offer_delivered]) 
+	scope :undelivered_offers, -> { where(state: [:offered]) }
+	scope :open_offers, -> { where(state: [:offered, :offer_delivered]) }
 
 	include AASM
 	aasm_column :state

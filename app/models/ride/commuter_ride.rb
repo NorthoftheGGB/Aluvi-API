@@ -17,7 +17,7 @@ class CommuterRide < Ride
 	end
 
 	def self.create!( origin, origin_place_name, destination, destination_place_name, desired_arrival, rider )
-		ride = CommuterRide.create( type, origin, origin_place_name, destination, destination_place_name, desired_arrival, rider )
+		ride = CommuterRide.create( origin, origin_place_name, destination, destination_place_name, desired_arrival, rider )
 		ride.save
 		ride
 	end

@@ -81,4 +81,6 @@ VocoApi::Application.configure do
 	config.voco_demo_commuter_assembly_trigger_threshold = 0
 
 	config.assets.cache_store = :dalli_store
+
+	config.voco_demo_commuter_assembly_trigger_threshold = 0
 end

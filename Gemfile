@@ -79,7 +79,9 @@ group :test do
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.0.0'
 end
+
 gem "spring", group: :development
+gem "spring-commands-rspec", group: :development
 
 # QA
 gem 'multi_logger'

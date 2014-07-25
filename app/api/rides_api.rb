@@ -3,7 +3,7 @@ class RidesAPI< Grape::API
 	format :json
 	formatter :json, Grape::Formatter::Jbuilder
 
-	resources :fares do
+	resources :rides do
 
 		desc "Request a ride"
 		params do
@@ -19,38 +19,39 @@ class RidesAPI< Grape::API
 		post :request do
 			authenticate!
 			case params[:type]
-			when 'on_demand'
-					stale_requests = current_user.rides.where( state: :requested).all
+        when 'on_demand'
+          rider = Rider.find(current_user.id)
+					stale_requests = rider.rides.where( state: :requested).all
 					stale_requests.each do |request|
 						request.cancel!
 					end
 
-					ride_request = OnDemandRide.create!(
+					ride = OnDemandRide.create!(
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
-																						 current_user
+																						 rider
 																						)
 			when 'commuter'
-					ride_request = CommuterRide.create!(
+         ride = CommuterRide.create!(
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
 																						 params[:desired_arrival],
-																						 current_user
+                                             rider
 																						)
 			else
 				raise "No request type set"
 			end
 
-			ride_request.request!
+      ride.request!
 
 			if params[:type] == 'commuter'
 				if current_user.demo
 					# demoing subsystem
-					demo_rides = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } )
+					demo_rides = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :rider ).where( :users => { demo: true  } )
 
 					threshold = Rails.application.config.voco_demo_commuter_assembly_trigger_threshold 
 					if threshold.nil?
@@ -61,38 +62,40 @@ class RidesAPI< Grape::API
 						Rails.logger.debug 'scheduling DEMO commuter ride'
 						ActiveRecord::Base.transaction do
 							# need to DRY this with the commuter ride requests controller
-							ride = Fare.assemble_fare_from_rides demo_rides
-							ride.meeting_point_place_name = FaresHelper::reverse_geocode ride.meeting_point
-							ride.drop_off_point_place_name = FaresHelper::reverse_geocode  ride.drop_off_point
+							fare = Fare.assemble_fare_from_rides demo_rides
+              fare.meeting_point_place_name = FaresHelper::reverse_geocode fare.meeting_point
+              fare.drop_off_point_place_name = FaresHelper::reverse_geocode  fare.drop_off_point
 							drivers = Driver.demo_drivers
-							ride.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
+              fare.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
 						end
 					end
 				end
 			end
 
 			rval = Hash.new
-			rval[:request_id] = ride_request.id
+			rval[:ride_id] = ride.id
 			rval
 
 		end
 		
 		desc "Cancel a ride request"
 		params do
-			requires :request_id, type: Integer
+			requires :ride_id, type: Integer
 		end
 		post "request/cancel" do
 			authenticate!
 			begin
-				ride_request = Ride.find(params[:request_id])
-				if(ride_request.user != current_user )
+				ride = Ride.find(params[:ride_id])
+        Rails.logger.info ride.rider.id.to_s
+        Rails.logger.info current_user.id.to_s
+				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
 				end
-				if !ride_request.fare.nil? && ride_request.fare.scheduled?
+				if !ride.fare.nil? && ride.fare.scheduled?
 					#if ride found has yet been delivered to phone, cancel ride instead of request anyway
-					ride_request.fare.rider_cancelled! ride_request.user
+          ride.fare.rider_cancelled! ride.rider
 				else
-					ride_request.cancel!
+          ride.cancel!
 				end
 				ok
 			rescue ApiExceptions::WrongUserForEntityException
@@ -101,37 +104,36 @@ class RidesAPI< Grape::API
 			rescue AASM::InvalidTransition => e 
 				Rails.logger.debug e
 				forbidden e
-			rescue
+      rescue
+        Rails.logger.debug $!
 				error! $!.message, 403, 'X-Error-Detail' => $!.message
 			end
-
 		end
 
-		desc "Update list of offered rides"
+		desc "Get list of offered rides"
 		get 'offers', jbuilder: 'offer' do
 			authenticate!
-			@offers = current_user.offers.open_offers
-			current_user.offers.undelivered_offers.each do |offer|
+      driver = Driver.find(current_user.id)
+			@offers = driver.offers.open_offers
+      driver.offers.undelivered_offers.each do |offer|
 				offer.offer_delivered!
 			end
 			@offers
 		end
 
-		desc "Update list of rides assigned to driver"
-		get 'rides', jbuilder: 'rides' do
+		desc "Get list of fares assigned to driver"
+		get 'fares', jbuilder: 'rides' do
 			authenticate!
-			if current_user.nil?
-				forbidden
-				return
-			end
-			@fares = current_user.fares.active
+      driver = Driver.find(current_user.id)
+      @fares = driver.fares.active
 
 		end
 
 		desc "Get requested and underway ride requests"
-		get 'requests', jbuilder: 'requests' do
+		get 'rides', jbuilder: 'rides' do
 			authenticate!
-			@requests = current_user.rides.select('*, ride_requests.id as request_id').joins('JOIN rides ON rides.id = ride_requests.ride_id').where( state: ["requested", "scheduled"])
+      rider = Rider.find(current_user.id)
+			@requests = rider.rides.select('*, rides.id as ride_id').joins('JOIN fares ON fares.id = rides.fare_id').where( state: ["requested", "scheduled"])
 			@requests.each do |ride|
 				# mark as delivered here if we like
 			end
@@ -153,14 +155,14 @@ class RidesAPI< Grape::API
 		end
 
 		desc "Get fare details"
-		get ':id' do
+		get 'fares/:id' do
 			authenticate!
 			fare = Fare.find(params[:id])
 			unless fare.nil?
 				if current_user.involved_in_fare fare
-					ride		
+					fare
 				else
-					forbidden
+					forbidden "User not involved in this fare"
 				end
 			else
 				not_found
@@ -192,7 +194,7 @@ class RidesAPI< Grape::API
 
 		end
 
-		desc "Driver declined fare d"
+		desc "Driver declined fare"
 		params do
 			requires :fare_id, type: Integer
 		end
@@ -214,21 +216,21 @@ class RidesAPI< Grape::API
 		end
 
 
-		desc "Driver cancelled ride"
+		desc "Driver cancelled fare"
 		params do
-			requires :ride_id, type: Integer
+			requires :fare_id, type: Integer
 		end
 		post :driver_cancelled do
 			authenticate!
-			ride = Fare.find(params[:ride_id])
+			fare = Fare.find(params[:ride_id])
 			begin
-				if ride.driver.id != current_user.id
+				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
-				ride.driver_cancelled!
+        fare.driver_cancelled!
 				ok
 			rescue AASM::InvalidTransition => e
-				if(ride.is_cancelled)
+				if(fare.is_cancelled)
 					ok
 				else
 					raise e
@@ -239,23 +241,23 @@ class RidesAPI< Grape::API
 		end
 
 
-		desc "Rider cancelled ride request"
+		desc "Rider cancelled fare"
 		params do
-			requires :ride_id, type: Integer
+			requires :fare_id, type: Integer
 		end
 		post :rider_cancelled do
 			authenticate!
 			# TODO rider should only be able to cancel their own ride
-			ride = Fare.find(params[:ride_id])
+      fare = Fare.find(params[:ride_id])
 			begin
 
-				if( !ride.riders.any?{ |r| current_user.id = ride.id } )
+				if( !fare.riders.any?{ |r| current_user.id = fare.id } )
 					raise ApiExceptions::RideNotAssignedToThisRiderException
 				end
-				ride.rider_cancelled!(current_user)
+        fare.rider_cancelled!(current_user)
 				ok
 			rescue AASM::InvalidTransition => e
-				if(ride.is_cancelled)
+				if(fare.is_cancelled)
 					ok
 				else
 					raise e
@@ -268,7 +270,7 @@ class RidesAPI< Grape::API
 
 		desc "Driver picked up rider"
 		params do
-			requires :ride_id, type: Integer
+			requires :fare_id, type: Integer
 			optional :rider_id, type: Integer
 		end
 		post :pickup do
@@ -276,18 +278,16 @@ class RidesAPI< Grape::API
 			authenticate!
 			# TODO validate driver and or rider is matched to ride
 			begin
-				ride = Fare.find(params[:ride_id])
-				Rails.logger.debug ride.driver.id
-				Rails.logger.debug current_user.id
-				if ride.driver.id != current_user.id
+				fare = Fare.find(params[:ride_id])
+				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
 				if(params[:rider_id].nil?)
-					ride.pickup!
+          fare.pickup!
 				else
 					rider = Rider.find(params[:rider_id])
-					ride.pickup! rider
+          fare.pickup! rider
 				end
 				ok
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
@@ -298,28 +298,28 @@ class RidesAPI< Grape::API
 
 		desc "Driver dropped off rider(s)"
 		params do
-			requires :ride_id, type: Integer
+			requires :fare_id, type: Integer
 		end
 		post :arrived do
 			authenticate!
 			begin
-				ride = Fare.find(params[:ride_id])
-				if ride.driver.id != current_user.id
+				fare = Fare.find(params[:ride_id])
+				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
-				ride = Fare.find(params[:ride_id])
-				earnings = ride.cost * 0.8
+        fare = Fare.find(params[:ride_id])
+				earnings = fare.cost * 0.8
 				# process the payment
 				# TODO Refactor into delayed job
 				# and move this code to a model layer, and separate into better units
-				ride.riders.each do |rider|
+        fare.riders.each do |rider|
 					begin
-						request = rider.rides.where( :ride_id => ride.id ).first
+						request = rider.rides.where( :ride_id => fare.id ).first
 
 						payment = Payment.new
-						payment.driver = ride.driver
-						payment.fare = ride
+						payment.driver = fare.driver
+						payment.fare = fare
 						payment.rider = rider
 						payment.ride = request
 						payment.amount_cents = ride.cost_per_rider
@@ -335,7 +335,7 @@ class RidesAPI< Grape::API
 								:amount => payment.amount_cents,
 								:currency => "usd",
 								:customer => customer.id,
-								:description => "Charge for Voco Ride: " + ride.meeting_point_place_name + " to " + ride.drop_off_point_place_name
+								:description => "Charge for Voco Ride: " + fare.meeting_point_place_name + " to " + fare.drop_off_point_place_name
 							)
 							if charge.paid == true
 								payment.stripe_charge_status = 'Success'

@@ -1,13 +1,39 @@
-json.array! @fares do |ride|
-
-	json.id ride.id
-	json.meeting_point_place_name ride.meeting_point_place_name
-	json.meeting_point_latitude ride.meeting_point.latitude
-	json.meeting_point_longitude ride.meeting_point.longitude
-  json.drop_off_point_place_name ride.drop_off_point_place_name
-  json.drop_off_point_latitude ride.drop_off_point.latitude
-  json.drop_off_point_longitude ride.drop_off_point.longitude
+json.array! @ride do |ride|
+  json.ride_id ride.id
+	json.fare_id ride.fare_id
+  json.origin_place_name ride.origin_place_name
+  json.origin_latitude ride.origin.latitude
+  json.origin_longitude ride.origin.longitude
+	json.destination_place_name ride.destination_place_name
+  json.destination_latitude ride.destination.latitude
+  json.destination_longitude ride.destination.longitude
+	json.meeting_point_place_name ride.fare.meeting_point_place_name
+	json.meeting_point_latitude ride.fare.meeting_point.latitude
+	json.meeting_point_longitude ride.fare.meeting_point.longitude
+  json.drop_off_point_place_name ride.fare.drop_off_point_place_name
+  json.drop_off_point_latitude ride.fare.drop_off_point.latitude
+  json.drop_off_point_longitude ride.fare.drop_off_point.longitude
 	json.state ride.state
-	json.pickup_time ride.pickup_time
-
-end
+	unless ride.fare.nil? || ride.fare.car.nil?
+		json.car do
+			json.id ride.fare.car.id
+			json.make ride.fare.car.make
+			json.model ride.fare.car.model
+			json.year ride.fare.car.year
+			json.license_plate ride.fare.car.license_plate
+			json.state ride.fare.car.state
+			json.car_photo ride.fare.car.car_photo.url( :thumb )
+		end
+	end
+	unless ride.fare.nil? || ride.fare.driver.nil?
+		json.driver do
+			json.id ride.fare.driver.id
+			json.first_name ride.fare.driver.first_name
+			json.last_name ride.fare.driver.last_name
+			json.phone ride.fare.driver.phone
+			unless ride.fare.driver.nil?
+				json.drivers_license_number ride.fare.driver.drivers_license_number
+			end
+		end
+	end
+end   

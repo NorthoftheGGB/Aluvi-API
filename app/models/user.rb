@@ -70,7 +70,14 @@ class User < ActiveRecord::Base
 	
 	# access
 	def involved_in_fare fare
-		if fare.riders.include? self || fare.driver == self
+
+    fare.riders.each do |r|
+      if r.id == self.id
+        return true
+      end
+    end
+
+		if fare.driver.id == self.id
 			true
 		else
 			false

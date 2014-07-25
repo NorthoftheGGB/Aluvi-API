@@ -36,4 +36,6 @@ VocoApi::Application.configure do
   config.active_support.deprecation = :stderr
 
 	config.eager_load = true
+
+	config.voco_demo_commuter_assembly_trigger_threshold = 0
 end

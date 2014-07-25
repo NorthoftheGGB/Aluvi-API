@@ -36,7 +36,7 @@ module VocoApiHelper
 	end
 
 	def forbidden exception
-		error! exception.message, 403, 'X-Error-Detail' => exception.message
+		error! exception.to_s, 403, 'X-Error-Detail' => exception.to_s
 	end
 
 	def not_found
