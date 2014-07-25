@@ -4,20 +4,6 @@ describe DriversAPI do
 
 	include AuthHelper
 
-	before(:all) do
-		user = User.user_with_phone('123 123 1232')
-		user.first_name = "Matthew"
-		user.last_name = "Rie"
-		user.email = 'whatever@myhouse.com'
-		user.password = 'whalesandthings'
-		user.token = "test_access1"
-		user.interested_in_driving
-		user.save
-
-		user.driver_role.state = 'approved'
-		user.driver_role.save
-	end
-
 	describe "POST /api/drivers/driver_registration" do
 		it "returns sucesss" do
 			credentials = ActionController::HttpAuthentication::Token.encode_credentials("test_access1")

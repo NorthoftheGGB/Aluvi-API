@@ -4,20 +4,6 @@ describe UsersAPI do
 
 	include AuthHelper
 
-	before(:all) do
-		user = User.user_with_phone('123 123 1232')
-		user.first_name = "Matthew"
-		user.last_name = "Rie"
-		user.email = 'whatever@myhouse.com'
-		user.password = 'whalesandthings'
-		Rails.logger.info 'setting pass'
-		Rails.logger.info user.hash_password('whalesandthings')
-		user.token = "test_access1"
-		user.interested_in_driving
-		user.save
-		# http_login not working
-	end
-
 	describe "POST /api/users" do
 		it "returns success" do
 			post "/api/users", :first_name => 'Matty', :last_name => 'Tetson', :email => 'test@test.com', :phone => '123 123 1232', :password => 'asdfasdfs', :name => "Jeff Shotz"

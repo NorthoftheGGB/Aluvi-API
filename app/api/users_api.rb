@@ -131,13 +131,15 @@ class UsersAPI < Grape::API
         driver_state = current_user.driver_state
       else
         user = User.user_with_phone params[:phone]
-        user.last_name = params[:name]
-        user.email = params[:email]
-        user.driver_request_region = params[:driver_request_region]
-        user.driver_referral_code = params[:driver_referral_code]
-        user.interested_in_driving
-        user.save
-        driver_state = user.driver_state
+				user.save
+				driver = Driver.find(user.id)
+        driver.last_name = params[:name]
+        driver.email = params[:email]
+        driver.driver_request_region = params[:driver_request_region]
+        driver.driver_referral_code = params[:driver_referral_code]
+        driver.interested_in_driving
+        driver.save
+        driver_state = driver.state
       end
 
       response = Hash.new

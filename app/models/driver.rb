@@ -33,13 +33,18 @@ class Driver < User
 	aasm_column :driver_state
 
 	aasm do
-		state :interested, :initial => true, :after_enter => :notify_state_changed
+		state :unintersted, :initial => true
+		state :interested, :after_enter => :notify_state_changed
 		state :approved, :after_enter => :notify_state_changed
 		state :denied, :after_enter => :notify_state_changed
 		state :registered, :after_enter => :notify_state_changed
 		state :active, :after_enter => :notify_state_changed
 		state :suspended, :after_enter => :notify_state_changed
 		state :on_duty, :after_enter => :notify_state_changed
+
+		event :interested do
+			transitions :from => :uninterested, :to => :interested
+		end
 
 		event :approve do
 			transitions :from => :interested, :to => :approved
