@@ -1,4 +1,3 @@
-CREATE EXTENSION postgis; 
 --
 -- PostgreSQL database dump
 --
@@ -9,6 +8,34 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
 
 SET search_path = public, pg_catalog;
 
@@ -836,4 +863,140 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 --
 -- PostgreSQL database dump complete
 --
+
+SET search_path TO "$user",public;
+
+INSERT INTO schema_migrations (version) VALUES ('20140523011016');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523011018');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523011309');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523011345');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523011347');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523011350');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523224324');
+
+INSERT INTO schema_migrations (version) VALUES ('20140523231216');
+
+INSERT INTO schema_migrations (version) VALUES ('20140524014750');
+
+INSERT INTO schema_migrations (version) VALUES ('20140524030533');
+
+INSERT INTO schema_migrations (version) VALUES ('20140524033522');
+
+INSERT INTO schema_migrations (version) VALUES ('20140524040642');
+
+INSERT INTO schema_migrations (version) VALUES ('20140527201119');
+
+INSERT INTO schema_migrations (version) VALUES ('20140528000417');
+
+INSERT INTO schema_migrations (version) VALUES ('20140529231120');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609032342');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609032948');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609033003');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609033104');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609055440');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609060248');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609194806');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609195636');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609195705');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609200048');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609200128');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609200135');
+
+INSERT INTO schema_migrations (version) VALUES ('20140609222744');
+
+INSERT INTO schema_migrations (version) VALUES ('20140610001847');
+
+INSERT INTO schema_migrations (version) VALUES ('20140618203022');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619051846');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619052055');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619071122');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619071629');
+
+INSERT INTO schema_migrations (version) VALUES ('20140619072814');
+
+INSERT INTO schema_migrations (version) VALUES ('20140628071158');
+
+INSERT INTO schema_migrations (version) VALUES ('20140703064003');
+
+INSERT INTO schema_migrations (version) VALUES ('20140707205309');
+
+INSERT INTO schema_migrations (version) VALUES ('20140708221243');
+
+INSERT INTO schema_migrations (version) VALUES ('20140715004033');
+
+INSERT INTO schema_migrations (version) VALUES ('20140715011119');
+
+INSERT INTO schema_migrations (version) VALUES ('20140716041228');
+
+INSERT INTO schema_migrations (version) VALUES ('20140716045214');
+
+INSERT INTO schema_migrations (version) VALUES ('20140716045640');
+
+INSERT INTO schema_migrations (version) VALUES ('20140716205436');
+
+INSERT INTO schema_migrations (version) VALUES ('20140716232620');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717002339');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717013238');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717022308');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717032649');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717044127');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717055403');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717093604');
+
+INSERT INTO schema_migrations (version) VALUES ('20140717100519');
+
+INSERT INTO schema_migrations (version) VALUES ('20140718012543');
+
+INSERT INTO schema_migrations (version) VALUES ('20140718012544');
+
+INSERT INTO schema_migrations (version) VALUES ('20140718063716');
+
+INSERT INTO schema_migrations (version) VALUES ('20140722212042');
+
+INSERT INTO schema_migrations (version) VALUES ('20140723232128');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724172153');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724173034');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724174513');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724183337');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724183654');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724183911');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724203223');
+
+INSERT INTO schema_migrations (version) VALUES ('20140724211608');
 

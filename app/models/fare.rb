@@ -73,7 +73,7 @@ class Fare < ActiveRecord::Base
 	alias aasm_retracted_by_rider retracted_by_rider
 	alias aasm_retracted_by_rider! retracted_by_rider!
 
-	def self.assemble_ride_from_requests requests_arg
+	def self.assemble_fare_from_rides requests_arg
 
 		Rails.logger.debug requests_arg
 		requests = Array.new

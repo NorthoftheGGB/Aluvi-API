@@ -22,8 +22,8 @@ namespace :db do
 	end
 end
 
-Rake::Task["db:structure:dump"].enhance do
-	Rake::Task["db:structure:add_postgis_extension"].invoke
-end
+# Rake::Task["db:structure:dump"].enhance do
+#		Rake::Task["db:structure:add_postgis_extension"].invoke
+# end
 
-Rake::Task["db:test:prepare"].clear
+# Rake::Task["db:test:prepare"].clear

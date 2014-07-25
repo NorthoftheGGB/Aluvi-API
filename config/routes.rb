@@ -7,7 +7,7 @@ VocoApi::Application.routes.draw do
 
   resources :rides
   resources :commuter_ride_requests
-	match 'commuter_ride_requests/assemble_ride' => 'commuter_ride_requests#assemble_ride'
+	post 'commuter_ride_requests/assemble_ride' => 'commuter_ride_requests#assemble_ride'
 
   resources :fares
 
@@ -15,20 +15,20 @@ VocoApi::Application.routes.draw do
 
   resources :devices
 
-	match 'users/csv_import' => 'users#csv_import'
+	post 'users/csv_import' => 'users#csv_import'
 	resources :users
 
-	match 'riders/csv_import' => 'riders#csv_import'
+	post 'riders/csv_import' => 'riders#csv_import'
   resources :riders
 
-	match 'drivers/:id/payout' => 'drivers#payout'
-	match 'drivers/csv_import' => 'drivers#csv_import'
+	get 'drivers/:id/payout' => 'drivers#payout'
+	post 'drivers/csv_import' => 'drivers#csv_import'
   resources :drivers
 
-	match 'scheduler' => 'scheduler#index'
+	get 'scheduler' => 'scheduler#index'
 	delete 'scheduler/:id' => 'scheduler#failed'
 
-	match 'panel' => 'panel#index'
+	get 'panel' => 'panel#index'
 
 	resources :payouts
 

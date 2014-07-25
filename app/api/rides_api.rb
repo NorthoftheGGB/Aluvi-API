@@ -50,18 +50,18 @@ class RidesAPI< Grape::API
 			if params[:type] == 'commuter'
 				if current_user.demo
 					# demoing subsystem
-					demo_ride_requests = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } )
+					demo_rides = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :user ).where( :users => { demo: true  } )
 
 					threshold = Rails.application.config.voco_demo_commuter_assembly_trigger_threshold 
 					if threshold.nil?
 						threshold = 3
 					end
 					Rails.logger.debug threshold
-					if demo_ride_requests.count > threshold 
+					if demo_rides.count > threshold
 						Rails.logger.debug 'scheduling DEMO commuter ride'
 						ActiveRecord::Base.transaction do
 							# need to DRY this with the commuter ride requests controller
-							ride = Fare.assemble_ride_from_requests demo_ride_requests
+							ride = Fare.assemble_fare_from_rides demo_rides
 							ride.meeting_point_place_name = FaresHelper::reverse_geocode ride.meeting_point
 							ride.drop_off_point_place_name = FaresHelper::reverse_geocode  ride.drop_off_point
 							drivers = Driver.demo_drivers
@@ -124,7 +124,7 @@ class RidesAPI< Grape::API
 				forbidden
 				return
 			end
-			@fares = current_user.driver_rides.active
+			@fares = current_user.fares.active
 
 		end
 
@@ -152,12 +152,12 @@ class RidesAPI< Grape::API
 			driver.earnings
 		end
 
-		desc "Get specific ride details"
+		desc "Get fare details"
 		get ':id' do
 			authenticate!
-			ride = Fare.find(params[:id])
-			unless ride.nil?
-				if current_user.involved_in_ride ride
+			fare = Fare.find(params[:id])
+			unless fare.nil?
+				if current_user.involved_in_fare fare
 					ride		
 				else
 					forbidden
@@ -168,16 +168,16 @@ class RidesAPI< Grape::API
 		end
 
 
-		desc "Driver accepted ride"
+		desc "Driver accepted fare"
 		params do
-			requires :ride_id, type: Integer
+			requires :fare_id, type: Integer
 		end
 		post :accepted do
 			authenticate!
-			ride = Fare.find(params[:ride_id])
+			fare = Fare.find(params[:fare_id])
 
-			unless(["created", "unscheduled"].include? ride.state)
-				if( ride.driver == current_user )
+			unless(["created", "unscheduled"].include? fare.state)
+				if( fare.driver == current_user )
 					# ok to return HTTP success
 					ok
 				else
@@ -186,21 +186,21 @@ class RidesAPI< Grape::API
 				end
 			else 
 				driver = Driver.find(current_user.id)
-				driver.accepted_fare(ride)
+				driver.accepted_fare(fare)
 				ok
 			end
 
 		end
 
-		desc "Driver declined ride"
+		desc "Driver declined fare d"
 		params do
-			requires :ride_id, type: Integer
+			requires :fare_id, type: Integer
 		end
 		post :declined do
 			authenticate!
-			ride = Fare.find(params[:ride_id])
-			if(ride.state != "created")
-				if( ride.driver == current_user )
+			fare = Fare.find(params[:fare_id])
+			if(fare.state != "created")
+				if( fare.driver == current_user )
 					error! 'Already assigned to this driver', 404, 'X-Error-Detail' => 'Already assigned to this driver'
 				else
 					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
@@ -208,7 +208,7 @@ class RidesAPI< Grape::API
 				end
 			end
 
-			current_user.declined_fare(ride)
+			current_user.declined_fare(fare)
 			ok
 
 		end

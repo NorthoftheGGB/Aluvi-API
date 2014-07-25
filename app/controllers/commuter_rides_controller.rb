@@ -91,7 +91,7 @@ class CommuterRidesController < ApplicationController
 
 		#TODO this logic should be moved to a helper or model
 		ActiveRecord::Base.transaction do
-			@fare = Fare.assemble_ride_from_requests request_ids
+			@fare = Fare.assemble_fare_from_rides request_ids
 			@fare.meeting_point_place_name = FaresHelper::reverse_geocode	@fare.meeting_point
 			@fare.drop_off_point_place_name = FaresHelper::reverse_geocode	@fare.drop_off_point
 			drivers = Driver.available_drivers

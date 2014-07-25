@@ -69,8 +69,8 @@ class User < ActiveRecord::Base
 
 	
 	# access
-	def involved_in_ride ride
-		if ride.riders.include? self || ride.driver == self
+	def involved_in_fare fare
+		if fare.riders.include? self || fare.driver == self
 			true
 		else
 			false
