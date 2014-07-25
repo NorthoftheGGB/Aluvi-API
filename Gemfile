@@ -11,7 +11,11 @@ gem 'foreigner', :git => 'git://github.com/deepwinter/foreigner.git'
 gem 'pg'
 gem 'activerecord-postgis-adapter'
 
+#web
 gem 'jquery-rails'
+gem 'sass-rails'
+gem 'uglifier'
+gem 'coffee-rails'
 
 # Non-blocking, single threaded server for concurrency
 gem 'thin'
