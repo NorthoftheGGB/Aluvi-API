@@ -9,14 +9,14 @@ class FareObserver < ActiveRecord::Observer
 		fare.riders.each do |rider|
 			Rails.logger.debug "notifying rider"
 			Rails.logger.debug rider
-			ride = fare.rides.where(rider_id: rider.id).first
+			fare = fare.rides.where(rider_id: rider.id).first
 			rider.devices.each do |d|
 				if(d.push_token.nil?)
 					next	
 				end
 				n = PushHelper::push_message(d)
 				n.alert = "Ride Found!"
-				n.data = { type: :ride_found, fare_id: ride.id, ride_id: request.id,
+				n.data = { type: :ride_found, fare_id: fare.id, ride_id: fare.ride.id,
 						request_type: ride.request_type,
 						meeting_point_place_name: fare.meeting_point_place_name,
 						drop_off_point_place_name: fare.drop_off_point_place_name }
