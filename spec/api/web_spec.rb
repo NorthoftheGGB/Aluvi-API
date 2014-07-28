@@ -12,7 +12,7 @@ describe WebAPI do
       @rider.password = 'whalesandthings'
       @rider.save
 			post "/api/web/authenticate", :phone => @rider.phone, :password => 'whalesandthings'
-			expect(response.status).to eq(200)
+			expect(response.status).to eq(201)
 		end
 	end
 

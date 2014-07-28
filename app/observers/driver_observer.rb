@@ -2,7 +2,7 @@ class DriverObserver < ActiveRecord::Observer
 	def driver_state_changed( driver )
 
 			if( driver.state == "approved" )
-				driver.user.devices.each do |d|
+				driver.devices.each do |d|
 					if(d.push_token.nil?)
 						next	
 					end
@@ -12,7 +12,7 @@ class DriverObserver < ActiveRecord::Observer
 					n.save!
 				end
 			elsif(["registered", "suspended", "denied"].include?( driver.state ) )
-				driver.user.devices.each do |d|
+				driver.devices.each do |d|
 					if(d.push_token.nil?)
 						next	
 					end
@@ -25,7 +25,7 @@ class DriverObserver < ActiveRecord::Observer
 	end
 
 	def driver_activated( driver )
-		driver.user.devices.each do |d|
+		driver.devices.each do |d|
 			if(d.push_token.nil?)
 				next	
 			end

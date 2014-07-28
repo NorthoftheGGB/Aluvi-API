@@ -75,7 +75,6 @@ describe RidesAPI do
   describe "GET /api/rides/rides" do
     it "gets rides" do
       @rider = FactoryGirl.create(:rider)
-      @ride = FactoryGirl.create(:ride)
       get "/api/rides/rides", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
       expect(response.status).to eq(200)
 
@@ -85,7 +84,6 @@ describe RidesAPI do
   describe "GET /api/rides/payments" do
     it "gets payments" do
       @rider = FactoryGirl.create(:rider)
-      @ride = FactoryGirl.create(:ride)
       get "/api/rides/payments", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
       expect(response.status).to eq(200)
 
@@ -95,7 +93,6 @@ describe RidesAPI do
   describe "GET /api/rides/earnings" do
     it "gets earnings" do
       @driver = FactoryGirl.create(:driver)
-      @fare = FactoryGirl.create(:fare)
       get "/api/rides/earnings", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
       expect(response.status).to eq(200)
 

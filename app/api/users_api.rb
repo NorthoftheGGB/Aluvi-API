@@ -21,19 +21,30 @@ class UsersAPI < Grape::API
 
       begin
         ActiveRecord::Base.transaction do
+
           user = User.user_with_phone params[:phone]
-          unless (user.rider_role.nil? || user.rider_role.state == 'registered')
+          unless user.nil?
             error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'
             return
           end
+          Rails.logger.info 'hioho'
+
+          user = User.new
           user.first_name = params[:first_name]
           user.last_name = params[:last_name]
+          user.phone = params[:phone]
           user.email = params[:email]
-          user.password = user.hash_password(params[:password])
+          user.password = params[:password]
           user.referral_code = params[:referral_code]
-          user.registered_for_riding
+          user.setup
           user.save
-          user.rider_role.activate!
+          Rails.logger.info '2222222222'
+
+          rider = Rider.find(user.id)
+          Rails.logger.info '2222222222'
+
+          rider.activate!
+          Rails.logger.info '33333333333333'
 
           # directly set up Stripe customer
           # TODO: Refactor, this should be moved to it's own class and happen via a delayed job
@@ -45,7 +56,6 @@ class UsersAPI < Grape::API
               }
           )
           if customer.nil?
-            Rails.logger.debug customer
             raise "Stripe customer not created"
           end
           user.stripe_customer_id = customer.id
@@ -56,8 +66,8 @@ class UsersAPI < Grape::API
         ok
 
       rescue
-        puts "rescue"
         Rails.logger.error $!
+        Rails.logger.error $!.backtrace.join("\n")
         client_error $!.message
       end
 
@@ -71,7 +81,7 @@ class UsersAPI < Grape::API
     post "forgot_password" do
       user = User.where(:email => params['email']).where(:phone => params['phone']).first
       unless (user.nil?)
-        g = GmailSender.new("matt@vocotransportation.com", "vocoemail1")
+        g = GmailSender.new("users@vocotransportation.com", "38sd9*VV")
         g.send(:to => user.email,
                :subject => "Password Reset",
                :content => "Click here to reset your password")
@@ -104,7 +114,6 @@ class UsersAPI < Grape::API
         response["driver_state"] = user.driver_state
         response
       rescue
-        puts $!.message
         Rails.logger.info $!.message
         error! 'Invalid Login', 404, 'X-Error-Detail' => 'Invalid Login'
       end
@@ -131,13 +140,18 @@ class UsersAPI < Grape::API
         driver_state = current_user.driver_state
       else
         user = User.user_with_phone params[:phone]
+        if user.nil?
+          user = User.new
+          user.phone = params[:phone]
+          user.setup
+        end
 				user.save
 				driver = Driver.find(user.id)
         driver.last_name = params[:name]
         driver.email = params[:email]
         driver.driver_request_region = params[:driver_request_region]
         driver.driver_referral_code = params[:driver_referral_code]
-        driver.interested_in_driving
+        driver.interested
         driver.save
         driver_state = driver.state
       end

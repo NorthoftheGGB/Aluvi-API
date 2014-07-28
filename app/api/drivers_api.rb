@@ -56,10 +56,10 @@ class DriversAPI < Grape::API
 						:name => driver.full_name,
 						:type => 'individual',
 						:bank_account => {
-						:country => 'US',
-						:routing_number => params[:bank_account_routing],
-						:account_number => params[:bank_account_number]
-					},
+					  	:country => 'US',
+					  	:routing_number => params[:bank_account_routing],
+					  	:account_number => params[:bank_account_number]
+					  },
 						:email => driver.email
 					)
 
@@ -82,8 +82,7 @@ class DriversAPI < Grape::API
 
 			rescue
 				Rails.logger.debug "driver registration failure"
-				Rails.logger.debug $!
-				Rails.logger.debug $!.class
+        Rails.logger.error $!.backtrace.join("\n")
 				client_error $!
 			end
 			 

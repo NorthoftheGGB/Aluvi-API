@@ -599,7 +599,7 @@ CREATE TABLE users (
     national_database_check_content_type character varying(255),
     national_database_check_file_size integer,
     national_database_check_updated_at timestamp without time zone,
-    drivers_license character varying(255)
+    drivers_license_number character varying(255)
 );
 
 
@@ -974,8 +974,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140717093604');
 
 INSERT INTO schema_migrations (version) VALUES ('20140717100519');
 
-INSERT INTO schema_migrations (version) VALUES ('20140718012543');
-
 INSERT INTO schema_migrations (version) VALUES ('20140718012544');
 
 INSERT INTO schema_migrations (version) VALUES ('20140718063716');
@@ -999,4 +997,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140724183911');
 INSERT INTO schema_migrations (version) VALUES ('20140724203223');
 
 INSERT INTO schema_migrations (version) VALUES ('20140724211608');
+
+INSERT INTO schema_migrations (version) VALUES ('20140728201331');
 

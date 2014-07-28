@@ -2,11 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82638c06-9f03-4cd7-a45b-dc466e5f2b2d" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/api/web_rides.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/web_fares.jbuilder" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/api/geo_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/driver.rb" afterPath="$PROJECT_DIR$/app/models/driver.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/driver.rb" afterPath="$PROJECT_DIR$/test/factories/driver.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/fare.rb" afterPath="$PROJECT_DIR$/test/factories/fare.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/driver_geo.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/driver_geo.jbuilder" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/observers/driver_observer.rb" afterPath="$PROJECT_DIR$/app/observers/driver_observer.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/drivers_api.rb" afterPath="$PROJECT_DIR$/app/api/drivers_api.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/drivers_spec.rb" afterPath="$PROJECT_DIR$/spec/api/drivers_spec.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/geo_api.rb" afterPath="$PROJECT_DIR$/app/api/geo_api.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/rider.rb" afterPath="$PROJECT_DIR$/test/factories/rider.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/rides_spec.rb" afterPath="$PROJECT_DIR$/spec/api/rides_spec.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/structure.sql" afterPath="$PROJECT_DIR$/db/structure.sql" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user.rb" afterPath="$PROJECT_DIR$/app/models/user.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/users_api.rb" afterPath="$PROJECT_DIR$/app/api/users_api.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/users_spec.rb" afterPath="$PROJECT_DIR$/spec/api/users_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/web_api.rb" afterPath="$PROJECT_DIR$/app/api/web_api.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/web_spec.rb" afterPath="$PROJECT_DIR$/spec/api/web_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -34,24 +43,24 @@
     <favorites_list name="voco-api" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4633111">
+    <splitter split-orientation="horizontal" split-proportion="0.4578557">
       <split-first>
         <leaf>
           <file leaf-file-name="rides_api.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/api/rides_api.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-16.73077" vertical-offset="0" max-vertical-offset="6270">
-                  <caret line="29" column="53" selection-start-line="29" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="1665" max-vertical-offset="6270">
+                  <caret line="119" column="9" selection-start-line="119" selection-start-column="9" selection-end-line="119" selection-end-column="9" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="voco_api_helper.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/api/voco_api_helper.rb">
+          <file leaf-file-name="drivers_api.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/api/drivers_api.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
-                  <caret line="34" column="14" selection-start-line="34" selection-start-column="14" selection-end-line="34" selection-end-column="14" />
+                <state vertical-scroll-proportion="-28.26923" vertical-offset="510" max-vertical-offset="1980">
+                  <caret line="83" column="56" selection-start-line="83" selection-start-column="56" selection-end-line="83" selection-end-column="56" />
                   <folding />
                 </state>
               </provider>
@@ -67,21 +76,31 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="driver.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/models/driver.rb">
+          <file leaf-file-name="user.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/models/user.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="2535">
-                  <caret line="35" column="23" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
+                <state vertical-scroll-proportion="-17.307692" vertical-offset="0" max-vertical-offset="1710">
+                  <caret line="30" column="49" selection-start-line="30" selection-start-column="49" selection-end-line="30" selection-end-column="49" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="offer.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/models/offer.rb">
+          <file leaf-file-name="driver.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/models/driver.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-4.0384617" vertical-offset="0" max-vertical-offset="750">
-                  <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="645" max-vertical-offset="2490">
+                  <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="driver_observer.rb" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/observers/driver_observer.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.2973568" vertical-offset="0" max-vertical-offset="908">
+                  <caret line="18" column="48" selection-start-line="18" selection-start-column="48" selection-end-line="18" selection-end-column="48" />
                   <folding />
                 </state>
               </provider>
@@ -90,18 +109,38 @@
           <file leaf-file-name="rider.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/models/rider.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="945">
-                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <state vertical-scroll-proportion="-10.961538" vertical-offset="0" max-vertical-offset="945">
+                  <caret line="19" column="21" selection-start-line="19" selection-start-column="11" selection-end-line="19" selection-end-column="21" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="web_api.rb" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="web_api.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/api/web_api.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.70998925" vertical-offset="944" max-vertical-offset="2310">
-                  <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="2415">
+                  <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="users_api.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/api/users_api.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="-25.307692" vertical-offset="1652" max-vertical-offset="3810">
+                  <caret line="154" column="25" selection-start-line="154" selection-start-column="25" selection-end-line="154" selection-end-column="25" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="geo_api.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/api/geo_api.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1020">
+                  <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
                   <folding />
                 </state>
               </provider>
@@ -114,18 +153,18 @@
           <file leaf-file-name="web_spec.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/spec/api/web_spec.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-20.76923" vertical-offset="120" max-vertical-offset="1155">
-                  <caret line="44" column="40" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
+                <state vertical-scroll-proportion="-15.576923" vertical-offset="0" max-vertical-offset="1155">
+                  <caret line="27" column="109" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="109" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="users_api.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/api/users_api.rb">
+          <file leaf-file-name="geo_spec.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/spec/api/geo_spec.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3585">
-                  <caret line="13" column="39" selection-start-line="13" selection-start-column="39" selection-end-line="13" selection-end-column="39" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="825">
+                  <caret line="19" column="42" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
                   <folding />
                 </state>
               </provider>
@@ -134,18 +173,18 @@
           <file leaf-file-name="rides_spec.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/spec/api/rides_spec.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="804" max-vertical-offset="1860">
-                  <caret line="78" column="30" selection-start-line="78" selection-start-column="30" selection-end-line="78" selection-end-column="93" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1815">
+                  <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="user.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/models/user.rb">
+          <file leaf-file-name="drivers_spec.rb" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/spec/api/drivers_spec.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="594" max-vertical-offset="1635">
-                  <caret line="80" column="7" selection-start-line="80" selection-start-column="7" selection-end-line="80" selection-end-column="7" />
+                <state vertical-scroll-proportion="0.41755888" vertical-offset="0" max-vertical-offset="934">
+                  <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -154,18 +193,18 @@
           <file leaf-file-name="driver.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test/factories/driver.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
-                  <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="375">
+                  <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="fare.rb" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="fare.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test/factories/fare.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.06423983" vertical-offset="0" max-vertical-offset="934">
-                  <caret line="4" column="5" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
+                  <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
                   <folding />
                 </state>
               </provider>
@@ -191,11 +230,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="rider.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/test/factories/rider.rb">
+          <file leaf-file-name="users_spec.rb" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/spec/api/users_spec.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="405">
-                  <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="930">
+                  <caret line="7" column="27" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
                   <folding />
                 </state>
               </provider>
@@ -223,22 +262,28 @@
         <option value="$PROJECT_DIR$/app/models/ride.rb" />
         <option value="$PROJECT_DIR$/app/models/rider_fare.rb" />
         <option value="$PROJECT_DIR$/app/observers/fare_observer.rb" />
-        <option value="$PROJECT_DIR$/app/api/users_api.rb" />
-        <option value="$PROJECT_DIR$/app/api/drivers_api.rb" />
         <option value="$PROJECT_DIR$/test/factories/ride.rb" />
         <option value="$PROJECT_DIR$/spec/support/auth_helper.rb" />
         <option value="$PROJECT_DIR$/app/models/ride/commuter_ride.rb" />
         <option value="$PROJECT_DIR$/app/models/offer.rb" />
         <option value="$PROJECT_DIR$/app/api/rides_api.rb" />
         <option value="$PROJECT_DIR$/app/api/voco_api_helper.rb" />
-        <option value="$PROJECT_DIR$/spec/api/rides_spec.rb" />
-        <option value="$PROJECT_DIR$/app/models/user.rb" />
-        <option value="$PROJECT_DIR$/app/models/driver.rb" />
-        <option value="$PROJECT_DIR$/app/api/web_api.rb" />
-        <option value="$PROJECT_DIR$/test/factories/rider.rb" />
-        <option value="$PROJECT_DIR$/test/factories/driver.rb" />
-        <option value="$PROJECT_DIR$/spec/api/web_spec.rb" />
         <option value="$PROJECT_DIR$/test/factories/fare.rb" />
+        <option value="$PROJECT_DIR$/app/api/web_api.rb" />
+        <option value="$PROJECT_DIR$/spec/api/web_spec.rb" />
+        <option value="$PROJECT_DIR$/test/factories/rider.rb" />
+        <option value="$PROJECT_DIR$/app/models/rider.rb" />
+        <option value="$PROJECT_DIR$/spec/api/rides_spec.rb" />
+        <option value="$PROJECT_DIR$/app/models/driver.rb" />
+        <option value="$PROJECT_DIR$/spec/api/geo_spec.rb" />
+        <option value="$PROJECT_DIR$/app/api/geo_api.rb" />
+        <option value="$PROJECT_DIR$/app/models/user.rb" />
+        <option value="$PROJECT_DIR$/spec/api/users_spec.rb" />
+        <option value="$PROJECT_DIR$/app/api/users_api.rb" />
+        <option value="$PROJECT_DIR$/test/factories/driver.rb" />
+        <option value="$PROJECT_DIR$/spec/api/drivers_spec.rb" />
+        <option value="$PROJECT_DIR$/app/api/drivers_api.rb" />
+        <option value="$PROJECT_DIR$/app/observers/driver_observer.rb" />
       </list>
     </option>
   </component>
@@ -250,9 +295,9 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-81" />
-    <option name="y" value="22" />
-    <option name="width" value="1852" />
+    <option name="x" value="-8" />
+    <option name="y" value="25" />
+    <option name="width" value="1686" />
     <option name="height" value="1028" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -281,7 +326,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="RailsProjectView" />
       <pane id="ProjectPane">
         <subPane>
@@ -487,12 +531,31 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="helpers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="voco-api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="voco-api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="api" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -645,6 +708,34 @@
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
+    <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+      <method />
+    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Rake.test: voco-api" />
       <item index="1" class="java.lang.String" itemvalue="Rake.spec: voco-api" />
@@ -671,7 +762,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-81" y="22" width="1852" height="1028" extended-state="0" />
+    <frame x="-8" y="25" width="1686" height="1028" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -680,7 +771,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328934" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.10961123" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.12040332" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3282981" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -712,7 +803,9 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/api/rides_api.rb">
@@ -846,14 +939,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/fare.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4710">
-          <caret line="0" column="8" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/environment.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="165">
@@ -872,13 +957,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="826" max-vertical-offset="1815">
           <caret line="74" column="12" selection-start-line="74" selection-start-column="6" selection-end-line="74" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/api/drivers_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.386681" vertical-offset="180" max-vertical-offset="1995">
-          <caret line="36" column="19" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -914,22 +992,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ride.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1080">
-          <caret line="0" column="10" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/rider.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="957">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/factories/offer.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="957">
@@ -954,62 +1016,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/api/voco_api_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
-          <caret line="34" column="14" selection-start-line="34" selection-start-column="14" selection-end-line="34" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="594" max-vertical-offset="1635">
-          <caret line="80" column="7" selection-start-line="80" selection-start-column="7" selection-end-line="80" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/api/rides_spec.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="804" max-vertical-offset="1860">
-          <caret line="78" column="30" selection-start-line="78" selection-start-column="30" selection-end-line="78" selection-end-column="93" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/driver.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="2535">
-          <caret line="35" column="23" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/api/rides_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.73077" vertical-offset="0" max-vertical-offset="6270">
-          <caret line="29" column="53" selection-start-line="29" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/api/web_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.70998925" vertical-offset="944" max-vertical-offset="2310">
-          <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/api/users_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3585">
-          <caret line="13" column="39" selection-start-line="13" selection-start-column="39" selection-end-line="13" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/support/auth_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
@@ -1018,34 +1024,170 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/spec/api/web_spec.rb">
+    <entry file="file://$PROJECT_DIR$/test/factories/fare.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-20.76923" vertical-offset="120" max-vertical-offset="1155">
-          <caret line="44" column="40" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
+          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/factories/driver.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/fare.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2415" max-vertical-offset="4860">
+          <caret line="169" column="31" selection-start-line="169" selection-start-column="31" selection-end-line="169" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/api/voco_api_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
+          <caret line="34" column="14" selection-start-line="34" selection-start-column="14" selection-end-line="34" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ride.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1080">
+          <caret line="0" column="10" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/api/web_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="2415">
+          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/factories/rider.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="405">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.08029979" vertical-offset="0" max-vertical-offset="934">
+          <caret line="5" column="31" selection-start-line="5" selection-start-column="31" selection-end-line="5" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/factories/fare.rb">
+    <entry file="file://$PROJECT_DIR$/spec/api/web_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.06423983" vertical-offset="0" max-vertical-offset="934">
-          <caret line="4" column="5" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
+        <state vertical-scroll-proportion="-15.576923" vertical-offset="0" max-vertical-offset="1155">
+          <caret line="27" column="109" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="109" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/api/rides_spec.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="804" max-vertical-offset="1815">
+          <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/coordinates_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.032119915" vertical-offset="0" max-vertical-offset="934">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/api/geo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1020">
+          <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/api/rides_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1665" max-vertical-offset="6270">
+          <caret line="119" column="9" selection-start-line="119" selection-start-column="9" selection-end-line="119" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/api/geo_spec.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="825">
+          <caret line="19" column="42" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/rider.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.961538" vertical-offset="0" max-vertical-offset="945">
+          <caret line="19" column="21" selection-start-line="19" selection-start-column="11" selection-end-line="19" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-17.307692" vertical-offset="0" max-vertical-offset="1710">
+          <caret line="30" column="49" selection-start-line="30" selection-start-column="49" selection-end-line="30" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/api/users_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-25.307692" vertical-offset="1652" max-vertical-offset="3810">
+          <caret line="154" column="25" selection-start-line="154" selection-start-column="25" selection-end-line="154" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/api/users_spec.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="930">
+          <caret line="7" column="27" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/factories/driver.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="375">
+          <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/api/drivers_spec.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.41755888" vertical-offset="0" max-vertical-offset="934">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/api/drivers_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-28.26923" vertical-offset="510" max-vertical-offset="1980">
+          <caret line="83" column="56" selection-start-line="83" selection-start-column="56" selection-end-line="83" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/driver.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="645" max-vertical-offset="2490">
+          <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/observers/driver_observer.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2973568" vertical-offset="0" max-vertical-offset="908">
+          <caret line="18" column="48" selection-start-line="18" selection-start-column="48" selection-end-line="18" selection-end-column="48" />
           <folding />
         </state>
       </provider>

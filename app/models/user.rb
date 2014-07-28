@@ -24,13 +24,14 @@ class User < ActiveRecord::Base
 
 	def self.user_with_phone(phone)
 		user = User.where( :phone => phone).first
-		if user.nil?
-			user = User.new
-			user.phone = phone
-			user.save
-		end
-		user
-	end
+  end
+
+  def setup
+    # need to set initial states when making users
+    write_attribute("driver_state", "uninterested")
+    write_attribute("rider_state", "registered")
+
+  end
 
 	def generate_token!
 		self.token = loop do
@@ -54,6 +55,10 @@ class User < ActiveRecord::Base
 		write_attribute(:password, self.hash_password(value))
 	end
 
+  def update_location!(longitude, latitude)
+    self.location = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(longitude, latitude)
+    save
+  end
 
 	# authentication
 	def hash_password(password)

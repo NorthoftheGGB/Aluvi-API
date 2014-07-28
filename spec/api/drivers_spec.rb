@@ -6,8 +6,8 @@ describe DriversAPI do
 
 	describe "POST /api/drivers/driver_registration" do
 		it "returns sucesss" do
+      @driver = FactoryGirl.create(:approved_driver)
 			credentials = ActionController::HttpAuthentication::Token.encode_credentials("test_access1")
-			Rails.logger.info credentials
 			post "/api/drivers/driver_registration",
 				{ 
 				:drivers_license_number => "KLSJLSKDF", 
@@ -18,7 +18,7 @@ describe DriversAPI do
 				:car_model => "Pickup Truck", 
 				:car_year => "1985", 
 				:car_license_plate => "SDF 3423" }, 
-				{'HTTP_AUTHORIZATION' => credentials}
+				{'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
 			Rails.logger.info response.status.to_s + ':' + response.body
 			expect(response.status).to eq(201)
 		end

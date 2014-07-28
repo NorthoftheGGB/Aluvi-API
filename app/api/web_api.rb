@@ -31,22 +31,29 @@ class WebAPI < Grape::API
 				end
 				if user.password != user.hash_password(params['password'])
 					raise "Wrong password"
-				end
-				token = user.generate_web_token!
+        end
+
+        token = user.generate_web_token!
 				response = Hash.new
 				response["webtoken"] = token
 				roles = Array.new
-				unless current_user.rider_role.nil?
-					roles << "rider"
-				end
-				unless current_user.nil?
-					roles << "driver"
-				end
-				response["roles"] = roles
+
+        begin
+          rider = Rider.find(user.id)
+          roles << "rider"
+        rescue
+        end
+        begin
+          driver = Driver.find(user.id)
+          roles << "driver"
+        rescue
+        end
+
+        response["roles"] = roles
 
 				response
 			rescue
-				puts $!.message
+				Rails.logger.info $!.message
 				error! 'Invalid Login', 404, 'X-Error-Detail' => 'Invalid Login'
 			end
 		end
