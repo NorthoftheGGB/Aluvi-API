@@ -15,7 +15,7 @@ FactoryGirl.define do
 			state "scheduled"
 			after(:create) do |fare|
 				fare.riders << FactoryGirl.create(:rider)
-				fare.riders << FactoryGirl.create(:rider)
+				fare.riders << FactoryGirl.create(:rider, email: "another@meme.com")
 			end
 
 		end

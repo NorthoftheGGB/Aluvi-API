@@ -2,23 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82638c06-9f03-4cd7-a45b-dc466e5f2b2d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/api/geo_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/driver.rb" afterPath="$PROJECT_DIR$/app/models/driver.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/driver.rb" afterPath="$PROJECT_DIR$/test/factories/driver.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/driver_geo.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/driver_geo.jbuilder" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/observers/driver_observer.rb" afterPath="$PROJECT_DIR$/app/observers/driver_observer.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/drivers_api.rb" afterPath="$PROJECT_DIR$/app/api/drivers_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/drivers_spec.rb" afterPath="$PROJECT_DIR$/spec/api/drivers_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/geo_api.rb" afterPath="$PROJECT_DIR$/app/api/geo_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/rider.rb" afterPath="$PROJECT_DIR$/test/factories/rider.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/rides_spec.rb" afterPath="$PROJECT_DIR$/spec/api/rides_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/structure.sql" afterPath="$PROJECT_DIR$/db/structure.sql" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user.rb" afterPath="$PROJECT_DIR$/app/models/user.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/users_api.rb" afterPath="$PROJECT_DIR$/app/api/users_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/users_spec.rb" afterPath="$PROJECT_DIR$/spec/api/users_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/web_api.rb" afterPath="$PROJECT_DIR$/app/api/web_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/api/web_spec.rb" afterPath="$PROJECT_DIR$/spec/api/web_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories/fare.rb" afterPath="$PROJECT_DIR$/test/factories/fare.rb" />
     </list>
     <ignored path="voco-api.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -66,16 +50,6 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ride.rb" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/models/ride.rb">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1290">
-                  <caret line="0" column="10" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="10" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="user.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/models/user.rb">
               <provider selected="true" editor-type-id="text-editor">
@@ -96,11 +70,21 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="driver_observer.rb" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="driver_observer.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/observers/driver_observer.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.2973568" vertical-offset="0" max-vertical-offset="908">
+                <state vertical-scroll-proportion="-10.384615" vertical-offset="0" max-vertical-offset="660">
                   <caret line="18" column="48" selection-start-line="18" selection-start-column="48" selection-end-line="18" selection-end-column="48" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ride_test.rb" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/test/unit/ride_test.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.53745925" vertical-offset="1110" max-vertical-offset="2295">
+                  <caret line="107" column="21" selection-start-line="107" selection-start-column="21" selection-end-line="107" selection-end-column="21" />
                   <folding />
                 </state>
               </provider>
@@ -129,8 +113,8 @@
           <file leaf-file-name="users_api.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/api/users_api.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-25.307692" vertical-offset="1652" max-vertical-offset="3810">
-                  <caret line="154" column="25" selection-start-line="154" selection-start-column="25" selection-end-line="154" selection-end-column="25" />
+                <state vertical-scroll-proportion="-25.307692" vertical-offset="1622" max-vertical-offset="3795">
+                  <caret line="152" column="25" selection-start-line="152" selection-start-column="25" selection-end-line="152" selection-end-column="25" />
                   <folding />
                 </state>
               </provider>
@@ -180,10 +164,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="drivers_spec.rb" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="drivers_spec.rb" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/spec/api/drivers_spec.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.41755888" vertical-offset="0" max-vertical-offset="934">
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
                   <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
                   <folding />
                 </state>
@@ -200,11 +184,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="fare.rb" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="fare.rb" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/test/factories/fare.rb">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-                  <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+                <state vertical-scroll-proportion="0.096359745" vertical-offset="0" max-vertical-offset="934">
+                  <caret line="6" column="21" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="21" />
                   <folding />
                 </state>
               </provider>
@@ -268,7 +252,6 @@
         <option value="$PROJECT_DIR$/app/models/offer.rb" />
         <option value="$PROJECT_DIR$/app/api/rides_api.rb" />
         <option value="$PROJECT_DIR$/app/api/voco_api_helper.rb" />
-        <option value="$PROJECT_DIR$/test/factories/fare.rb" />
         <option value="$PROJECT_DIR$/app/api/web_api.rb" />
         <option value="$PROJECT_DIR$/spec/api/web_spec.rb" />
         <option value="$PROJECT_DIR$/test/factories/rider.rb" />
@@ -284,6 +267,7 @@
         <option value="$PROJECT_DIR$/spec/api/drivers_spec.rb" />
         <option value="$PROJECT_DIR$/app/api/drivers_api.rb" />
         <option value="$PROJECT_DIR$/app/observers/driver_observer.rb" />
+        <option value="$PROJECT_DIR$/test/factories/fare.rb" />
       </list>
     </option>
   </component>
@@ -373,6 +357,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="unit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="voco-api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="voco-api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="functional" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -392,56 +394,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="factories" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="voco-api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="voco-api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="spec" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="voco-api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="voco-api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="spec" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="support" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="voco-api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="voco-api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="spec" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1024,14 +976,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/factories/fare.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/fare.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2415" max-vertical-offset="4860">
@@ -1138,8 +1082,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/api/users_api.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-25.307692" vertical-offset="1652" max-vertical-offset="3810">
-          <caret line="154" column="25" selection-start-line="154" selection-start-column="25" selection-end-line="154" selection-end-column="25" />
+        <state vertical-scroll-proportion="-25.307692" vertical-offset="1622" max-vertical-offset="3795">
+          <caret line="152" column="25" selection-start-line="152" selection-start-column="25" selection-end-line="152" selection-end-column="25" />
           <folding />
         </state>
       </provider>
@@ -1162,7 +1106,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spec/api/drivers_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41755888" vertical-offset="0" max-vertical-offset="934">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
           <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
           <folding />
         </state>
@@ -1186,8 +1130,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/observers/driver_observer.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2973568" vertical-offset="0" max-vertical-offset="908">
+        <state vertical-scroll-proportion="-10.384615" vertical-offset="0" max-vertical-offset="660">
           <caret line="18" column="48" selection-start-line="18" selection-start-column="48" selection-end-line="18" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/unit/ride_test.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.53745925" vertical-offset="1110" max-vertical-offset="2295">
+          <caret line="107" column="21" selection-start-line="107" selection-start-column="21" selection-end-line="107" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/factories/fare.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.096359745" vertical-offset="0" max-vertical-offset="934">
+          <caret line="6" column="21" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="21" />
           <folding />
         </state>
       </provider>
