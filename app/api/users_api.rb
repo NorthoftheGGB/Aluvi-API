@@ -19,6 +19,11 @@ class UsersAPI < Grape::API
     end
     post do
 
+			check = User.where( email: params['email'] ).first
+			unless check.nil?
+				raise "Email already registered with an account"
+			end
+
       begin
         ActiveRecord::Base.transaction do
 

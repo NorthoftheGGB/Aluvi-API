@@ -48,7 +48,13 @@ module VocoApiHelper
 	end
 
 	def client_error message
-		error! message, 400
+		if (message.is_a?(Hash))
+			error! message, 400
+		else
+			payload = Hash.new
+			payload['error'] = message
+			error! payload, 400
+		end
 	end
 end
 
