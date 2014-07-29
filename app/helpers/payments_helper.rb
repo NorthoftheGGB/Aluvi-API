@@ -18,7 +18,11 @@ module PaymentsHelper
 			fill_payment.amount_cents = amount_cents
 			fill_payment.save
 
-			user.commuter_balance_cents += amount_cents
+      unless user.commuter_balance_cents.nil?
+  			user.commuter_balance_cents += amount_cents
+      else
+        user.commuter_balance_cents = amount_cents
+      end
 			user.save
 
 			customer = Stripe::Customer.retrieve(user.stripe_customer_id)
