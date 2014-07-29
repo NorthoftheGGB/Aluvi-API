@@ -18,10 +18,15 @@ module PaymentsHelper
 			fill_payment.amount_cents = amount_cents
 			fill_payment.save
 
-			user.commuter_balance_cents += amount_cents
-			user.save
+      unless user.commuter_balance_cents.nil?
+  			user.commuter_balance_cents += amount_cents
+      else
+        user.commuter_balance_cents = amount_cents
+      end
+      user.save
 
-			customer = Stripe::Customer.retrieve(user.stripe_customer_id)
+
+      customer = Stripe::Customer.retrieve(user.stripe_customer_id)
 			charge = Stripe::Charge.create(
 				:amount => amount_cents,
 				:currency => "usd",
