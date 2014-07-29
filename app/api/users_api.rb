@@ -19,37 +19,48 @@ class UsersAPI < Grape::API
 		end
 		post do
 
-			ActiveRecord::Base.transaction do 
-				user = User.user_with_phone params[:phone]
-				unless(user.rider_role.nil? || user.rider_role.state == 'registered')
-					error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
-					return
+			begin
+				check = User.where( email: params['email'] ).first
+				unless check.nil?
+					raise "Email already registered with an account"
 				end
-				user.first_name = params[:first_name]
-				user.last_name = params[:last_name]
-				user.email = params[:email]
-				user.password = user.hash_password(params[:password])
-				user.referral_code = params[:referral_code]
-				user.registered_for_riding
-				user.save
-				user.rider_role.activate!
 
-				# directly set up Stripe customer
-				# TODO: Refactor, this should be moved to it's own class and happen via a delayed job
-				customer = Stripe::Customer.create(
-					:email => user.email,
-					:metadata => {
+
+				ActiveRecord::Base.transaction do 
+					user = User.user_with_phone params[:phone]
+					unless(user.rider_role.nil? || user.rider_role.state == 'registered')
+						error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'	
+						return
+					end
+					user.first_name = params[:first_name]
+					user.last_name = params[:last_name]
+					user.email = params[:email]
+					user.password = params[:password]
+					user.referral_code = params[:referral_code]
+					user.registered_for_riding
+					user.save
+					user.rider_role.activate!
+
+					# directly set up Stripe customer
+					# TODO: Refactor, this should be moved to it's own class and happen via a delayed job
+					customer = Stripe::Customer.create(
+						:email => user.email,
+						:metadata => {
 						:voco_id => user.id,
 						:phone => user.phone
 					}
-				)
-				if customer.nil?
-					Rails.logger.debug customer
-					raise "Stripe customer not created"
-				end
-				user.stripe_customer_id = customer.id
-				user.save
+					)
+					if customer.nil?
+						Rails.logger.debug customer
+						raise "Stripe customer not created"
+					end
+					user.stripe_customer_id = customer.id
+					user.save
 
+				end
+
+			rescue
+				client_error $!.message
 			end
 
 			ok
