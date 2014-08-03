@@ -9,7 +9,7 @@ if defined?(Bundler)
   Bundler.require(:default, Rails.env)
 end
 
-module VocoApi
+module Voco
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -62,8 +62,6 @@ module VocoApi
 		# Activate observers that should always be running
 		config.active_record.observers = [:ride_observer, :fare_observer, :driver_observer]
 
-		# Mount Grape API
-		config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
 		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', '**/')]
 		config.autoload_paths += Dir[Rails.root.join('app', 'models', '**/')]
 

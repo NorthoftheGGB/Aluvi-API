@@ -39,7 +39,7 @@
   <div class="field">
     <%= f.label "Rider State" %><br />
     <%= f.label @rider.state %><br />
-		<%= f.select :rider_state, @rider.aasm.events, :include_blank => true %>
+		<%= f.select :rider_state_event, @rider.aasm.events, :include_blank => true %>
   </div>
 
 	<h2>Commuter Card</h2>

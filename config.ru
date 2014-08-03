@@ -7,5 +7,5 @@ use Rack::Config do |env|
   env['api.tilt.root'] = 'app/views/api'
 end
 
-run VocoApi::Application
+run Voco::Application
 Rpush.embed

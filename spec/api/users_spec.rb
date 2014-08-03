@@ -46,8 +46,15 @@ describe UsersAPI do
 	end
 
 	describe "POST /api/users/driver_interested" do
-		it "returns success" do
+		it "returns success for new driver" do
 			post "/api/users/driver_interested", :email => 'test@test.com', :phone => '123 123 1236', :driver_request_region => 'asdfasdfs', :name => "Jeff Shotz"
+			Rails.logger.info response.status.to_s + ':' + response.body
+			expect(response.status).to eq(201)
+		end
+
+		it "returns success for existing driver" do
+      @rider = FactoryGirl.create(:rider)
+			post "/api/users/driver_interested", {:email => 'test@test.com', :phone => '123 123 1236', :driver_request_region => 'asdfasdfs', :name => "Jeff Shotz" }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
 			Rails.logger.info response.status.to_s + ':' + response.body
 			expect(response.status).to eq(201)
 		end

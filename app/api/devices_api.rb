@@ -12,7 +12,6 @@ class DevicesAPI < Grape::API
 		end
 		patch ':uuid' do
 			#validate api token
-			Rails.logger.debug params
 			device = Device.where( :uuid => params[:uuid] ).first
 			if(device.nil?)
 				device = Device.new

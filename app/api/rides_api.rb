@@ -187,9 +187,17 @@ class RidesAPI< Grape::API
 					return
 				end
 			else 
-				driver = Driver.find(current_user.id)
-				driver.accepted_fare(fare)
-				ok
+				begin
+					driver = Driver.find(current_user.id)
+					driver.accepted_fare(fare)
+					ok
+				rescue AASM::InvalidTransition => e
+					if fare.state == "accepted" && fare.driver.id == driver.id
+						ok
+					else 
+						error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
+					end
+				end
 			end
 
 		end
@@ -222,7 +230,7 @@ class RidesAPI< Grape::API
 		end
 		post :driver_cancelled do
 			authenticate!
-			fare = Fare.find(params[:ride_id])
+			fare = Fare.find(params[:fare_id])
 			begin
 				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
@@ -248,7 +256,7 @@ class RidesAPI< Grape::API
 		post :rider_cancelled do
 			authenticate!
 			# TODO rider should only be able to cancel their own ride
-      fare = Fare.find(params[:ride_id])
+      fare = Fare.find(params[:fare_id])
 			begin
 
 				if( !fare.riders.any?{ |r| current_user.id = fare.id } )
@@ -278,7 +286,7 @@ class RidesAPI< Grape::API
 			authenticate!
 			# TODO validate driver and or rider is matched to ride
 			begin
-				fare = Fare.find(params[:ride_id])
+				fare = Fare.find(params[:fare_id])
 				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
@@ -303,19 +311,19 @@ class RidesAPI< Grape::API
 		post :arrived do
 			authenticate!
 			begin
-				fare = Fare.find(params[:ride_id])
+				fare = Fare.find(params[:fare_id])
 				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
-        fare = Fare.find(params[:ride_id])
+        fare = Fare.find(params[:fare_id])
 				earnings = fare.cost * 0.8
 				# process the payment
 				# TODO Refactor into delayed job
 				# and move this code to a model layer, and separate into better units
         fare.riders.each do |rider|
 					begin
-						request = rider.rides.where( :ride_id => fare.id ).first
+						request = rider.rides.where( :fare_id => fare.id ).first
 
 						payment = Payment.new
 						payment.driver = fare.driver
@@ -395,11 +403,11 @@ class RidesAPI< Grape::API
 					end
 
 				end
-				ride.arrived!
+				fare.arrived!
 
 				# either way notify the driver
 				response = Hash.new
-				response['amount'] = ride.cost
+				response['amount'] = fare.cost
 				response['driver_earnings'] = earnings
 				response
 

@@ -1,4 +1,4 @@
-VocoApi::Application.routes.draw do
+Voco::Application.routes.draw do
 
 	mount VocoAPI => '/api/'
 

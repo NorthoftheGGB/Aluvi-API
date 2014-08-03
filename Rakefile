@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-VocoApi::Application.load_tasks
+Voco::Application.load_tasks

@@ -41,7 +41,7 @@
   <div class="field">
     <%= f.label "Driver State" %><br />
     <%= f.label @driver.state %><br />
-		<%= f.select :driver_state, @driver.aasm.events, :include_blank => true %>
+		<%= f.select :driver_state_event, @driver.aasm.events, :include_blank => true %>
   </div>
 
 	<div class="field">

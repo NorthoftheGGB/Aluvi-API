@@ -9,14 +9,14 @@ class FareObserver < ActiveRecord::Observer
 		fare.riders.each do |rider|
 			Rails.logger.debug "notifying rider"
 			Rails.logger.debug rider
-			fare = fare.rides.where(rider_id: rider.id).first
+			ride = fare.rides.where(rider_id: rider.id).first
 			rider.devices.each do |d|
-				if(d.push_token.nil?)
+				if(d.push_token.nil? || d.push_token == '')
 					next	
 				end
 				n = PushHelper::push_message(d)
 				n.alert = "Ride Found!"
-				n.data = { type: :ride_found, fare_id: fare.id, ride_id: fare.ride.id,
+				n.data = { type: :fare_found, fare_id: fare.id, ride_id: ride.id,
 						request_type: ride.request_type,
 						meeting_point_place_name: fare.meeting_point_place_name,
 						drop_off_point_place_name: fare.drop_off_point_place_name }
@@ -29,11 +29,11 @@ class FareObserver < ActiveRecord::Observer
 		Rails.logger.debug 'observer: driver_assigned'
 		# if this is a ride assigned by the scheduler (rather than accepted) notify the driver
 		fare.driver.devices.each do |d|
-				if(d.push_token.nil?)
+				if(d.push_token.nil? || d.push_token == '')
 					next
 				end
 				n = PushHelper::push_message(d)
-				n.alert = "Ride Assigned"
+				n.alert = "Fare Assigned"
 				n.data = { type: :fare_assigned, fare_id:fare.id }
 				Rails.logger.debug n
 				n.save!
@@ -47,7 +47,7 @@ class FareObserver < ActiveRecord::Observer
 
 	def fare_cancelled_by_rider(fare)
 		fare.driver.devices.each do |d|
-				if(d.push_token.nil?)
+				if(d.push_token.nil? || d.push_token == '')
 					next	
 				end
 				n = PushHelper::push_message(d)
@@ -61,7 +61,7 @@ class FareObserver < ActiveRecord::Observer
 	def fare_cancelled_by_driver(fare)
 		fare.riders.each do |rider|
 			rider.devices.each do |d|
-				if(d.push_token.nil?)
+				if(d.push_token.nil? || d.push_token == '')
 					next	
 				end
 				n = PushHelper::push_message(d)
@@ -79,7 +79,7 @@ class FareObserver < ActiveRecord::Observer
 			payment = fare.payments.where( :rider_id => rider.id ).first
 
 			rider.devices.each do |d|
-				if(d.push_token.nil?)
+				if(d.push_token.nil? || d.push_token == '')
 					next	
 				end
 				n = PushHelper::push_message(d)
@@ -99,13 +99,13 @@ class FareObserver < ActiveRecord::Observer
 		fare.offers.offer_closed_delivered.each do |offer|
 			driver = offer.driver	
 			driver.devices.each do |d|
-				if(d.push_token.nil?)
+				if(d.push_token.nil? || d.push_token == '')
 					next	
 				end
 				n = PushHelper::push_message(d)
 				n.alert = ""
 				n.content_available = true
-				n.data = { type: :ride_offer_closed, offer_id: offer.id, fare_id: fare.id }
+				n.data = { type: :offer_closed, offer_id: offer.id, fare_id: fare.id }
 				n.save!
 			end
 		end

@@ -46,12 +46,12 @@ class RideObserver < ActiveRecord::Observer
 			if(driver.devices.count > 0 )
 				offer = driver.offer_fare(fare)
 				driver.devices.each do |d|
-					if(d.push_token.nil?)
+					if(d.push_token.nil? || d.push_token == '')
 						next	
 					end
 					n = PushHelper::push_message(d)
-					n.alert = "Ride Requested!"
-					n.data = { type: :ride_offer, offer_id: offer.id, fare_id: fare.id,
+					n.alert = "Fare Available!"
+					n.data = { type: :offer, offer_id: offer.id, fare_id: fare.id,
 						meeting_point_place_name: fare.meeting_point_place_name,
 						drop_off_point_place_name: fare.drop_off_point_place_name }
 					n.save!

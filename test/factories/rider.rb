@@ -7,6 +7,7 @@ FactoryGirl.define do
     phone "1234567890"
     token '2309u09sjdf0'
     webtoken '2309u09fffsjdf0'
+    driver_state 'uninterested'
 
     factory :rider_with_fares do
       after(:create) do |rider|

@@ -9,12 +9,12 @@ class Driver < User
 	has_many :payouts
 	has_many :earnings, :class_name => 'Payment'
 
-	default_scope { where('driver_state IS NOT NULL') }
+	default_scope { where("driver_state != 'uninterested' ") }
 	scope :available_drivers, ->{ where(:driver_state => :on_duty) }
 	scope :on_duty, ->{ where(:driver_state => :on_duty) }
 	scope :demo_drivers, ->{ where(:demo => true) }
 
-	attr_accessible :driver_state, :drivers_license_number
+	attr_accessible :driver_state, :drivers_license_number, :driver_state_event
   attr_accessible :drivers_license, :vehicle_registration, :proof_of_insurance, :national_database_check
 	has_attached_file :drivers_license, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
 	has_attached_file :vehicle_registration, :styles => { :thumb => "100x100>" }, :default_url => "/images/missing.png", :storage => :s3
@@ -154,6 +154,16 @@ class Driver < User
 
 	def state=(state_change)
 		self.driver_state = state_change
+	end
+
+	def driver_state_event=(state_change)
+		unless state_change.nil? || state_change == ''
+			self.method(state_change).call
+		end
+	end
+
+	def driver_state_event
+		self.driver_state
 	end
 
 

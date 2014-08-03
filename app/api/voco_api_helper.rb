@@ -9,6 +9,14 @@ module VocoApiHelper
 		@current_user ||= User.authorize!(auth[0])
 	end
 
+	def current_driver
+		Driver.find(current_user.id)
+	end
+
+	def current_rider
+		Rider.find(current_user.id)
+	end
+
 	def authenticate!
 		unless current_user
 			error!('401 Unauthorized', 401)

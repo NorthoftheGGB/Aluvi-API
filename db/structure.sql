@@ -49,7 +49,7 @@ SET default_with_oids = false;
 
 CREATE TABLE cards (
     id integer NOT NULL,
-    user_id integer,
+    rider_id integer,
     stripe_card_id character varying(255),
     last4 character varying(255),
     brand character varying(255),
@@ -999,4 +999,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140724203223');
 INSERT INTO schema_migrations (version) VALUES ('20140724211608');
 
 INSERT INTO schema_migrations (version) VALUES ('20140728201331');
+
+INSERT INTO schema_migrations (version) VALUES ('20140803021908');
 

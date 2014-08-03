@@ -140,9 +140,8 @@ class UsersAPI < Grape::API
         unless params[:driver_referral_code].nil?
           current_user.driver_referral_code = params[:driver_referral_code]
         end
-        current_user.interested_in_driving
-        current_user.save
-        driver_state = current_user.driver_state
+				driver = Driver.find(current_user.id)
+				driver.interested!
       else
         user = User.user_with_phone params[:phone]
         if user.nil?
@@ -158,9 +157,9 @@ class UsersAPI < Grape::API
         driver.driver_referral_code = params[:driver_referral_code]
         driver.interested
         driver.save
-        driver_state = driver.state
       end
 
+			driver_state = driver.state
       response = Hash.new
       response["driver_state"] = driver_state
       response
@@ -179,7 +178,7 @@ class UsersAPI < Grape::API
     params do
       optional :default_card_token, type: String
     end
-    post "profile", jbuilder: "profile" do
+    post "profile", jbuilder: "rider_profile" do
       authenticate!
       unless params[:default_card_token].nil?
         # TODO handle in background, delayed job
@@ -195,12 +194,12 @@ class UsersAPI < Grape::API
 
         default_card = customer.cards.all().data[0]
 
-        current_user.cards.each do |card|
+        current_rider.cards.each do |card|
           card.delete
         end
 
         card = Card.new
-        card.user = current_user
+        card.rider = current_rider
         card.stripe_card_id = default_card.id
         card.last4 = default_card.last4
         card.brand = default_card.brand
@@ -215,25 +214,25 @@ class UsersAPI < Grape::API
       fields = ['commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|
         unless params[field].nil?
-          current_user.send("#{field}=", params[field])
+          current_rider.send("#{field}=", params[field])
         end
       end
-      current_user.save
-      @user = User.find(current_user.id)
+      current_rider.save
+			@user = current_rider
 
     end
 
     desc "Get Profile"
-    get "profile", jbuilder: "profile" do
+    get "profile", jbuilder: "rider_profile" do
       authenticate!
-      @user = current_user
+      @user = current_rider
     end
 
     desc "Fill Commuter Pass"
     params do
       requires :amount_cents
     end
-    post "fill_commuter_pass", jbuilder: "profile" do
+    post "fill_commuter_pass", jbuilder: "rider_profile" do
       authenticate!
 
       begin

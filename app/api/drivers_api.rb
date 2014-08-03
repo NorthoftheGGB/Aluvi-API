@@ -93,8 +93,8 @@ class DriversAPI < Grape::API
 		end
 		post "clock_on" do
 			authenticate!
-			unless current_user.state == 'on_duty'
-				current_user.clock_on!
+			unless current_driver.state == 'on_duty'
+				current_driver.clock_on!
 			end
 			ok
 		end
@@ -104,14 +104,14 @@ class DriversAPI < Grape::API
 		end
 		post "clock_off" do
 			authenticate!
-			if current_user.state == 'on_duty'
-				current_user.clock_off!
+			if current_driver.state == 'on_duty'
+				current_driver.clock_off!
 			end
 			ok
 		end
 
-		desc "Load Ride Details for Driver"
-		get "rides/:id", jbuilder: 'ride' do
+		desc "Load Fare Details for Driver"
+		get "fares/:id", jbuilder: 'fare' do
 			authenticate!
 			@fare = Fare.find(params[:id])
 			unless @fare.nil?

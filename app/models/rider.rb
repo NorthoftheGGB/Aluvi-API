@@ -7,7 +7,7 @@ class Rider < User
 	has_many :cards
 	has_many :payments
 
-	attr_accessible :rider_state
+	attr_accessible :rider_state, :rider_state_event
 
 	def self.states
 		[ :registered, :active, :payment_problem, :suspended ]
@@ -53,5 +53,13 @@ class Rider < User
 		self.rider_state = state_change
 	end
 
+	def rider_state_event
+		return state
+	end
 
+	def rider_state_event=(state_change)
+		unless state_change.nil? || state_change == ''
+			self.method(state_change).call
+		end
+	end
 end

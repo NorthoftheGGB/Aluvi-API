@@ -109,7 +109,7 @@ class Fare < ActiveRecord::Base
 								"unnamed location");
 		requests.each do |request|
 			ride.rides << request
-			ride.riders << request.user
+			ride.riders << request.rider
 		end
 		ride.save
 		ride
