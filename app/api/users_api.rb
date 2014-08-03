@@ -140,7 +140,7 @@ class UsersAPI < Grape::API
         unless params[:driver_referral_code].nil?
           current_user.driver_referral_code = params[:driver_referral_code]
         end
-				driver = Driver.find(current_user.id)
+				driver = Driver.unscoped.find(current_user.id)
 				driver.interested!
       else
         user = User.user_with_phone params[:phone]
@@ -150,7 +150,7 @@ class UsersAPI < Grape::API
           user.setup
         end
 				user.save
-				driver = Driver.find(user.id)
+				driver = Driver.unscoped.find(user.id)
         driver.last_name = params[:name]
         driver.email = params[:email]
         driver.driver_request_region = params[:driver_request_region]
