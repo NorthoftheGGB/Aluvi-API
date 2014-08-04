@@ -20,7 +20,7 @@ class RidesAPI< Grape::API
 			authenticate!
 			case params[:type]
         when 'on_demand'
-					stale_requests = rider.rides.where( state: :requested).all
+					stale_requests = current_rider.rides.where( state: :requested).all
 					stale_requests.each do |request|
 						request.cancel!
 					end
