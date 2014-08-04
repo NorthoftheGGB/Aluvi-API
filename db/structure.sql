@@ -861,6 +861,14 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: rides_rider_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rides
+    ADD CONSTRAINT rides_rider_id_fk FOREIGN KEY (rider_id) REFERENCES users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -1001,4 +1009,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140724211608');
 INSERT INTO schema_migrations (version) VALUES ('20140728201331');
 
 INSERT INTO schema_migrations (version) VALUES ('20140803021908');
+
+INSERT INTO schema_migrations (version) VALUES ('20140804025314');
 

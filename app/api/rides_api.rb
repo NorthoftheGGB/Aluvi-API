@@ -20,7 +20,6 @@ class RidesAPI< Grape::API
 			authenticate!
 			case params[:type]
         when 'on_demand'
-          rider = Rider.find(current_user.id)
 					stale_requests = rider.rides.where( state: :requested).all
 					stale_requests.each do |request|
 						request.cancel!
@@ -31,7 +30,7 @@ class RidesAPI< Grape::API
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
-																						 rider
+																						 current_rider
 																						)
 			when 'commuter'
          ride = CommuterRide.create!(
@@ -40,7 +39,7 @@ class RidesAPI< Grape::API
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
 																						 params[:desired_arrival],
-                                             rider
+                                             current_rider
 																						)
 			else
 				raise "No request type set"
@@ -86,8 +85,6 @@ class RidesAPI< Grape::API
 			authenticate!
 			begin
 				ride = Ride.find(params[:ride_id])
-        Rails.logger.info ride.rider.id.to_s
-        Rails.logger.info current_user.id.to_s
 				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
 				end
@@ -102,10 +99,11 @@ class RidesAPI< Grape::API
 				Rails.logger.debug $!
 				forbidden $!
 			rescue AASM::InvalidTransition => e 
-				Rails.logger.debug e
+				Rails.logger.error e
 				forbidden e
       rescue
-        Rails.logger.debug $!
+        Rails.logger.error $!
+				Rails.logger.error $!.backtrace.join("\n")
 				error! $!.message, 403, 'X-Error-Detail' => $!.message
 			end
 		end

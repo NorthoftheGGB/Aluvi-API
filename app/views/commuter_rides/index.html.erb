@@ -56,7 +56,7 @@
 <div id="map" style="height: 500px;" >
 </div>
 
-<%= form_tag("/commuter_ride_requests/assemble_ride", method: "post" ) do %>
+<%= form_tag("/commuter_rides/assemble_ride", method: "post" ) do %>
 <table>
   <tr>
 		<th></th>
@@ -77,15 +77,15 @@
 			<% if( ride_request.state == 'requested') %>
 				<%= check_box_tag "selected[]", ride_request.id, false, class: 'request_check_box', :id => 'request' + ride_request.id.to_s, :"data-origin" => ride_request.origin, :"data-destination" => ride_request.destination %></td>
 		<% end %>
-    <td><%= ride_request.user.full_name %></td>
+    <td><%= ride_request.rider.full_name %></td>
     <td><%= ride_request.state %></td>
     <td><%= ride_request.request_type %></td>
     <td><%= ride_request.origin_place_name %></td>
     <td><%= ride_request.destination_place_name %></td>
     <td><%= ride_request.desired_arrival %></td>
-		<td><%= ride_request.fare.nil? ? '' : ( link_to ride_request.ride.driver.full_name, ride_request.ride ) %></td>
+		<td><%= ride_request.fare.nil? ? '' : ( link_to ride_request.fare.driver.full_name, ride_request.fare ) %></td>
     <td><%= link_to 'Show', ride_request %></td>
-    <td><%= link_to 'Edit', edit_ride_request_path(ride_request) %></td>
+    <td><%= link_to 'Edit', edit_ride_path(ride_request) %></td>
     <td><%= link_to 'Destroy', ride_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
@@ -112,4 +112,4 @@
 <br />
 <br />
 
-<%= link_to 'Create New Ride request', new_ride_request_path %>
+<%= link_to 'Create New Ride request', new_ride_path %>

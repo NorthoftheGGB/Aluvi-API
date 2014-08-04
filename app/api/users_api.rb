@@ -222,11 +222,18 @@ class UsersAPI < Grape::API
 
     end
 
-    desc "Get Profile"
+    desc "Get Rider Profile"
     get "profile", jbuilder: "rider_profile" do
       authenticate!
       @user = current_rider
     end
+
+    desc "Get Driver Profile"
+    get "driver_profile", jbuilder: "rider_profile" do
+      authenticate!
+      @user = current_rider
+    end
+
 
     desc "Fill Commuter Pass"
     params do

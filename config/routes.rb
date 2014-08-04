@@ -6,8 +6,8 @@ Voco::Application.routes.draw do
   resources :rider_fares
 
   resources :rides
-  resources :commuter_ride_requests
-	post 'commuter_ride_requests/assemble_ride' => 'commuter_ride_requests#assemble_ride'
+  resources :commuter_rides
+	post 'commuter_rides/assemble_ride' => 'commuter_rides#assemble_ride'
 
   resources :fares
 
