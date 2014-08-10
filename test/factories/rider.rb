@@ -19,6 +19,9 @@ FactoryGirl.define do
       demo true
       token 'asdf2323'
     end
+
+		factory :sandbox_rider do
+			email { "#{first_name}.#{phone}@example.com".downcase }
   end
 
 end

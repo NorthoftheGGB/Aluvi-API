@@ -23,4 +23,12 @@ class CommuterRide < Ride
 		ride
 	end
 
+	def return_ride 
+		CommuterRide.where({ trip_id: self.trip_id, direction: 'b' }).first
+	end
+
+	def forward_ride 
+		CommuterRide.where({ trip_id: self.trip_id, direction: 'a' }).first
+	end
+
 end

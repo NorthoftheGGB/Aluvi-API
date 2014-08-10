@@ -209,7 +209,8 @@ CREATE TABLE fares (
     drop_off_point_place_name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    pickup_time timestamp without time zone
+    pickup_time timestamp without time zone,
+    max_distance_to_meeting_point double precision
 );
 
 
@@ -391,7 +392,9 @@ CREATE TABLE rides (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     pickup_time timestamp without time zone,
-    driving boolean
+    driving boolean,
+    trip_id integer,
+    direction character varying(255)
 );
 
 
@@ -547,6 +550,34 @@ ALTER SEQUENCE rpush_notifications_id_seq OWNED BY rpush_notifications.id;
 CREATE TABLE schema_migrations (
     version character varying(255) NOT NULL
 );
+
+
+--
+-- Name: trips; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE trips (
+    id integer NOT NULL
+);
+
+
+--
+-- Name: trips_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE trips_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: trips_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE trips_id_seq OWNED BY trips.id;
 
 
 --
@@ -718,6 +749,13 @@ ALTER TABLE ONLY rpush_notifications ALTER COLUMN id SET DEFAULT nextval('rpush_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY trips ALTER COLUMN id SET DEFAULT nextval('trips_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
@@ -823,6 +861,14 @@ ALTER TABLE ONLY rider_fares
 
 ALTER TABLE ONLY fares
     ADD CONSTRAINT rides_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: table_trips_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY trips
+    ADD CONSTRAINT table_trips_pkey PRIMARY KEY (id);
 
 
 --
@@ -1016,4 +1062,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140804025314');
 INSERT INTO schema_migrations (version) VALUES ('20140810020443');
 
 INSERT INTO schema_migrations (version) VALUES ('20140810020546');
+
+INSERT INTO schema_migrations (version) VALUES ('20140810073014');
+
+INSERT INTO schema_migrations (version) VALUES ('20140810073441');
+
+INSERT INTO schema_migrations (version) VALUES ('20140810073604');
 

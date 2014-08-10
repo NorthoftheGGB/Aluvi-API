@@ -8,7 +8,7 @@ class Fare < ActiveRecord::Base
 	has_many :offers, inverse_of: :fare
 	has_many :payments
 
-  attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state
+  attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
 

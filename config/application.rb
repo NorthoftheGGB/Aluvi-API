@@ -64,6 +64,7 @@ module Voco
 
 		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', '**/')]
 		config.autoload_paths += Dir[Rails.root.join('app', 'models', '**/')]
+		config.autoload_paths << Rails.root.join('lib')
 
 		# AWS - Paperclip
 		config.paperclip_defaults = {

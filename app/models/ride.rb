@@ -2,7 +2,9 @@ class Ride < ActiveRecord::Base
 
 	belongs_to :rider, inverse_of: :rides
 	belongs_to :fare, inverse_of: :rides
-  attr_accessible :aasm_state, :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :desired_arrival
+  attr_accessible :aasm_state, :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :pickup_time, :trip_id, :direction
+
+	before_create :before_create
 
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
@@ -12,6 +14,7 @@ class Ride < ActiveRecord::Base
 	aasm do
 		state :created, :initial => true
 		state :requested
+		state :pending_return
 		state :scheduled
 		state :cancelled
 		state :failed
@@ -26,6 +29,14 @@ class Ride < ActiveRecord::Base
 
 		event :failed do
 			transitions :fram => :requested, :to => :failed
+		end
+
+		event :promote_to_pending_return do
+			transitions :from => :requested, :to => :pending_return
+		end
+
+		event :return_filled do
+			transitions :from => :pending_return, :to => :scheduled
 		end
 
 		event :scheduled, :after => :notify_scheduled do
@@ -47,6 +58,17 @@ class Ride < ActiveRecord::Base
 			route += self.destination_place_name
 		else
 			route += 'unspecified'
+		end
+	end
+
+	def before_create
+		if self.trip_id.nil? || self.trip_id < 1
+			trip = Trip.new
+			trip.save
+			self.trip_id = trip.id
+			self.direction = 'a'
+		else
+			self.direction = 'b'
 		end
 	end
 
