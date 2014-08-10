@@ -390,7 +390,8 @@ CREATE TABLE rides (
     destination_place_name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    desired_arrival timestamp without time zone
+    pickup_time timestamp without time zone,
+    driving boolean
 );
 
 
@@ -1011,4 +1012,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140728201331');
 INSERT INTO schema_migrations (version) VALUES ('20140803021908');
 
 INSERT INTO schema_migrations (version) VALUES ('20140804025314');
+
+INSERT INTO schema_migrations (version) VALUES ('20140810020443');
+
+INSERT INTO schema_migrations (version) VALUES ('20140810020546');
 

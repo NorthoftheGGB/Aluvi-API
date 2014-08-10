@@ -14,7 +14,8 @@ class RidesAPI< Grape::API
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
 			requires :destination_place_name, type: String
-			optional :desired_arrival, type: Date
+			optional :pickup_time, type: Date
+			optional :driving, type: Boolean
 		end
 		post :request do
 			authenticate!
@@ -38,7 +39,8 @@ class RidesAPI< Grape::API
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 																						 params[:destination_place_name],
-																						 params[:desired_arrival],
+																						 params[:pickup_time],
+																						 params[:driving],
                                              current_rider
 																						)
 			else
@@ -65,7 +67,9 @@ class RidesAPI< Grape::API
               fare.meeting_point_place_name = FaresHelper::reverse_geocode fare.meeting_point
               fare.drop_off_point_place_name = FaresHelper::reverse_geocode  fare.drop_off_point
 							drivers = Driver.demo_drivers
-              fare.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
+							unless drivers.count == 0
+								fare.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
+							end
 						end
 					end
 				end
