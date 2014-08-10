@@ -14,8 +14,9 @@ class RidesAPI< Grape::API
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
 			requires :destination_place_name, type: String
-			optional :pickup_time, type: Date
+			optional :pickup_time, type: DateTime
 			optional :driving, type: Boolean
+			optional :trip_id, type: Integer
 		end
 		post :request do
 			authenticate!
@@ -34,7 +35,7 @@ class RidesAPI< Grape::API
 																						 current_rider
 																						)
 			when 'commuter'
-         ride = CommuterRide.create!(
+         ride = CommuterRide.create(
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 																						 params[:departure_place_name],
 																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
@@ -43,6 +44,11 @@ class RidesAPI< Grape::API
 																						 params[:driving],
                                              current_rider
 																						)
+				Rails.logger.debug params
+				unless params[:trip_id].nil?
+					ride.trip_id = params[:trip_id]
+				end
+				ride.save
 			else
 				raise "No request type set"
 			end
@@ -50,7 +56,7 @@ class RidesAPI< Grape::API
       ride.request!
 
 			if params[:type] == 'commuter'
-				if current_user.demo
+				if false #current_user.demo
 					# demoing subsystem
 					demo_rides = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :rider ).where( :users => { demo: true  } )
 
@@ -77,6 +83,7 @@ class RidesAPI< Grape::API
 
 			rval = Hash.new
 			rval[:ride_id] = ride.id
+			rval[:trip_id] = ride.trip_id
 			rval
 
 		end

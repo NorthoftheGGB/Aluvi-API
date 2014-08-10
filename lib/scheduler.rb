@@ -128,7 +128,9 @@ module Scheduler
 		ride_scheduling_failures = CommuterRide.requested.where( direction: 'a' )
 		ride_scheduling_failures.each do |r|
 			r.commute_scheduler_failed!
-			r.return_ride.commute_scheduler_failed!
+			unless r.return_ride.nil?
+				r.return_ride.commute_scheduler_failed!
+			end
 		end
 
 	end
@@ -262,7 +264,9 @@ module Scheduler
 		ride_scheduling_failures = CommuterRide.pending_return
 		ride_scheduling_failures.each do |r|
 			r.commute_scheduler_failed!
-			r.return_ride.commute_scheduler_failed!
+			unless r.return_ride.nil?
+				r.return_ride.commute_scheduler_failed!
+			end
 		end
 
 	end
