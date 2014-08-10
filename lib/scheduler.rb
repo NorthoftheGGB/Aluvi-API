@@ -93,8 +93,9 @@ module Scheduler
 
 		# triangulation
 		# - average the origins and create a meeting point
-		fares = Fare.all # ALL is definitely not the right idea here
-		fares.each do |f|
+		driving_rides.each do |driving_ride|
+			f = driving_ride.fare
+
 			lat_sum = 0
 			lon_sum = 0
 			f.rides.each do |r|
@@ -105,11 +106,23 @@ module Scheduler
 			avg_lat = lat_sum / f.rides.count
 			f.meeting_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
 
+			lat_sum = 0
+			lon_sum = 0
+			f.rides.each do |r|
+				lat_sum += r.destination.y
+				lon_sum += r.destination.x
+			end
+			avg_lon = lon_sum / f.rides.count
+			avg_lat = lat_sum / f.rides.count
+			f.drop_off_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
+
 			f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
 				f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]	
 			end
 
+			f.pickup_time = driving_ride.pickup_time
 			f.save
+			f.schedule!
 		end
 
 		ride_scheduling_failures = CommuterRide.requested.where( direction: 'a' )
@@ -119,6 +132,7 @@ module Scheduler
 		end
 
 	end
+
 
 	def self.build_return_fares
 
@@ -208,6 +222,41 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
 		end
+
+		# triangulation
+		# - average the origins and create a meeting point
+		return_driving_rides.each do |driving_ride|
+			f = driving_ride.fare
+
+			lat_sum = 0
+			lon_sum = 0
+			f.rides.each do |r|
+				lat_sum += r.origin.y
+				lon_sum += r.origin.x
+			end
+			avg_lon = lon_sum / f.rides.count
+			avg_lat = lat_sum / f.rides.count
+			f.meeting_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
+
+			lat_sum = 0
+			lon_sum = 0
+			f.rides.each do |r|
+				lat_sum += r.destination.y
+				lon_sum += r.destination.x
+			end
+			avg_lon = lon_sum / f.rides.count
+			avg_lat = lat_sum / f.rides.count
+			f.drop_off_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
+
+			f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
+				f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]	
+			end
+
+			f.pickup_time = driving_ride.pickup_time
+			f.save
+			f.schedule!
+		end
+
 
 		# mark failures
 		ride_scheduling_failures = CommuterRide.pending_return

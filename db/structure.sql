@@ -209,8 +209,7 @@ CREATE TABLE fares (
     drop_off_point_place_name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    pickup_time timestamp without time zone,
-    max_distance_to_meeting_point double precision
+    pickup_time timestamp without time zone
 );
 
 
@@ -557,7 +556,9 @@ CREATE TABLE schema_migrations (
 --
 
 CREATE TABLE trips (
-    id integer NOT NULL
+    id integer NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
