@@ -79,6 +79,14 @@ module Voco
 			env['api.tilt.root'] = Rails.root.join 'app', 'views', 'api'
 		end
 
-
+		# scheduler
+		config.commute_scheduler = {
+			:threshold_from_driver_origin => 1600, # 1 mile
+			:threshold_from_driver_destination => 800, # 1/4 mile
+			:morning_start_hour => 7,
+			:morning_stop_hour => 9,
+			:evening_start_hour => 4 + 12,
+			:evening_stop_hour => 7 + 12
+		}
   end
 end

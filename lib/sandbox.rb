@@ -91,18 +91,23 @@ module Sandbox
 
 	end
 
-	def self.create_fares
+	def self.clear_fares
 		Fare.all.each do |f|
 			f.delete
 		end
 		Ride.all.each do |r|
 			r.fare_id = nil
+			r.state = 'requested'
 			r.save
 		end
 		ActiveRecord::Base.connection.reset_pk_sequence!('fares')
 
-		Scheduler.build_commuter_trips
+	end
 
+	def self.request_and_build_schedule
+		self.create_rides
+		self.clear_fares
+		Scheduler.build_commuter_trips
 	end
 
 

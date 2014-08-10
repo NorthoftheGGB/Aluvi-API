@@ -18,6 +18,7 @@ class Ride < ActiveRecord::Base
 		state :scheduled
 		state :cancelled
 		state :failed
+		state :commute_scheduler_failed
 
 		event :request, :after => :ride_requested do
 			transitions :from => :created, :to => :requested
@@ -41,6 +42,11 @@ class Ride < ActiveRecord::Base
 
 		event :scheduled, :after => :notify_scheduled do
 			transitions :from => :requested, :to => :scheduled
+		end
+
+		event :commute_scheduler_failed, :after => :clear_fare do
+			transitions :from => :requested, :to => :commute_scheduler_failed
+			transitions :from => :pending_return, :to => :commute_scheduler_failed
 		end
 
 	end
@@ -70,6 +76,11 @@ class Ride < ActiveRecord::Base
 		else
 			self.direction = 'b'
 		end
+	end
+
+	def clear_fare
+		self.fare = nil
+		save
 	end
 
 	private
