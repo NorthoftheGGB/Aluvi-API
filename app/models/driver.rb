@@ -136,12 +136,7 @@ class Driver < User
     offer_for_fare(fare).declined!
   end
 
-  def accepted_fare( fare )
-    offer_for_fare(fare).accepted!
-    fare.accepted!(self)
-    self.current_fare_id = fare.id
-    save
-  end
+
 
 	
 	def state

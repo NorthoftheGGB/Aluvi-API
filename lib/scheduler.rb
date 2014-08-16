@@ -273,6 +273,14 @@ module Scheduler
 
 	def self.notify_commuters
 
-	end
+    Trip.fulfilled_pending_notification.each do |trip|
+      TripController.notify_fulfilled trip
+    end
+
+    Trip.unfulfilled_pending_notification.each do |trip|
+      TripController.notify_unfulfilled trip
+    end
+
+  end
 
 end

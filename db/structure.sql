@@ -558,7 +558,9 @@ CREATE TABLE schema_migrations (
 CREATE TABLE trips (
     id integer NOT NULL,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    state character varying(255),
+    notified boolean DEFAULT false
 );
 
 
@@ -1069,4 +1071,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140810073014');
 INSERT INTO schema_migrations (version) VALUES ('20140810073441');
 
 INSERT INTO schema_migrations (version) VALUES ('20140810073604');
+
+INSERT INTO schema_migrations (version) VALUES ('20140816173623');
+
+INSERT INTO schema_migrations (version) VALUES ('20140816221915');
+
+INSERT INTO schema_migrations (version) VALUES ('20140816222253');
 

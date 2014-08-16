@@ -198,7 +198,7 @@ class RidesAPI< Grape::API
 			else 
 				begin
 					driver = Driver.find(current_user.id)
-					driver.accepted_fare(fare)
+          TripController.driver_accepted_on_demand_fare(driver, fare)
 					ok
 				rescue AASM::InvalidTransition => e
 					if fare.state == "accepted" && fare.driver.id == driver.id
