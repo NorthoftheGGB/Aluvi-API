@@ -103,6 +103,17 @@ class User < ActiveRecord::Base
 			roles << "driver"
 		end
 		roles
-	end
+  end
 
+  def as_user
+    User.find(self.id)
+  end
+
+  def as_rider
+    Rider.find(self.id)
+  end
+
+  def as_driver
+    Driver.find(self.id)
+  end
 end

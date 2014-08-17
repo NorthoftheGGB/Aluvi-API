@@ -3,11 +3,25 @@ module Scheduler
 	def self.build_commuter_trips
 		self.build_forward_fares
 		self.build_return_fares
+    self.notify_commuters
 	end
 
-	def self.build_forward_fares 
+	def self.build_forward_fares
 
-		tomorrow = Date.tomorrow
+    # clean bad data
+    driving_rides = CommuterRide.where( driving: true)
+    driving_rides.each do |r|
+      begin
+        driver = r.rider.as_driver
+      rescue ActiveRecord::RecordNotFound
+        Rails.logger.error $!
+        Rails.logger.error "Rider is not a driver, modifying ride to not driving"
+        r.driving = false
+        next
+      end
+    end
+
+    tomorrow = DateTime.tomorrow.in_time_zone("Pacific Time (US & Canada)")
 		tomorrow_morning_start = tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours 
 		tomorrow_morning_stop = tomorrow + Rails.configuration.commute_scheduler[:morning_stop_hour].hours
 		driving_rides = CommuterRide.where( driving: true)
@@ -16,8 +30,8 @@ module Scheduler
 
 		# 1st pass - create fare
 		driving_rides.each do |r|
-			fare = Fare.new
-			fare.driver = r.rider
+      fare = Fare.new
+      fare.driver = r.rider.as_driver
 			fare.save
 			r.fare = fare	
 			r.save
@@ -116,9 +130,10 @@ module Scheduler
 			avg_lat = lat_sum / f.rides.count
 			f.drop_off_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
 
-			f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
-				f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]	
-			end
+
+			#f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
+			#	f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]
+			#end
 
 			f.pickup_time = driving_ride.pickup_time
 			f.save
@@ -152,12 +167,13 @@ module Scheduler
 		CommuterRide.scheduled.where( driving: true).each do |r|
 			return_ride = r.return_ride
 			fare = Fare.new
-			fare.driver = r.rider
+			fare.driver = r.rider.as_driver
 			fare.save
 			return_ride.fare = fare	
 			return_ride.scheduled!
 			r.save
 			r.return_filled!
+      r.trip.fulfilled!
 			return_driving_rides << r
 		end
 	end
@@ -179,12 +195,13 @@ module Scheduler
 			if rides[0].nil?
 				next
 			end
-			return_ride = rides[0]
-			return_ride.fare = r.fare
-			return_ride.save
-			return_ride.scheduled!
-			r.return_filled!
-		end
+      assign_return_ride = rides[0]
+      assign_return_ride.fare = r.fare
+      assign_return_ride.save
+      assign_return_ride.scheduled!
+      assign_return_ride.forward_ride.return_filled!
+      assign_return_ride.trip.fulfilled!
+    end
 
 
 		# 3rd pass
@@ -204,6 +221,7 @@ module Scheduler
 			assign_return_ride.save
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
+      assign_return_ride.trip.fulfilled!
 		end
 
 		# 4th pass
@@ -223,7 +241,8 @@ module Scheduler
 			assign_return_ride.save
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
-		end
+      assign_return_ride.trip.fulfilled!
+    end
 
 		# triangulation
 		# - average the origins and create a meeting point
@@ -250,9 +269,9 @@ module Scheduler
 			avg_lat = lat_sum / f.rides.count
 			f.drop_off_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
 
-			f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
-				f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]	
-			end
+			#f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
+			#	f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]
+			#end
 
 			f.pickup_time = driving_ride.pickup_time
 			f.save
@@ -266,6 +285,7 @@ module Scheduler
 			r.commute_scheduler_failed!
 			unless r.return_ride.nil?
 				r.return_ride.commute_scheduler_failed!
+        r.trip.unfulfilled
 			end
 		end
 

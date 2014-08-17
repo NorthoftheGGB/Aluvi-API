@@ -31,7 +31,7 @@ class Fare < ActiveRecord::Base
 		end
 
 		event :schedule, :after => :ride_was_scheduled do
-			transitions :from => :unscheduled, :to => :scheduled , :on_transition => Proc.new {|obj, *args| obj.schedule_ride(*args)}
+			transitions :from => :unscheduled, :to => :scheduled
 		end
 		
 		event :accepted do
@@ -164,7 +164,6 @@ class Fare < ActiveRecord::Base
 		offers.open_offers.each do |offer|
 			offer.closed!
 		end
-		notify_scheduled
 	end
 
 	def retracted_by_rider! rider
@@ -221,14 +220,6 @@ class Fare < ActiveRecord::Base
 		save
 	end
 
-	def schedule_ride( pickup_time, driver, car )
-		self.pickup_time = pickup_time
-		self.driver = driver
-		self.car = car
-		self.scheduled = Time.now
-		save
-	end
-
 	def cost
 		unless self.started.nil?
 			cost = 250 # base
@@ -259,10 +250,10 @@ class Fare < ActiveRecord::Base
 	end
 
 	private
-	def ride_was_scheduled 
+	def ride_was_scheduled
+    self.scheduled = Time.now
+    save
 		update_ride_requests_to_scheduled
-		notify_scheduled
-		notify_observers :driver_assigned
 	end
 
 	def driver_cancelled_ride

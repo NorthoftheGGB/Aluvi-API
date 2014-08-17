@@ -1,5 +1,7 @@
 class TripController
 
+  # On Demand
+
   def self.driver_accepted_on_demand_fare(driver, fare)
       driver.offer_for_fare(fare).accepted!
       fare.accepted!(driver)
@@ -24,7 +26,42 @@ class TripController
           n.save!
         end
       end
+
+      # send push messages to notify other drivers that the fare is closed
+      self.send_offer_closed_messages fare
   end
+
+  def self.send_offer_closed_messages fare
+
+    fare.offers.offer_closed_delivered.each do |offer|
+      self.send_notification offer.driver do |notification|
+        n.alert = ""
+        n.content_available = true
+        n.data = { type: :offer_closed, offer_id: offer.id, fare_id: fare.id }
+      end
+    end
+
+  end
+
+  # Currently this notification is not used
+  # This would be used to notify a driver of an assigned fare
+  def self.driver_assigned(fare)
+    Rails.logger.debug 'observer: driver_assigned'
+    # if this is a ride assigned by the scheduler (rather than accepted) notify the driver
+    fare.driver.devices.each do |d|
+      if(d.push_token.nil? || d.push_token == '')
+        next
+      end
+      n = PushHelper::push_message(d)
+      n.alert = "Fare Assigned"
+      n.data = { type: :fare_assigned, fare_id:fare.id }
+      Rails.logger.debug n
+      n.save!
+    end
+
+  end
+
+  # Commuter
 
   def self.notify_fulfilled trip
     send_trip_notification trip do |notification|

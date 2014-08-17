@@ -74,7 +74,9 @@ class RidesAPI< Grape::API
               fare.drop_off_point_place_name = FaresHelper::reverse_geocode  fare.drop_off_point
 							drivers = Driver.demo_drivers
 							unless drivers.count == 0
-								fare.schedule!( nil, DateTime.now, drivers[0], drivers[0].cars.first )
+                fare.pickup_time = DateTime.now
+                fare.driver = drivers[0]
+                fare.car = drivers[0].cars.first
 							end
 						end
 					end
@@ -105,6 +107,8 @@ class RidesAPI< Grape::API
 				else
           ride.cancel!
 				end
+				ok
+			rescue ActiveRecord::RecordNotFound
 				ok
 			rescue ApiExceptions::WrongUserForEntityException
 				Rails.logger.debug $!

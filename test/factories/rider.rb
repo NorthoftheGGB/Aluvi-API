@@ -22,6 +22,7 @@ FactoryGirl.define do
 
 		factory :sandbox_rider do
 			email { "#{first_name}.#{phone}@example.com".downcase }
+		end
   end
 
 end
