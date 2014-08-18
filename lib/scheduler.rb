@@ -17,6 +17,7 @@ module Scheduler
         Rails.logger.error $!
         Rails.logger.error "Rider is not a driver, modifying ride to not driving"
         r.driving = false
+        r.save
         next
       end
     end
