@@ -73,9 +73,15 @@ describe RidesAPI do
   end
 
   describe "GET /api/rides/rides" do
-    it "gets rides" do
+    it "recieves success" do
       @rider = FactoryGirl.create(:rider)
       get "/api/rides/rides", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      expect(response.status).to eq(200)
+    end
+
+    it "gets rides" do
+			@ride = FactoryGirl.create(:ride)
+      get "/api/rides/rides", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@ride.rider.token)}
       expect(response.status).to eq(200)
 
     end

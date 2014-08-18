@@ -20,6 +20,7 @@ class Ride < ActiveRecord::Base
 		state :cancelled
 		state :failed
 		state :commute_scheduler_failed
+    state :aborted
 
 		event :request, :after => :ride_requested do
 			transitions :from => :created, :to => :requested
@@ -30,7 +31,7 @@ class Ride < ActiveRecord::Base
 		end
 
 		event :failed do
-			transitions :fram => :requested, :to => :failed
+			transitions :from => :requested, :to => :failed
 		end
 
 		event :promote_to_pending_return do
@@ -43,7 +44,11 @@ class Ride < ActiveRecord::Base
 
 		event :scheduled, :after => :notify_scheduled do
 			transitions :from => :requested, :to => :scheduled
-		end
+    end
+
+    event :abort do
+      transitions :from => :scheduled, :to => :aborted
+    end
 
 		event :commute_scheduler_failed, :after => :clear_fare do
 			transitions :from => :requested, :to => :commute_scheduler_failed

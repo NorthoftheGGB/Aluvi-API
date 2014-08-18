@@ -417,6 +417,19 @@ ALTER SEQUENCE rides_id_seq OWNED BY rides.id;
 
 
 --
+-- Name: rides_summary_view; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW rides_summary_view AS
+ SELECT rides.trip_id,
+    rides.direction,
+    rides.state,
+    rides.pickup_time,
+    timezone('PDT'::text, rides.pickup_time) AS timezone
+   FROM rides;
+
+
+--
 -- Name: rpush_apps; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -634,7 +647,11 @@ CREATE TABLE users (
     national_database_check_content_type character varying(255),
     national_database_check_file_size integer,
     national_database_check_updated_at timestamp without time zone,
-    drivers_license_number character varying(255)
+    drivers_license_number character varying(255),
+    commuter_pickup_time character varying(255),
+    commuter_origin geometry(Point),
+    commuter_destination geometry(Point),
+    commuter_return_time character varying(255)
 );
 
 
@@ -1079,4 +1096,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140816221915');
 INSERT INTO schema_migrations (version) VALUES ('20140816222253');
 
 INSERT INTO schema_migrations (version) VALUES ('20140817024244');
+
+INSERT INTO schema_migrations (version) VALUES ('20140818013652');
 

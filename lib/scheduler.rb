@@ -9,7 +9,7 @@ module Scheduler
 	def self.build_forward_fares
 
     # clean bad data
-    driving_rides = CommuterRide.where( driving: true)
+    driving_rides = CommuterRide.where( {driving: true, state: 'requested'} )
     driving_rides.each do |r|
       begin
         driver = r.rider.as_driver
@@ -24,7 +24,7 @@ module Scheduler
     tomorrow = DateTime.tomorrow.in_time_zone("Pacific Time (US & Canada)")
 		tomorrow_morning_start = tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours 
 		tomorrow_morning_stop = tomorrow + Rails.configuration.commute_scheduler[:morning_stop_hour].hours
-		driving_rides = CommuterRide.where( driving: true)
+		driving_rides = CommuterRide.where( {driving: true, state: 'requested'} )
 		driving_rides = driving_rides.where(  direction: 'a' )
 		driving_rides = driving_rides.where('pickup_time >= ? AND pickup_time <= ? ', tomorrow_morning_start, tomorrow_morning_stop )
 
@@ -42,7 +42,7 @@ module Scheduler
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
 		driving_rides.each do |r|
-			rides = CommuterRide.where({ fare_id: nil })
+			rides = CommuterRide.where({ state: 'requested' })
 			rides = rides.where( direction: 'a' )
 			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
@@ -64,7 +64,7 @@ module Scheduler
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
 		driving_rides.each do |r|
-			rides = CommuterRide.where({ fare_id: nil })
+			rides = CommuterRide.where({ state: 'requested' })
 			rides = rides.where( direction: 'a' )
 			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
@@ -87,7 +87,7 @@ module Scheduler
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
 		driving_rides.each do |r|
-			rides = CommuterRide.where({ fare_id: nil })
+			rides = CommuterRide.where({ state: 'requested' })
 			rides = rides.where( direction: 'a' )
 			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
@@ -153,35 +153,21 @@ module Scheduler
 
 	def self.build_return_fares
 
-		self.build_return_fares_assign_drivers
-		self.build_return_fares_assign_riders
-
-	end
-
-	def self.build_return_fares_assign_drivers
-
 		# attempt to solve all return rides
 		# 1st pass
 		# - all drivers get assigned to a fare
 		return_driving_rides = Array.new
-		CommuterRide.scheduled.where( driving: true).each do |r|
+		CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
 			return_ride = r.return_ride
 			fare = Fare.new
 			fare.driver = r.rider.as_driver
 			fare.save
 			return_ride.fare = fare	
 			return_ride.scheduled!
-			r.save
 			r.return_filled!
       r.trip.fulfilled!
-			return_driving_rides << r
+			return_driving_rides << return_ride
 		end
-	end
-
-
-	def self.build_return_fares_assign_riders
-
-		return_driving_rides = CommuterRide.scheduled.where( driving: true).where( direction: 'b' )
 
 		# 2nd pass
 		# - attempt to assign to drivers from return rides of pending_return rides
@@ -287,7 +273,7 @@ module Scheduler
 				r.return_ride.commute_scheduler_failed!
         r.trip.unfulfilled
 			end
-		end
+    end
 
 	end
 

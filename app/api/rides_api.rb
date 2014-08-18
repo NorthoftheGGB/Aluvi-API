@@ -146,11 +146,11 @@ class RidesAPI< Grape::API
 		get 'rides', jbuilder: 'rides' do
 			authenticate!
       rider = Rider.find(current_user.id)
-			@requests = rider.rides.select('*, rides.id as ride_id').joins('JOIN fares ON fares.id = rides.fare_id').where( state: ["requested", "scheduled"])
-			@requests.each do |ride|
+			@rides = rider.rides.select('*, rides.id as ride_id').joins('JOIN fares ON fares.id = rides.fare_id').where( state: ["requested", "scheduled"])
+			@rides.each do |ride|
 				# mark as delivered here if we like
 			end
-			@requests
+			@rides
 		end
 
 		desc "Payment Details"
@@ -272,19 +272,24 @@ class RidesAPI< Grape::API
       fare = Fare.find(params[:fare_id])
 			begin
 
-				if( !fare.riders.any?{ |r| current_user.id = fare.id } )
-					raise ApiExceptions::RideNotAssignedToThisRiderException
-				end
-        fare.rider_cancelled!(current_user)
+        ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
+        unless ride.nil?
+          unless ride.aborted?
+          ride.abort!
+          end
+          unless ride.fare.nil?
+            unless fare.is_cancelled
+             fare.rider_cancelled!(current_user.as_rider)
+            end
+          end
+        end
 				ok
-			rescue AASM::InvalidTransition => e
-				if(fare.is_cancelled)
+      rescue AASM::InvalidTransition => e
+        if(fare.is_cancelled && ride.is_aborted)
 					ok
 				else
 					raise e
 				end
-			rescue ApiExceptions::RideNotAssignedToThisRiderException
-				forbidden $!
 			end
 		end
 

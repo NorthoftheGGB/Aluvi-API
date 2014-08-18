@@ -173,7 +173,7 @@ class Fare < ActiveRecord::Base
 
 	def retracted_by_rider rider
 		if( riders.count == 1 )
-			aasm_retracted_by_rider
+			aasm_retracted_by_rider rider
 			self.finished = Time.now
 			offers.open_offers.each do |offer|
 				offer.closed!
@@ -186,13 +186,10 @@ class Fare < ActiveRecord::Base
 
 	
 	def rider_cancelled rider
-		Rails.logger.info "RIDER_CANCELLED: riders count"
-		Rails.logger.info self.riders
-		Rails.logger.info self.riders.count
+		Rails.logger.info "RIDER_CANCELLED"
 		if( self.riders.count == 1 ) 
-			Rails.logger.info 'last rider cancelled ' + rider.id.to_s
 			# this is the only rider, cancel the whole ride
-			aasm_rider_cancelled
+			aasm_rider_cancelled rider
 			self.finished = Time.now
 			notify_fare_cancelled_by_rider
 		else 

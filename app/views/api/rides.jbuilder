@@ -1,5 +1,5 @@
-json.array! @ride do |ride|
-  json.ride_id ride.id
+json.array! @rides do |ride|
+  json.ride_id ride.ride_id
 	json.fare_id ride.fare_id
   json.origin_place_name ride.origin_place_name
   json.origin_latitude ride.origin.latitude
@@ -14,6 +14,18 @@ json.array! @ride do |ride|
   json.drop_off_point_latitude ride.fare.drop_off_point.latitude
   json.drop_off_point_longitude ride.fare.drop_off_point.longitude
 	json.state ride.state
+	unless ride.fare.nil?
+		json.pickup_time ride.fare.pickup_time
+	else
+		json.pickup_time ride.pickup_time
+	end
+	if ride.direction == 'a'
+		json.origin_short_name 'Home'
+		json.destination_short_name 'Work'
+	elsif ride.direction == 'b'
+		json.origin_short_name 'Work'
+		json.destination_short_name 'Home'
+	end
 	unless ride.fare.nil? || ride.fare.car.nil?
 		json.car do
 			json.id ride.fare.car.id
