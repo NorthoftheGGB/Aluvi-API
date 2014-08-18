@@ -27,3 +27,6 @@ end
 # end
 
 # Rake::Task["db:test:prepare"].clear
+
+
+Rake::Task["db:structure:dump"].clear if Rails.env.production?
