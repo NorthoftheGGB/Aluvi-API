@@ -7,15 +7,15 @@ json.array! @rides do |ride|
 	json.destination_place_name ride.destination_place_name
   json.destination_latitude ride.destination.latitude
   json.destination_longitude ride.destination.longitude
-	json.meeting_point_place_name ride.fare.meeting_point_place_name
-	json.meeting_point_latitude ride.fare.meeting_point.latitude
-	json.meeting_point_longitude ride.fare.meeting_point.longitude
-  json.drop_off_point_place_name ride.fare.drop_off_point_place_name
-  json.drop_off_point_latitude ride.fare.drop_off_point.latitude
-  json.drop_off_point_longitude ride.fare.drop_off_point.longitude
 	json.state ride.state
 	unless ride.fare.nil?
 		json.pickup_time ride.fare.pickup_time
+    json.meeting_point_place_name ride.fare.meeting_point_place_name
+    json.meeting_point_latitude ride.fare.meeting_point.latitude
+    json.meeting_point_longitude ride.fare.meeting_point.longitude
+    json.drop_off_point_place_name ride.fare.drop_off_point_place_name
+    json.drop_off_point_latitude ride.fare.drop_off_point.latitude
+    json.drop_off_point_longitude ride.fare.drop_off_point.longitude
 	else
 		json.pickup_time ride.pickup_time
 	end

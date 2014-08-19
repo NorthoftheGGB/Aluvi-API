@@ -143,7 +143,7 @@ class RidesAPI< Grape::API
 		end
 
 		desc "Get requested and underway ride requests"
-		get 'rides', jbuilder: 'rides' do
+		get 'tickets', jbuilder: 'tickets' do
 			authenticate!
       rider = Rider.find(current_user.id)
 			@rides = rider.rides.select('*, rides.id as ride_id').joins('JOIN fares ON fares.id = rides.fare_id').where( state: ["requested", "scheduled"])
