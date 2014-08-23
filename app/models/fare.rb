@@ -250,7 +250,6 @@ class Fare < ActiveRecord::Base
 	def ride_was_scheduled
     self.scheduled = Time.now
     save
-		update_ride_requests_to_scheduled
 	end
 
 	def driver_cancelled_ride
@@ -296,11 +295,4 @@ class Fare < ActiveRecord::Base
 		notify_observers :fare_cancelled_by_driver
 	end
 
-	def update_ride_requests_to_scheduled
-		rides.each do |rr|
-			rr.scheduled!
-		end
-	end
-
-  
 end

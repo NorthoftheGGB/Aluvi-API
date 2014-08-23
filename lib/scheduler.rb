@@ -8,6 +8,7 @@ module Scheduler
 
 	def self.build_forward_fares
 
+    Rails.logger.info "Clean bad data"
     # clean bad data
     driving_rides = CommuterRide.where( {driving: true, state: 'requested'} )
     driving_rides.each do |r|
@@ -23,22 +24,29 @@ module Scheduler
     end
 
     tomorrow = DateTime.tomorrow.in_time_zone("Pacific Time (US & Canada)")
-		tomorrow_morning_start = tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours 
+    Rails.logger.info tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours
+    tomorrow_morning_start = tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours
 		tomorrow_morning_stop = tomorrow + Rails.configuration.commute_scheduler[:morning_stop_hour].hours
 		driving_rides = CommuterRide.where( {driving: true, state: 'requested'} )
 		driving_rides = driving_rides.where(  direction: 'a' )
-		driving_rides = driving_rides.where('pickup_time >= ? AND pickup_time <= ? ', tomorrow_morning_start, tomorrow_morning_stop )
+		driving_rides = driving_rides.where('pickup_time >= ? AND pickup_time <= ? ', tomorrow_morning_start.to_s, tomorrow_morning_stop.to_s )
 
+    Rails.logger.info "First Pass - drivers"
+    Rails.logger.info driving_rides.count
 		# 1st pass - create fare
 		driving_rides.each do |r|
+      Rails.logger.info "Creating Fare with Driver"
       fare = Fare.new
       fare.driver = r.rider.as_driver
 			fare.save
 			r.fare = fare	
 			r.save
+      Rails.logger.info "Scheduling Fare"
 			r.scheduled!
-		end
+    end
 
+
+    Rails.logger.info "Second Pass - riders"
 		# 2nd pass 
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
@@ -59,7 +67,8 @@ module Scheduler
 			assign_ride.fare = r.fare
 			assign_ride.save
 			assign_ride.promote_to_pending_return!
-		end
+    end
+
 
 		# 3rd pass
 		# - get closest ride that doesn't already have a fare
@@ -84,7 +93,8 @@ module Scheduler
 		end
 
 
-		# 4th pass
+
+    # 4th pass
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
 		driving_rides.each do |r|
@@ -106,8 +116,12 @@ module Scheduler
 			assign_ride.promote_to_pending_return!
 		end
 
-		# triangulation
+
+
+
+    # triangulation
 		# - average the origins and create a meeting point
+    Rails.logger.info "Triangulation"
 		driving_rides.each do |driving_ride|
 			f = driving_ride.fare
 
@@ -138,8 +152,11 @@ module Scheduler
 
 			f.pickup_time = driving_ride.pickup_time
 			f.save
-			f.schedule!
+      Rails.logger.info "saving pickup time and triangulation " + f.id.to_s
+      f.schedule!
 		end
+
+    return
 
 		ride_scheduling_failures = CommuterRide.requested.where( direction: 'a' )
 		ride_scheduling_failures.each do |r|
@@ -153,22 +170,34 @@ module Scheduler
 
 
 	def self.build_return_fares
+    Rails.logger.info "Build Return Fares'"
 
 		# attempt to solve all return rides
 		# 1st pass
 		# - all drivers get assigned to a fare
 		return_driving_rides = Array.new
+    Rails.logger.info "First Pass - Drivers"
 		CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
-			return_ride = r.return_ride
-			fare = Fare.new
-			fare.driver = r.rider.as_driver
-			fare.save
-			return_ride.fare = fare	
-			return_ride.scheduled!
-			r.return_filled!
-      r.trip.fulfilled!
-			return_driving_rides << return_ride
-		end
+      begin
+			  return_ride = r.return_ride
+        Rails.logger.info "Creating Fare"
+		  	fare = Fare.new
+			  fare.driver = r.rider.as_driver
+		  	fare.save
+        Rails.logger.info "Saved Fare"
+        Rails.logger.info "Scheduling Ride"
+        return_ride.fare = fare
+        return_ride.save
+        return_ride.scheduled!
+        Rails.logger.info "Scheduled Ride"
+        Rails.logger.info "Marking Trip Fulfilled"
+        r.trip.fulfilled!
+			  return_driving_rides << return_ride
+      rescue
+        Rails.logger.error $!
+        return
+      end
+    end
 
 		# 2nd pass
 		# - attempt to assign to drivers from return rides of pending_return rides

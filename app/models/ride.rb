@@ -26,7 +26,7 @@ class Ride < ActiveRecord::Base
 			transitions :from => :created, :to => :requested
 		end
 
-		event :cancel, :after => :request_cancelled do
+		event :cancel do
 			transitions :from => :requested, :to => :cancelled
 		end
 
@@ -42,7 +42,7 @@ class Ride < ActiveRecord::Base
 			transitions :from => :pending_return, :to => :scheduled
 		end
 
-		event :scheduled, :after => :notify_scheduled do
+		event :scheduled do
 			transitions :from => :requested, :to => :scheduled
     end
 
@@ -104,16 +104,6 @@ class Ride < ActiveRecord::Base
 		end		
 		notify_observers :requested # notifies scheduler
 
-	end
-
-	def request_cancelled
-		if self.fare != nil && self.fare.unscheduled?
-			self.fare.retracted_by_rider! self.rider
-		end
-	end
-
-	def notify_scheduled
-		notify_observers :scheduled
 	end
 
 end

@@ -62,11 +62,5 @@ class RideObserver < ActiveRecord::Observer
 
 	end
 
-	def scheduled(fare)
-		# this is where we send a push message to the user letting them know their ride is coming
-		# i.e. we update their state
-
-	end
-
 
 end

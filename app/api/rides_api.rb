@@ -100,20 +100,27 @@ class RidesAPI< Grape::API
 				ride = Ride.find(params[:ride_id])
 				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
-				end
-				if !ride.fare.nil? && ride.fare.scheduled?
-					#if ride found has yet been delivered to phone, cancel ride instead of request anyway
-          ride.fare.rider_cancelled! ride.rider
-				else
+        end
+        Rails.logger.debug ride
+        Rails.logger.debug ride.fare
+
+        if ride.fare.nil?
+            ride.cancel!
+        elsif ride.fare.scheduled?
           ride.cancel!
-				end
+          ride.fare.rider_cancelled! ride.rider
+        else
+          #if ride found has not yet been delivered to phone, cancel fare instead of ride anyway
+          ride.cancel!
+          ride.fare.retracted_by_rider! self.rider
+        end
 				ok
 			rescue ActiveRecord::RecordNotFound
 				ok
 			rescue ApiExceptions::WrongUserForEntityException
 				Rails.logger.debug $!
 				forbidden $!
-			rescue AASM::InvalidTransition => e 
+      rescue AASM::InvalidTransition => e
 				Rails.logger.error e
 				forbidden e
       rescue
@@ -269,9 +276,8 @@ class RidesAPI< Grape::API
 		post :rider_cancelled do
 			authenticate!
 			# TODO rider should only be able to cancel their own ride
-      fare = Fare.find(params[:fare_id])
 			begin
-
+				fare = Fare.find(params[:fare_id])
         ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
         unless ride.nil?
           unless ride.aborted?
@@ -286,6 +292,12 @@ class RidesAPI< Grape::API
 				ok
       rescue AASM::InvalidTransition => e
         if(fare.is_cancelled && ride.is_aborted)
+					ok
+				else
+					raise e
+				end
+			rescue ActiveRecord::RecordNotFound => e
+				if fare.nil?
 					ok
 				else
 					raise e
