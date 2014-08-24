@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82638c06-9f03-4cd7-a45b-dc466e5f2b2d" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/models/rider_fare.rb" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/fare.rb" afterPath="$PROJECT_DIR$/app/models/fare.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/fares.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/fares.jbuilder" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ride.rb" afterPath="$PROJECT_DIR$/app/models/ride.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/api/rides_api.rb" afterPath="$PROJECT_DIR$/app/api/rides_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/structure.sql" afterPath="$PROJECT_DIR$/db/structure.sql" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/api/tickets.jbuilder" afterPath="$PROJECT_DIR$/app/views/api/tickets.jbuilder" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="voco-api.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -78,8 +71,8 @@
       <file leaf-file-name="fares.jbuilder" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/api/fares.jbuilder">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.29564315" vertical-offset="0" max-vertical-offset="964">
-              <caret line="19" column="3" selection-start-line="19" selection-start-column="3" selection-end-line="19" selection-end-column="3" />
+            <state vertical-scroll-proportion="0.17116183" vertical-offset="0" max-vertical-offset="964">
+              <caret line="11" column="26" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -985,8 +978,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/api/fares.jbuilder">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.29564315" vertical-offset="0" max-vertical-offset="964">
-          <caret line="19" column="3" selection-start-line="19" selection-start-column="3" selection-end-line="19" selection-end-column="3" />
+        <state vertical-scroll-proportion="0.17116183" vertical-offset="0" max-vertical-offset="964">
+          <caret line="11" column="26" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
           <folding />
         </state>
       </provider>
