@@ -342,38 +342,6 @@ ALTER SEQUENCE payouts_id_seq OWNED BY payouts.id;
 
 
 --
--- Name: rider_fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE rider_fares (
-    id integer NOT NULL,
-    rider_id integer,
-    fare_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: rider_fares_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE rider_fares_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: rider_fares_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE rider_fares_id_seq OWNED BY rider_fares.id;
-
-
---
 -- Name: rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -425,6 +393,7 @@ CREATE VIEW rides_summary_view AS
     rides.direction,
     rides.state,
     rides.pickup_time,
+    rides.driving,
     timezone('PDT'::text, rides.pickup_time) AS timezone
    FROM rides;
 
@@ -734,13 +703,6 @@ ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY rider_fares ALTER COLUMN id SET DEFAULT nextval('rider_fares_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY rides ALTER COLUMN id SET DEFAULT nextval('rides_id_seq'::regclass);
 
 
@@ -865,14 +827,6 @@ ALTER TABLE ONLY rpush_notifications
 
 ALTER TABLE ONLY rides
     ADD CONSTRAINT ride_requests_pkey PRIMARY KEY (id);
-
-
---
--- Name: rider_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY rider_fares
-    ADD CONSTRAINT rider_rides_pkey PRIMARY KEY (id);
 
 
 --
@@ -1098,4 +1052,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140816222253');
 INSERT INTO schema_migrations (version) VALUES ('20140817024244');
 
 INSERT INTO schema_migrations (version) VALUES ('20140818013652');
+
+INSERT INTO schema_migrations (version) VALUES ('20140823235842');
 

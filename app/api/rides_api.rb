@@ -142,7 +142,7 @@ class RidesAPI< Grape::API
 		end
 
 		desc "Get list of fares assigned to driver"
-		get 'fares', jbuilder: 'rides' do
+		get 'fares', jbuilder: 'fares' do
 			authenticate!
       driver = Driver.find(current_user.id)
       @fares = driver.fares.active
