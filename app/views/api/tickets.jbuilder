@@ -1,15 +1,20 @@
 json.array! @rides do |ride|
-  json.ride_id ride.ride_id
-	json.fare_id ride.fare_id
+  json.ride_id ride.id
+
   json.origin_place_name ride.origin_place_name
   json.origin_latitude ride.origin.latitude
   json.origin_longitude ride.origin.longitude
 	json.destination_place_name ride.destination_place_name
   json.destination_latitude ride.destination.latitude
   json.destination_longitude ride.destination.longitude
-	json.state ride.state
+  if !ride.fare.nil? && ride.fare.state == 'completed'
+    json.state ride.fare.state
+  else
+    json.state ride.state
+  end
   json.driving ride.driving
 	unless ride.fare.nil?
+    json.fare_id ride.fare.id
 		json.pickup_time ride.fare.pickup_time
     json.meeting_point_place_name ride.fare.meeting_point_place_name
     json.meeting_point_latitude ride.fare.meeting_point.latitude

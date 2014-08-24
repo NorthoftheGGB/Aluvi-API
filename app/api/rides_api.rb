@@ -144,16 +144,21 @@ class RidesAPI< Grape::API
 		desc "Get list of fares assigned to driver"
 		get 'fares', jbuilder: 'fares' do
 			authenticate!
-      driver = Driver.find(current_user.id)
-      @fares = driver.fares.active
-
+      begin
+        driver = Driver.find(current_user.id)
+        @fares = driver.fares.active
+      rescue ActiveRecord::RecordNotFound
+        @fares = Array.new
+      end
 		end
 
 		desc "Get requested and underway ride requests"
 		get 'tickets', jbuilder: 'tickets' do
 			authenticate!
       rider = Rider.find(current_user.id)
-			@rides = rider.rides.select('*, rides.id as ride_id').joins('JOIN fares ON fares.id = rides.fare_id').where( state: ["requested", "scheduled"])
+      #TODO should only send rides that are in the future
+      #however we must send all for now, because orphan cleaning isn't working on iOS side
+			@rides = rider.rides #.select('rides.*').joins('JOIN fares ON fares.id = rides.fare_id').where( state: ["requested", "scheduled", "started"])
 			@rides.each do |ride|
 				# mark as delivered here if we like
 			end
@@ -256,6 +261,9 @@ class RidesAPI< Grape::API
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
         fare.driver_cancelled!
+        unless ride.aborted?
+          ride.abort!
+        end
 				ok
 			rescue AASM::InvalidTransition => e
 				if(fare.is_cancelled)
@@ -281,7 +289,7 @@ class RidesAPI< Grape::API
         ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
         unless ride.nil?
           unless ride.aborted?
-          ride.abort!
+            ride.abort!
           end
           unless ride.fare.nil?
             unless fare.is_cancelled
@@ -353,7 +361,7 @@ class RidesAPI< Grape::API
 				# and move this code to a model layer, and separate into better units
         fare.riders.each do |rider|
 					begin
-						request = rider.rides.where( :fare_id => fare.id ).first
+						ride = rider.rides.where( :fare_id => fare.id ).first
 
 						payment = Payment.new
 						payment.driver = fare.driver
@@ -365,8 +373,10 @@ class RidesAPI< Grape::API
 						payment.stripe_customer_id = rider.stripe_customer_id
 
 						case request.request_type
-						when 'on_demand'
-							payment.initiation = 'On Demand Payment'
+              when 'on_demand'
+              when 'commuter'
+
+                payment.initiation = 'On Demand Payment'
 
 							customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
 							charge = Stripe::Charge.create(
@@ -383,7 +393,7 @@ class RidesAPI< Grape::API
 								payment.stripe_charge_status = 'Failed'
 							end
 
-						when 'commuter'
+						when 'commuter_card' # Currently Unused
 
 							payment.initiation = 'Commuter Card'
 

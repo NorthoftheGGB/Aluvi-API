@@ -156,15 +156,14 @@ module Scheduler
       f.schedule!
 		end
 
-    return
-
 		ride_scheduling_failures = CommuterRide.requested.where( direction: 'a' )
 		ride_scheduling_failures.each do |r|
 			r.commute_scheduler_failed!
 			unless r.return_ride.nil?
 				r.return_ride.commute_scheduler_failed!
-			end
-		end
+      end
+      r.trip.unfulfilled!
+    end
 
 	end
 
@@ -190,8 +189,7 @@ module Scheduler
         return_ride.save
         return_ride.scheduled!
         Rails.logger.info "Scheduled Ride"
-        Rails.logger.info "Marking Trip Fulfilled"
-        r.trip.fulfilled!
+
 			  return_driving_rides << return_ride
       rescue
         Rails.logger.error $!
@@ -217,6 +215,9 @@ module Scheduler
       assign_return_ride.scheduled!
       assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
+      if !r.trip.fulfilled?
+        r.trip.fulfilled!
+      end
     end
 
 
@@ -238,6 +239,9 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
+      if !r.trip.fulfilled?
+        r.trip.fulfilled!
+      end
 		end
 
 		# 4th pass
@@ -258,6 +262,9 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
+      if !r.trip.fulfilled?
+        r.trip.fulfilled!
+      end
     end
 
 		# triangulation
@@ -301,11 +308,20 @@ module Scheduler
 			r.commute_scheduler_failed!
 			unless r.return_ride.nil?
 				r.return_ride.commute_scheduler_failed!
-        r.trip.unfulfilled
+        r.trip.unfulfilled!
 			end
     end
 
-	end
+    # TODO: Check this logic, and ALSO for drivers the trip is fulfilled if there is a single rider EITHER WAY
+    # so they can switch to fulfilled in the forward fares calculation as well
+    # this will beak the current logic used to find b side rides
+    # driving rides that still have a trip in the requested state are not fulfilled
+    CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
+      r.trip.unfulfilled!
+    end
+
+
+    end
 
 	def self.notify_commuters
 

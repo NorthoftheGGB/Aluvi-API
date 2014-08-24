@@ -73,7 +73,7 @@ class TripController
   def self.notify_unfulfilled trip
     send_trip_notification trip do |notification|
       notification.alert = "We were unable to fulfill your commute to and from work.  Please try again tomorrow"
-      notification.data = { type: :trip_fulfilled, trip_id: trip.id }
+      notification.data = { type: :trip_unfulfilled, trip_id: trip.id }
     end
   end
 

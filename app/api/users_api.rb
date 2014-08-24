@@ -113,6 +113,10 @@ class UsersAPI < Grape::API
           raise "Wrong password"
         end
         token = user.generate_token!
+        user.devices.each do |device|
+          device.push_token = "" # other devices are logged out, dont push to them
+          device.save
+        end
         response = Hash.new
         response["token"] = token
         response["rider_state"] = user.rider_state
