@@ -82,6 +82,13 @@ class CommuterRidesController < ApplicationController
     end
   end
 
+  def schedule_trips
+    Scheduler.build_commuter_trips
+    respond_to do |format|
+      format.html { render html:"Trips were scheduled." }
+    end
+  end
+
 	#POST 
 	def assemble_ride
 		request_ids = params['selected']
