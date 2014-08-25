@@ -33,7 +33,7 @@ class FareObserver < ActiveRecord::Observer
 
 	def fare_completed(fare)
 		Rails.logger.debug('FareObserver::ride_completed')
-		fare.riders.each do |rider|
+		fare.riders.where.not(id: fare.driver.id).each do |rider|
 
 			payment = fare.payments.where( :rider_id => rider.id ).first
 

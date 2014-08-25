@@ -259,12 +259,16 @@ class RidesAPI< Grape::API
 			begin
 				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
-				end
-        fare.driver_cancelled!
-        unless ride.aborted?
-          ride.abort!
         end
-				ok
+        if !fare.is_cancelled
+          fare.driver_cancelled!
+        end
+        fare.rides.each do |ride|
+          unless ride.aborted?
+            ride.abort!
+          end
+        end
+				ok  
 			rescue AASM::InvalidTransition => e
 				if(fare.is_cancelled)
 					ok
@@ -359,7 +363,7 @@ class RidesAPI< Grape::API
 				# process the payment
 				# TODO Refactor into delayed job
 				# and move this code to a model layer, and separate into better units
-        fare.riders.each do |rider|
+        fare.riders.where.not(id: fare.driver.id).each do |rider|
 					begin
 						ride = rider.rides.where( :fare_id => fare.id ).first
 
@@ -367,77 +371,77 @@ class RidesAPI< Grape::API
 						payment.driver = fare.driver
 						payment.fare = fare
 						payment.rider = rider
-						payment.ride = request
-						payment.amount_cents = ride.cost_per_rider
-						payment.driver_earnings_cents = earnings / ride.riders.count
+						payment.ride = ride
+						payment.amount_cents = fare.cost_per_rider
+						payment.driver_earnings_cents = earnings / fare.riders.count
 						payment.stripe_customer_id = rider.stripe_customer_id
 
-						case request.request_type
+						case ride.request_type
               when 'on_demand'
               when 'commuter'
 
-                payment.initiation = 'On Demand Payment'
+                payment.initiation = 'Standard Payment'
 
-							customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
-							charge = Stripe::Charge.create(
-								:amount => payment.amount_cents,
-								:currency => "usd",
-								:customer => customer.id,
-								:description => "Charge for Voco Ride: " + fare.meeting_point_place_name + " to " + fare.drop_off_point_place_name
-							)
-							if charge.paid == true
-								payment.stripe_charge_status = 'Success'
-								payment.captured_at = DateTime.now
-								payment.paid = true
-							else
-								payment.stripe_charge_status = 'Failed'
-							end
+					  		customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
+						  	charge = Stripe::Charge.create(
+						  		:amount => payment.amount_cents,
+						  		:currency => "usd",
+						  		:customer => customer.id,
+						  		:description => "Charge for Voco Fare: " + fare.id.to_s
+						  	)
+						  	if charge.paid == true
+						  		payment.stripe_charge_status = 'Success'
+						  		payment.captured_at = DateTime.now
+						  		payment.paid = true
+						  	else
+						  		payment.stripe_charge_status = 'Failed'
+						  	end
 
 						when 'commuter_card' # Currently Unused
 
-							payment.initiation = 'Commuter Card'
+							  payment.initiation = 'Commuter Card'
 
-							# refill commuter card if necessary
-							tries = 0
-							begin
-								if rider.commuter_balance_cents < ride.cost_per_rider 
-									# fill the commuter card
-									if rider.commuter_refill_amount_cents <= 0
-										raise "Commuter refill not set"
-									end
+							  # refill commuter card if necessary
+							  tries = 0
+							  begin
+							  	if rider.commuter_balance_cents < ride.cost_per_rider
+							  		# fill the commuter card
+							  		if rider.commuter_refill_amount_cents <= 0
+							  			raise "Commuter refill not set"
+							  		end
 
-									paid = PaymentsHelper.autofill_commuter_card rider
-									if paid == true
-										raise "retry"
-									else
-										raise "Failed to refill commuter card"
-									end
-								end
-							rescue
-								if $!.to_s == 'retry'
-									Rails.logger.debug 'rescuing for retry'
-									tries += 1
-									if tries > 2 
-										raise "Commuter card refill did not reach required amount after 2 iterations"
-									end
-									retry
-								else
-									raise $!
-								end
-							end
+							  		paid = PaymentsHelper.autofill_commuter_card rider
+							  		if paid == true
+							  			raise "retry"
+							  		else
+							  			raise "Failed to refill commuter card"
+							  		end
+							  	end
+							  rescue
+							  	if $!.to_s == 'retry'
+							  		Rails.logger.debug 'rescuing for retry'
+							  		tries += 1
+							  		if tries > 2
+							  			raise "Commuter card refill did not reach required amount after 2 iterations"
+							  		end
+							  		retry
+							  	else
+							  		raise $!
+							  	end
+							  end
 
-							# pay via commuter card
-							payment.stripe_charge_status = 'Paid By Commuter Card'
-							payment.paid = true
-							rider.commuter_balance_cents -= payment.amount_cents
-							rider.save
+					  		# pay via commuter card
+					  		payment.stripe_charge_status = 'Paid By Commuter Card'
+					  		payment.paid = true
+							  rider.commuter_balance_cents -= payment.amount_cents
+						  	rider.save
 							
-						end
+				    end
 					
 					rescue
 						payment.stripe_charge_status = 'Error: ' + $!.message
 						Rails.logger.debug $!.message
-
+            Rails.logger.debug e.backtrace.join("\n")
 					ensure
 						payment.save
 					end
