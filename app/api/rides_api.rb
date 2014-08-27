@@ -441,7 +441,7 @@ class RidesAPI< Grape::API
 					rescue
 						payment.stripe_charge_status = 'Error: ' + $!.message
 						Rails.logger.debug $!.message
-            Rails.logger.debug e.backtrace.join("\n")
+            Rails.logger.debug $!.backtrace.join("\n")
 					ensure
 						payment.save
 					end
