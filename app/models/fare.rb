@@ -7,7 +7,8 @@ class Fare < ActiveRecord::Base
 	has_many :offers, inverse_of: :fare
 	has_many :payments
 
-  attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name, :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point
+  attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name,
+                  :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point, :fixed_earnings
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
 
@@ -276,9 +277,6 @@ class Fare < ActiveRecord::Base
 	def completed_ride
 		self.finished = Time.now
 		save
-		self.driver.current_fare = nil
-		self.driver.save
-		notify_observers :fare_completed
 	end
 
 	def notify_scheduled

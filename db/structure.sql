@@ -209,7 +209,8 @@ CREATE TABLE fares (
     drop_off_point_place_name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    pickup_time timestamp without time zone
+    pickup_time timestamp without time zone,
+    fixed_earnings integer
 );
 
 
@@ -361,7 +362,8 @@ CREATE TABLE rides (
     pickup_time timestamp with time zone,
     driving boolean,
     trip_id integer,
-    direction character varying(255)
+    direction character varying(255),
+    fixed_price integer
 );
 
 
@@ -1054,4 +1056,12 @@ INSERT INTO schema_migrations (version) VALUES ('20140817024244');
 INSERT INTO schema_migrations (version) VALUES ('20140818013652');
 
 INSERT INTO schema_migrations (version) VALUES ('20140823235842');
+
+INSERT INTO schema_migrations (version) VALUES ('20140828014343');
+
+INSERT INTO schema_migrations (version) VALUES ('20140828014459');
+
+INSERT INTO schema_migrations (version) VALUES ('20140828014630');
+
+INSERT INTO schema_migrations (version) VALUES ('20140828015919');
 

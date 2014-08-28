@@ -3,7 +3,8 @@ class Ride < ActiveRecord::Base
 	belongs_to :rider, inverse_of: :rides
 	belongs_to :fare, inverse_of: :rides
   belongs_to :trip, inverse_of: :rides
-  attr_accessible :aasm_state, :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime, :state, :request_type, :pickup_time, :trip_id, :direction, :driving
+  attr_accessible :aasm_state, :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime,
+                  :state, :request_type, :pickup_time, :trip_id, :direction, :driving, :fixed_price
 
 	before_create :before_create
 

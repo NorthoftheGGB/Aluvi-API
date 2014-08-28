@@ -6,7 +6,17 @@ class Car < ActiveRecord::Base
 	validates_attachment_content_type :car_photo, :content_type => /\Aimage\/.*\Z/ 
 
 	def summary
-		self.year + ' ' + self.make + ' '+  self.model
+    summary = ''
+    unless self.year.nil?
+      summary += self.year + ' '
+    end
+    unless self.make.nil?
+      summary += self.make + ' '
+    end
+    unless self.model.nil?
+		  summary += self.model
+    end
+    summary
 	end
 
 end

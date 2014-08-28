@@ -7,6 +7,7 @@ json.array! @rides do |ride|
 	json.destination_place_name ride.destination_place_name
   json.destination_latitude ride.destination.latitude
   json.destination_longitude ride.destination.longitude
+  json.fixed_price ride.fixed_price
   if !ride.fare.nil? && ride.fare.state == 'completed'
     json.state ride.fare.state
   else

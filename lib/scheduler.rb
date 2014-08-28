@@ -317,11 +317,22 @@ module Scheduler
     # this will beak the current logic used to find b side rides
     # driving rides that still have a trip in the requested state are not fulfilled
     CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
-      r.trip.unfulfilled!
+      if !r.trip.unfulfilled?
+        r.trip.unfulfilled!
+      end
     end
 
+  end
 
+  def self.calculate_costs
+    Trip.fulfilled_pending_notification.each do |trip|
+      TripController.calculate_fixed_price_for_commute trip
     end
+
+    Fare.scheduled.each do |fare|
+      TripController.calculated_fixed_earnings_for_fare fare
+    end
+  end
 
 	def self.notify_commuters
 

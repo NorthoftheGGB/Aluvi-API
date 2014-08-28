@@ -3,6 +3,7 @@ class CommuterRide < Ride
 	self.table_name = "rides"
 	default_scope { where request_type: "commuter" }
 
+
 	def self.create(origin, origin_place_name, destination, destination_place_name, pickup_time, driving, rider )
 		ride = CommuterRide.new
 		ride.request_type = "commuter"
