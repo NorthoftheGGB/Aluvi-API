@@ -80,11 +80,10 @@ class UsersAPI < Grape::API
 
     desc "Forgot password"
     params do
-      requires :phone, type: String
       requires :email, type: String
     end
     post "forgot_password" do
-      user = User.where(:email => params['email']).where(:phone => params['phone']).first
+      user = User.where(:email => params['email']).first
       unless (user.nil?)
         g = GmailSender.new("users@vocotransportation.com", "38sd9*VV")
         g.send(:to => user.email,
@@ -98,13 +97,13 @@ class UsersAPI < Grape::API
 
     desc "Log the user in"
     params do
-      requires :phone, type: String
+      requires :email, type: String
       requires :password, type: String
     end
     post "login" do
 
       begin
-        user = User.where(:phone => params['phone']).first
+        user = User.where(:email => params['email']).first
         if user.nil?
           raise "User not found"
         end
