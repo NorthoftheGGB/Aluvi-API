@@ -182,7 +182,7 @@ class TripController
   def self.calculated_fixed_earnings_for_fare fare
     fare.fixed_earnings = 0
     fare.rides.each do |ride|
-      fare.fixed_earnings += ride.fixed_cost * 80 / 100
+      fare.fixed_earnings += ride.fixed_cost * 82.25 / 100.0
       fare.save
     end
   end
