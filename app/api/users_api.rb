@@ -179,9 +179,14 @@ class UsersAPI < Grape::API
 
     desc "Update profile"
     params do
+			optional :first_name, type: String
+			optional :last_name, type: String
+			optional :email, type: String
+			optional :phone, type: String
       optional :default_card_token, type: String
     end
     post "profile", jbuilder: "rider_profile" do
+			Rails.logger.debug params
       authenticate!
       unless params[:default_card_token].nil?
         # TODO handle in background, delayed job
@@ -214,10 +219,12 @@ class UsersAPI < Grape::API
         ok
       end
 
-      fields = ['commuter_refill_amount_cents', 'commuter_refill_enabled']
+      fields = ['first_name', 'last_name', 'email', 'phone', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|
-        unless params[field].nil?
-          current_rider.send("#{field}=", params[field])
+        unless params[field].nil? || params[field] == ""
+					Rails.logger.debug field
+					Rails.logger.debug params[field]
+          current_rider.update_attribute(field, params[field])
         end
       end
       current_rider.save
