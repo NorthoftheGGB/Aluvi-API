@@ -173,10 +173,10 @@ class RidesAPI< Grape::API
 		end
 
 		desc "Receipt for Drivers"
-		get :earnings do
+		get :earnings, jbuilder: 'earnings' do
 			authenticate!
 			driver = Driver.find(current_user.id)
-			driver.earnings
+			@fares = driver.fares.completed
 		end
 
 		desc "Get fare details"
