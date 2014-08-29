@@ -1,0 +1,60 @@
+<%= form_for(@fare) do |f| %>
+  <% if @fare.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@fare.errors.count, "error") %> prohibited this fare from being saved:</h2>
+
+      <ul>
+      <% @fare.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    Driver<br />
+		<% if @fare.driver == nil  %>
+			Schedule driver for this fare: 
+			<%= f.collection_select :driver, Driver.all, :id, :full_name, :include_blank => true %>
+		<% else %>
+			<%= f.label @fare.driver.full_name %>
+		<% end %>
+  </div>
+  <div class="field">
+		Riders<br />
+		<% @fare.riders.each do |r| %>
+		<%= r.full_name %>
+		<% end %>
+	</div>
+  <div class="field">
+    <%= f.label :car %><br />
+    <%= f.text_field :car %>
+  </div>
+  <div class="field">
+    <%= f.label :state %><br />
+		<%= @fare.state %>
+  </div>
+  <div class="field">
+    <%= f.label :scheduled %><br />
+    <%= @fare.scheduled %>
+  </div>
+  <div class="field">
+    <%= f.label :started %><br />
+    <%= @fare.started %>
+  </div>
+  <div class="field">
+    <%= f.label :finished %><br />
+    <%= @fare.finished %>
+  </div>
+  <div class="field">
+    <%= f.label :meeting_point_place_name %><br />
+    <%= f.text_field :meeting_point_place_name %>
+  </div>
+  <div class="field">
+    <%= f.label :destination_place_name %><br />
+    <%= f.text_field :drop_off_point_place_name %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

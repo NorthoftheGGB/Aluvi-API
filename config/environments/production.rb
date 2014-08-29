@@ -1,4 +1,4 @@
-VocoApi::Application.configure do
+Voco::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests
@@ -66,6 +66,8 @@ VocoApi::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 	
+	config.eager_load = false
+	
 	config.paperclip_defaults = {
 		:s3_credentials => {
 			:bucket => ENV['S3_BUCKET'] #'alpha'
@@ -76,7 +78,7 @@ VocoApi::Application.configure do
 	# config.mobile_app_identifier = 'com.vocotransportation.alpha'
 	config.mobile_app_identifier = ENV['MOBILE_APP_IDENTIFIER']
 	
-	config.voco_demo_commuter_assembly_trigger_threshold = 0
-
 	config.assets.cache_store = :dalli_store
+
+	config.voco_demo_commuter_assembly_trigger_threshold = 2
 end

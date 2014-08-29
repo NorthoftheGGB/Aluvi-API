@@ -1,33 +1,36 @@
-VocoApi::Application.routes.draw do
+Voco::Application.routes.draw do
 
 	mount VocoAPI => '/api/'
 
-  resources :offered_rides
-  resources :rider_rides
-
-  resources :ride_requests
-  resources :commuter_ride_requests
-	match 'commuter_ride_requests/assemble_ride' => 'commuter_ride_requests#assemble_ride'
+  resources :offers
+  resources :rider_fares
 
   resources :rides
+
+	get 'commuter_rides/schedule_trips' => 'commuter_rides#schedule_trips'
+  resources :commuter_rides
+	post 'commuter_rides/assemble_ride' => 'commuter_rides#assemble_ride'
+
+  resources :fares
 
   resources :cars
 
   resources :devices
 
+	post 'users/csv_import' => 'users#csv_import'
 	resources :users
 
+	post 'riders/csv_import' => 'riders#csv_import'
   resources :riders
-	match 'riders/csv_import' => 'riders#csv_import'
 
-	match 'drivers/:id/payout' => 'drivers#payout'
+	get 'drivers/:id/payout' => 'drivers#payout'
+	post 'drivers/csv_import' => 'drivers#csv_import'
   resources :drivers
-	match 'drivers/csv_import' => 'drivers#csv_import'
 
-	match 'scheduler' => 'scheduler#index'
+	get 'scheduler' => 'scheduler#index'
 	delete 'scheduler/:id' => 'scheduler#failed'
 
-	match 'panel' => 'panel#index'
+	get 'panel' => 'panel#index'
 
 	resources :payouts
 

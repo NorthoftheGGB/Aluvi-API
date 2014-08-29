@@ -22,7 +22,7 @@
 
 <p>
   <b>Rider State:</b>
-	<%= @rider.rider_role.nil? ? "not configured" : @rider.rider_role.state %>
+	<%= @rider.state %>
 </p>
 
 <p>
@@ -39,9 +39,9 @@
 <%= link_to 'Back', riders_path %>
 <br /><br />
 <%= simple_table_for @rider.rides do |t| %>
-		<%# t.column :origin_place_name %>
-		<% t.column :meeting_point_place_name %>
-		<% t.column :drop_off_point_place_name %>
-	  <% t.column :state %>
+	<%# t.column :origin_place_name %>
+	<% t.column :meeting_point_place_name %>
+	<% t.column :drop_off_point_place_name %>
+	<% t.column :state %>
 <% end %>
 

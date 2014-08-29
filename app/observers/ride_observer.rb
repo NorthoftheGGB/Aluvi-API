@@ -1,120 +1,65 @@
 class RideObserver < ActiveRecord::Observer
 
-	def scheduled(ride)
-		Rails.logger.debug "RideObserver::scheduled"
-		# send push messages to clear dialog for other drivers
-		send_offer_closed_messages ride
+	def requested(ride)
 
-		# and send push messages to notify rider(s) that the ride has been found
-		ride.riders.each do |rider|
-			Rails.logger.debug "notifying rider"
-			Rails.logger.debug rider
-			request = ride.ride_requests.where(user_id: rider.id).first
-			rider.devices.each do |d|
-				if(d.push_token.nil?)
-					next	
+		Rails.logger.debug "Got :requested in RideRequestObserver"
+		# this is where the scheduler needs to be notified, or a flag set
+
+		if(ride.request_type == "on_demand")
+			# for now, sidestep the scheduler and just send push notifications out to the drivers
+			# when this is an on demand request, for commuter it MUST go through the scheduler to work at all
+			
+			if self.get_potential_drivers(ride.fare).count == 0
+				ride.rider.devices.each do |d|
+					n = PushHelper::push_message(d)	
+					n.alert = "Ride Requested!"
+					n.data = { type: :no_drivers_available, request_id: ride.id }
+					n.save!
 				end
-				n = PushHelper::push_message(d)
-				n.alert = "Ride Found!"
-				n.data = { type: :ride_found, ride_id: ride.id, request_id: request.id,
-						request_type: request.request_type,
-						meeting_point_place_name: ride.meeting_point_place_name,
-						drop_off_point_place_name: ride.drop_off_point_place_name }
-				n.save!
+			else
+				offer_to_drivers(ride.fare)
 			end
+		end	
+	end
+
+	def get_potential_drivers fare
+		if(fare.riders[0].demo)
+			drivers = Driver.demo_drivers
+		else
+			drivers = Driver.available_drivers
 		end
+		drivers
 	end
 
-	def driver_assigned(ride)
-		Rails.logger.debug 'observer: driver_assigned'
-		# if this is a ride assigned by the scheduler (rather than accepted) notify the driver
-		Rails.logger.debug ride.driver
-		Rails.logger.debug ride.driver.devices
-		ride.driver.devices.each do |d|
-				if(d.push_token.nil?)
-					next
-				end
-				n = PushHelper::push_message(d)
-				n.alert = "Ride Assigned"
-				n.data = { type: :ride_assigned, ride_id:ride.id }
-				Rails.logger.debug n
-				n.save!
-		end
-				
-	end
+	# this would be a callback from the scheduler somewhere
+	def offer_to_drivers(fare)
 
-	def retracted(ride)
-		send_offer_closed_messages ride
-	end
+		drivers = self.get_potential_drivers(fare)
 
-	def ride_cancelled_by_rider(ride)
-		#Rails.logger.stack.debug 'ride_cancelled_by_rider ' + ride.to_s
-		ride.driver.devices.each do |d|
-				if(d.push_token.nil?)
-					next	
-				end
-				n = PushHelper::push_message(d)
-				n.alert = "Ride Cancelled!"
-				n.data = { type: :ride_cancelled_by_rider, ride_id: ride.id }
-				n.save!
-				#Rails.logger.stack.debug "push sent " + n.data
-		end
-	end
-
-	def ride_cancelled_by_driver(ride)
-		#Rails.logger.stack.debug 'ride_cancelled_by_driver ' + ride.to_s
-		ride.riders.each do |rider|
-			rider.devices.each do |d|
-				if(d.push_token.nil?)
-					next	
-				end
-				n = PushHelper::push_message(d)
-				n.alert = "Ride Cancelled!"
-				n.data = { type: :ride_cancelled_by_driver, ride_id: ride.id }
-				n.save!
-				#Rails.logger.stack.debug "push sent " + n.data
+		drivers.each do |driver|
+			if fare.riders.include?(driver)
+				next
 			end
-		end
-	end
-
-	def ride_completed(ride)
-		Rails.logger.debug('RideObserver::ride_completed')
-		ride.riders.each do |rider|
-
-			payment = ride.payments.where( :rider_id => rider.id ).first
-
-			rider.devices.each do |d|
-				if(d.push_token.nil?)
-					next	
+			Rails.logger.debug driver.id
+			# Every device used by an available driver gets a push notification if they are available
+			# this solves any multi-device problems, driver is the key entity in delivery of this particular push
+			if(driver.devices.count > 0 )
+				offer = driver.offer_fare(fare)
+				driver.devices.each do |d|
+					if(d.push_token.nil? || d.push_token == '')
+						next	
+					end
+					n = PushHelper::push_message(d)
+					n.alert = "Fare Available!"
+					n.data = { type: :offer, offer_id: offer.id, fare_id: fare.id,
+						meeting_point_place_name: fare.meeting_point_place_name,
+						drop_off_point_place_name: fare.drop_off_point_place_name }
+					n.save!
 				end
-				n = PushHelper::push_message(d)
-				if payment.paid == true
-					n.alert = "Receipt For Your Ride"
-					n.data = { type: :ride_receipt, ride_id: ride.id, amount: payment.amount_cents }
-				else
-					n.alert = "Problem Processing Payment For Your Ride"
-					n.data = { type: :ride_payment_problem, ride_id: ride.id, amount: payment.amount_cents }
-				end
-				n.save!
-			end
+			end	
 		end
-	end
+		Rails.logger.debug "Sent push notifications to drivers"
 
-	def send_offer_closed_messages ride 	
-		ride.offers.offer_closed_delivered.each do |offer|
-			#Rails.logger.stack.debug 'ride_offer_closed ' + ride.to_s + offer.to_s
-			driver = offer.driver	
-			driver.devices.each do |d|
-				if(d.push_token.nil?)
-					next	
-				end
-				n = PushHelper::push_message(d)
-				n.alert = ""
-				n.content_available = true
-				n.data = { type: :ride_offer_closed, offer_id: offer.id, ride_id: ride.id }
-				n.save!
-			end
-		end
 	end
 
 

@@ -1,8 +1,20 @@
 module VocoApiHelper
 	def current_user
+    if headers['Authorization'].nil?
+      return nil
+    end
 		auth = token_and_options(headers['Authorization'])
+		Rails.logger.info auth
 		token = auth[0]
 		@current_user ||= User.authorize!(auth[0])
+	end
+
+	def current_driver
+		Driver.find(current_user.id)
+	end
+
+	def current_rider
+		Rider.find(current_user.id)
 	end
 
 	def authenticate!
@@ -32,7 +44,7 @@ module VocoApiHelper
 	end
 
 	def forbidden exception
-		error! exception.message, 403, 'X-Error-Detail' => exception.message
+		error! exception.to_s, 403, 'X-Error-Detail' => exception.to_s
 	end
 
 	def not_found

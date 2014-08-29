@@ -31,22 +31,29 @@ class WebAPI < Grape::API
 				end
 				if user.password != user.hash_password(params['password'])
 					raise "Wrong password"
-				end
-				token = user.generate_web_token!
+        end
+
+        token = user.generate_web_token!
 				response = Hash.new
 				response["webtoken"] = token
 				roles = Array.new
-				unless current_user.rider_role.nil?
-					roles << "rider"
-				end
-				unless current_user.driver_role.nil?
-					roles << "driver"
-				end
-				response["roles"] = roles
+
+        begin
+          rider = Rider.find(user.id)
+          roles << "rider"
+        rescue
+        end
+        begin
+          driver = Driver.find(user.id)
+          roles << "driver"
+        rescue
+        end
+
+        response["roles"] = roles
 
 				response
 			rescue
-				puts $!.message
+				Rails.logger.info $!.message
 				error! 'Invalid Login', 404, 'X-Error-Detail' => 'Invalid Login'
 			end
 		end
@@ -62,26 +69,27 @@ class WebAPI < Grape::API
 		params do
 			optional :begin_date, type: DateTime
 			optional :end_date, type: DateTime
-			optional :ride_id, type: Integer
+			optional :fare_id, type: Integer
 			optional :rider_id, type: Integer
 			optional :driver_id, type: Integer
 			optional :role, type: Symbol, values: [:rider, :driver, :admin], default: :rider
 		end
-		get "trips", jbuilder: 'web_rides' do
+		get "trips", jbuilder: 'web_fares' do
 			authenticate!
+      rider = Rider.find(current_user.id)
 			if( params[:role] == :rider )
-				@rides = current_user.rides
+				@fares = rider.fares
 			elsif ( params[:role] == :driver )
-				@rides = current_user.fares
+				@fares = rider.fares
 			elsif ( params[:role] == :admin )
 
-				@rides = Ride.order('rides.id')
+				@fares = Fare.order('fares.id')
 				if params['rider_id']
-					@rides = Ride.includes(:riders).where( :users => { id: params['rider_id'] } )
+					@fares = Fare.includes(:riders).where( :users => { id: params['rider_id'] } )
 				end
 
 				if params['driver_id']
-					@rides = Ride.includes(:driver).where( :users => { id: params['driver_id'] } )
+					@fares = Fare.includes(:driver).where( :users => { id: params['driver_id'] } )
 				end
 
 			else
@@ -89,20 +97,22 @@ class WebAPI < Grape::API
 			end
 
 			if params['begin_date']
-				@rides.where( "started >", params['begin_date'])
+				@fares.where( "started >", params['begin_date'])
 			else 
-				@rides.where( "started >", 3.months.ago)
+				@fares.where( "started >", 3.months.ago)
 			end
 
 			if params['end_date']
-				@rides.where( "started <", params['end_date'])
+				@fares.where( "started <", params['end_date'])
 			else 
-				@rides.where( "started >", DateTime.now)
+				@fares.where( "started >", DateTime.now)
 			end
 
-			if params['ride_id']
-				@rides.where( :id => params['ride_id'])
-			end
+			if params['fare_id']
+				@fares.where( :id => params['fare_id'])
+      end
+
+      @fares
 
 		end
 

@@ -47,7 +47,7 @@ class DriversAPI < Grape::API
 					driver = Driver.find(current_user.id)
 					driver.cars << car
 					driver.car = car	
-					driver.driver_role.drivers_license_number = params[:drivers_license_number]
+					driver.drivers_license_number = params[:drivers_license_number]
 					# need to handle referral codes	
 
 					# directly set up Stripe recipient, don't store banking information on our server
@@ -56,10 +56,10 @@ class DriversAPI < Grape::API
 						:name => driver.full_name,
 						:type => 'individual',
 						:bank_account => {
-						:country => 'US',
-						:routing_number => params[:bank_account_routing],
-						:account_number => params[:bank_account_number]
-					},
+					  	:country => 'US',
+					  	:routing_number => params[:bank_account_routing],
+					  	:account_number => params[:bank_account_number]
+					  },
 						:email => driver.email
 					)
 
@@ -70,7 +70,7 @@ class DriversAPI < Grape::API
 					driver.bank_account_name = recipient.active_account.bank_name
 
 					driver.save
-					driver.driver_role.register!
+					driver.register!
 					ok
 				end
 
@@ -82,8 +82,7 @@ class DriversAPI < Grape::API
 
 			rescue
 				Rails.logger.debug "driver registration failure"
-				Rails.logger.debug $!
-				Rails.logger.debug $!.class
+        Rails.logger.error $!.backtrace.join("\n")
 				client_error $!
 			end
 			 
@@ -94,8 +93,8 @@ class DriversAPI < Grape::API
 		end
 		post "clock_on" do
 			authenticate!
-			unless current_user.driver_role.state == 'on_duty'
-				current_user.driver_role.clock_on!
+			unless current_driver.state == 'on_duty'
+				current_driver.clock_on!
 			end
 			ok
 		end
@@ -105,18 +104,18 @@ class DriversAPI < Grape::API
 		end
 		post "clock_off" do
 			authenticate!
-			if current_user.driver_role.state == 'on_duty'
-				current_user.driver_role.clock_off!
+			if current_driver.state == 'on_duty'
+				current_driver.clock_off!
 			end
 			ok
 		end
 
-		desc "Load Ride Details for Driver"
-		get "rides/:id", jbuilder: 'ride' do
+		desc "Load Fare Details for Driver"
+		get "fares/:id", jbuilder: 'fare' do
 			authenticate!
-			@ride = Ride.find(params[:id])
-			unless @ride.nil?
-				@ride		
+			@fare = Fare.find(params[:id])
+			unless @fare.nil?
+				@fare
 			else
 				not_found
 			end

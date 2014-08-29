@@ -40,14 +40,14 @@ class GeoAPI < Grape::API
 		end
 
 		desc "Get rider location"
-		get 'riders/:id' do
+		get 'riders/:id',  jbuilder: :rider_geo do
 			authenticate!
-			begin
-				rider = User.find(params[:id])
-				return CoordinatesHelper.render_json(rider.location)
-			rescue ActiveRecord::RecordNotFound
-				error! 'Rider not found', 404
-			end
+        Rails.logger.info params[:id]
+				@rider = Rider.find(params[:id])
+        if @rider.nil?
+          Rails.logger.info 'ERROR'
+				  error! 'Rider not found', 404
+			  end
 		end
 
 		desc "All on duty drivers in the system"

@@ -1,0 +1,62 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Driver:</b>
+	<%= @fare.driver != nil ? @fare.driver.full_name : '' %>
+</p>
+
+<p>
+  <b>Car:</b>
+	<% unless @fare.car.nil? %>
+  <%= link_to @fare.car %>
+	<% end %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%= @fare.state %>
+</p>
+
+<p>
+	<b>Pickup Time</b>
+	<%= @fare.pickup_time %>
+</p>
+
+<p>
+  <b>Processed by Scheduler At:</b>
+  <%= @fare.scheduled %>
+</p>
+
+<p>
+  <b>Started At:</b>
+  <%= @fare.started %>
+</p>
+
+<p>
+  <b>Finished At:</b>
+  <%= @fare.finished %>
+</p>
+
+<p>
+  <b>Meeting point:</b>
+  <%= @fare.meeting_point %>
+</p>
+
+<p>
+  <b>Meeting point place name:</b>
+  <%= @fare.meeting_point_place_name %>
+</p>
+
+<p>
+  <b>Drop Off:</b>
+  <%= @fare.drop_off_point %>
+</p>
+
+<p>
+  <b>Drop off place name:</b>
+  <%= @fare.drop_off_point_place_name %>
+</p>
+
+
+<%= link_to 'Edit', edit_fare_path(@fare) %> |
+<%= link_to 'Back', fares_path %>

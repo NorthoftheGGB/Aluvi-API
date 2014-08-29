@@ -2,29 +2,28 @@
 
 <table>
   <tr>
-    <th>Driver</th>
-    <th>Car</th>
+    <th>User</th>
     <th>State</th>
-    <th>Scheduled</th>
-    <th>Started</th>
-    <th>Finished</th>
-    <th>Meeting point place name</th>
-    <th>Drop off point place name</th>
-    <th></th>
+    <th>Type</th>
+    <th>Origin</th>
+    <th>Origin place name</th>
+    <th>Destination</th>
+    <th>Destination place name</th>
+    <th>Request Created</th>
     <th></th>
     <th></th>
   </tr>
 
 <% @rides.each do |ride| %>
   <tr>
-    <td><%= ride.driver != nil ? ride.driver.full_name : '' %></td>
-    <td><%= ride.car %></td>
+    <td><%= ride.rider.full_name %></td>
     <td><%= ride.state %></td>
-    <td><%= ride.scheduled %></td>
-    <td><%= ride.started %></td>
-    <td><%= ride.finished %></td>
-    <td><%= ride.meeting_point_place_name %></td>
-    <td><%= ride.drop_off_point_place_name %></td>
+    <td><%= ride.request_type %></td>
+    <td><%= ride.origin %></td>
+    <td><%= ride.origin_place_name %></td>
+    <td><%= ride.destination %></td>
+    <td><%= ride.destination_place_name %></td>
+    <td><%= ride.requested_datetime %></td>
     <td><%= link_to 'Show', ride %></td>
     <td><%= link_to 'Edit', edit_ride_path(ride) %></td>
     <td><%= link_to 'Destroy', ride, method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -34,4 +33,4 @@
 
 <br />
 
-<%= link_to 'New Ride', new_ride_path %>
+<%= link_to 'New Ride request', new_ride_path %>

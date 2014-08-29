@@ -12,47 +12,32 @@
   <% end %>
 
   <div class="field">
-    Driver<br />
-		<% if @ride.driver == nil  %>
-			Schedule driver for this ride: 
-			<%= f.collection_select :driver, User.drivers, :id, :full_name, :include_blank => true %>
-		<% else %>
-			<%= f.label @ride.driver.full_name %>
-		<% end %>
-  </div>
-  <div class="field">
-		Riders<br />
-		<% @ride.riders.each do |r| %>
-		<%= r.full_name %>
-		<% end %>
-	</div>
-  <div class="field">
-    <%= f.label :car %><br />
-    <%= f.text_field :car %>
-  </div>
-  <div class="field">
     <%= f.label :state %><br />
-		<%= @ride.state %>
+    <%= f.text_field :state %>
   </div>
   <div class="field">
-    <%= f.label :scheduled %><br />
-    <%= @ride.scheduled %>
+    <%= f.label :request_type %><br />
+    <%= f.text_field :request_type %>
   </div>
   <div class="field">
-    <%= f.label :started %><br />
-    <%= @ride.started %>
+    <%= f.label :requested_datetime %><br />
+    <%= f.datetime_select :requested_datetime %>
   </div>
   <div class="field">
-    <%= f.label :finished %><br />
-    <%= @ride.finished %>
+    <%= f.label :origin %><br />
+    <%= f.text_field :origin %>
   </div>
   <div class="field">
-    <%= f.label :meeting_point_place_name %><br />
-    <%= f.text_field :meeting_point_place_name %>
+    <%= f.label :origin_place_name %><br />
+    <%= f.text_field :origin_place_name %>
+  </div>
+  <div class="field">
+    <%= f.label :destination %><br />
+    <%= f.text_field :destination %>
   </div>
   <div class="field">
     <%= f.label :destination_place_name %><br />
-    <%= f.text_field :drop_off_point_place_name %>
+    <%= f.text_field :destination_place_name %>
   </div>
   <div class="actions">
     <%= f.submit %>

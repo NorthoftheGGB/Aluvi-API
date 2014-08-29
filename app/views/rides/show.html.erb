@@ -1,15 +1,13 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Driver:</b>
-	<%= @ride.driver != nil ? @ride.driver.full_name : '' %>
+  <b>User:</b>
+  <%= @ride.rider.full_name %>
 </p>
 
 <p>
-  <b>Car:</b>
-	<% unless @ride.car.nil? %>
-  <%= link_to @ride.car %>
-	<% end %>
+  <b>Ride:</b>
+  <%= @ride.route_description %>
 </p>
 
 <p>
@@ -18,43 +16,33 @@
 </p>
 
 <p>
-	<b>Pickup Time</b>
-	<%= @ride.pickup_time %>
+  <b>Type:</b>
+  <%= @ride.request_type %>
 </p>
 
 <p>
-  <b>Processed by Scheduler At:</b>
-  <%= @ride.scheduled %>
+  <b>Requested datetime:</b>
+  <%= @ride.requested_datetime %>
 </p>
 
 <p>
-  <b>Started At:</b>
-  <%= @ride.started %>
+  <b>Origin:</b>
+  <%= @ride.origin %>
 </p>
 
 <p>
-  <b>Finished At:</b>
-  <%= @ride.finished %>
+  <b>Origin place name:</b>
+  <%= @ride.origin_place_name %>
 </p>
 
 <p>
-  <b>Meeting point:</b>
-  <%= @ride.meeting_point %>
+  <b>Destination:</b>
+  <%= @ride.destination %>
 </p>
 
 <p>
-  <b>Meeting point place name:</b>
-  <%= @ride.meeting_point_place_name %>
-</p>
-
-<p>
-  <b>Drop Off:</b>
-  <%= @ride.drop_off_point %>
-</p>
-
-<p>
-  <b>Drop off place name:</b>
-  <%= @ride.drop_off_point_place_name %>
+  <b>Destination place name:</b>
+  <%= @ride.destination_place_name %>
 </p>
 
 

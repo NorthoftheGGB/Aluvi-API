@@ -1,24 +1,21 @@
 FactoryGirl.define do
 	factory :ride do
+		rider
+    #departure_latitude 45.5
+    #departure_longitude -122.3
+    origin_place_name 'My House'
+    #destination_latitude 45.6
+    #destination_longitude -122.7
+    destination_place_name 'My Work'
 
-		factory :scheduled_ride do
-			state "scheduled"
-			after(:build) do |ride|
-				ride.driver = FactoryGirl.create(:driver)
-				ride.riders << FactoryGirl.create(:rider)
-			end
+		factory :on_demand_ride do
+			request_type 'on_demand'
+			state 'created'
+    end
 
-		end
-
-		factory :scheduled_multirider_ride do
-			state "scheduled"
-			after(:create) do |ride|
-				ride.driver = FactoryGirl.create(:driver)
-				ride.riders << FactoryGirl.create(:rider)
-				ride.riders << FactoryGirl.create(:rider)
-			end
-
-		end
-
+    factory :commuter_ride do
+      request_type 'on_demand'
+      state 'created'
+    end
 	end
 end

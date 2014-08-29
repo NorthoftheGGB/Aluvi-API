@@ -1,25 +1,24 @@
 source 'https://code.stripe.com'
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '4.1'
+gem 'protected_attributes'
+gem 'rails-observers'
 
 # database
 #gem 'mysql2'
 gem 'foreigner', :git => 'git://github.com/deepwinter/foreigner.git'
 gem 'pg'
-gem 'activerecord-postgis-adapter', '~> 0.6.6'
+gem 'activerecord-postgis-adapter'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
+#web
 
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
-
-  gem 'uglifier', '>= 1.0.3'
-end
+# Use SCSS for stylesheets
+gem 'sass-rails', '~> 4.0.3'
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+# Use CoffeeScript for .js.coffee assets and views
+gem 'coffee-rails', '~> 4.0.0'
 
 gem 'jquery-rails'
 
@@ -80,6 +79,9 @@ group :test do
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.0.0'
 end
+
+gem "spring", group: :development
+gem "spring-commands-rspec", group: :development
 
 # QA
 gem 'multi_logger'

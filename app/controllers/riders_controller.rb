@@ -2,7 +2,7 @@ class RidersController < ApplicationController
   # GET /riders
   # GET /riders.json
   def index
-    @riders = User.all
+    @riders = Rider.all
 
 		#switch to jbuilder
 		json = Array.new
@@ -13,7 +13,6 @@ class RidersController < ApplicationController
 				Rails.logger.debug u.location
 				item[:latitude] = u.location.latitude
 				item[:longitude] = u.location.longitude
-				item[:is_driver] = u.is_driver
 			end
 			json.push item
 		end
@@ -27,7 +26,7 @@ class RidersController < ApplicationController
   # GET /riders/1
   # GET /riders/1.json
   def show
-    @rider = User.find(params[:id])
+    @rider = Rider.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -38,7 +37,7 @@ class RidersController < ApplicationController
   # GET /riders/new
   # GET /riders/new.json
   def new
-    @rider = User.new
+    @rider = Rider.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -48,17 +47,17 @@ class RidersController < ApplicationController
 
   # GET /riders/1/edit
   def edit
-    @rider = User.find(params[:id])
+    @rider = Rider.find(params[:id])
   end
 
   # POST /riders
   # POST /riders.json
   def create
-    @rider = User.new(params[:user])
+    @rider = Rider.new(params[:rider])
 
     respond_to do |format|
       if @rider.save
-        format.html { redirect_to rider_path(@rider), notice: 'User was successfully created.' }
+        format.html { redirect_to rider_path(@rider), notice: 'Rider was successfully created.' }
         format.json { render json: @rider, status: :created, location: @rider }
       else
         format.html { render action: "new" }
@@ -70,11 +69,11 @@ class RidersController < ApplicationController
   # PUT /riders/1
   # PUT /riders/1.json
   def update
-    @rider = User.find(params[:id])
-		password = params[:user][:password]
+    @rider = Rider.find(params[:id])
+		password = params[:rider][:password]
     respond_to do |format|
-      if @rider.update_attributes(params[:user])
-        format.html { redirect_to rider_path(@rider), notice: 'User was successfully updated.' }
+      if @rider.update_attributes(params[:rider])
+        format.html { redirect_to rider_path(@rider), notice: 'Rider was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -86,7 +85,7 @@ class RidersController < ApplicationController
   # DELETE /riders/1
   # DELETE /riders/1.json
   def destroy
-    @rider = User.find(params[:id])
+    @rider = Rider.find(params[:id])
     @rider.destroy
 
     respond_to do |format|
@@ -101,7 +100,7 @@ class RidersController < ApplicationController
 
 		csv_rows.each do |row|
 			Rails.logger.debug(row.to_hash)
-			User.create!(row.to_hash)
+			Rider.create!(row.to_hash)
 		end
 
 		respond_to do |format|

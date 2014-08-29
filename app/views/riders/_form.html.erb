@@ -1,4 +1,4 @@
-<%= form_for @rider, :url => url_for(:controller => 'riders', :action => 'update'), :html => { :multipart => true } do |f| %>
+<%= form_for @rider, :html => { :multipart => true } do |f| %>
   <% if @rider.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@rider.errors.count, "error") %> prohibited this rider from being saved:</h2>
@@ -24,6 +24,10 @@
     <%= f.text_field :last_name %>
   </div>
   <div class="field">
+    <%= f.label :email %><br />
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
     <%= f.label :phone %><br />
     <%= f.text_field :phone %>
   </div>
@@ -38,13 +42,8 @@
   </div>
   <div class="field">
     <%= f.label "Rider State" %><br />
-		<% unless @rider.rider_role.nil? %>
-    <%= f.label @rider.rider_role.state %><br />
-		<%= f.select :rider_state, @rider.rider_role.aasm.events, :include_blank => true %>
-		<% else %>
-		Not Configured
-		<%= f.select :rider_state, [ :initalize ], :include_blank => true %>
-		<% end %>
+    <%= f.label @rider.state %><br />
+		<%= f.select :rider_state_event, @rider.aasm.events, :include_blank => true %>
   </div>
 
 	<h2>Commuter Card</h2>

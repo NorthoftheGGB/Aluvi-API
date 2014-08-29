@@ -16,10 +16,10 @@
     <th></th>
   </tr>
 
-<% @ride_requests.each do |ride_request| %>
+<% @rides.each do |ride_request| %>
   <tr>
     <td><%= ride_request.user %></td>
-    <td><%= ride_request.ride %></td>
+    <td><%= ride_request.fare %></td>
     <td><%= ride_request.state %></td>
     <td><%= ride_request.type %></td>
     <td><%= ride_request.requested_datetime %></td>

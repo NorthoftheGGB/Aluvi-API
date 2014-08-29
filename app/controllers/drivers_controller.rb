@@ -2,7 +2,7 @@ class DriversController < ApplicationController
   # GET /drivers
   # GET /drivers.json
   def index
-    @drivers = Driver.drivers
+    @drivers = Driver.all
 
 		#switch to jbuilder
 		json = Array.new
@@ -13,7 +13,6 @@ class DriversController < ApplicationController
 				Rails.logger.debug u.location
 				item[:latitude] = u.location.latitude
 				item[:longitude] = u.location.longitude
-				item[:is_driver] = u.is_driver
 			end
 			json.push item
 		end
@@ -38,7 +37,7 @@ class DriversController < ApplicationController
   # GET /drivers/new
   # GET /drivers/new.json
   def new
-    @driver = Driver.new_driver
+    @driver = Driver.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -76,16 +75,6 @@ class DriversController < ApplicationController
 		if params[:driver][:car] == ""
 			params[:driver].delete('car')
 		end
-		driver_role_attachments = [ :drivers_license, :vehicle_registration, :proof_of_insurance, :car_photo, :national_database_check ]
-		driver_role_params = Hash.new
-		driver_role_attachments.each do |attachment|
-			unless params[:driver][attachment].nil?
-				driver_role_params[attachment] = params[:driver][attachment]
-			end
-			params[:driver].delete(attachment)
-		end
-		@driver.driver_role.update_attributes(driver_role_params)
-		@driver.driver_role.save
 
     respond_to do |format|
       if @driver.update_attributes(params[:driver])

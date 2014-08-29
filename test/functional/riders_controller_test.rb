@@ -19,7 +19,7 @@ class RidersControllerTest < ActionController::TestCase
 
   test "should create rider" do
     assert_difference('User.count') do
-      post :create, rider: { commuter_balance_cents: @rider.commuter_balance_cents, commuter_refill_amount_cents: @rider.commuter_refill_amount_cents, company_id: @rider.company_id, first_name: @rider.first_name, is_driver: @rider.is_driver, is_rider: @rider.is_rider, last_name: @rider.last_name, stripe_customer_id: @rider.stripe_customer_id, stripe_recipient_id: @rider.stripe_recipient_id }
+      post :create, rider: { commuter_balance_cents: @rider.commuter_balance_cents, commuter_refill_amount_cents: @rider.commuter_refill_amount_cents, company_id: @rider.company_id, first_name: @rider.first_name, last_name: @rider.last_name, stripe_customer_id: @rider.stripe_customer_id, stripe_recipient_id: @rider.stripe_recipient_id }
     end
 
     assert_redirected_to rider_path(assigns(:rider))
@@ -36,7 +36,7 @@ class RidersControllerTest < ActionController::TestCase
   end
 
   test "should update rider" do
-    put :update, id: @rider, rider: { commuter_balance_cents: @rider.commuter_balance_cents, commuter_refill_amount_cents: @rider.commuter_refill_amount_cents, company_id: @rider.company_id, first_name: @rider.first_name, is_driver: @rider.is_driver, is_rider: @rider.is_rider, last_name: @rider.last_name, stripe_customer_id: @rider.stripe_customer_id, stripe_recipient_id: @rider.stripe_recipient_id }
+    put :update, id: @rider, rider: { commuter_balance_cents: @rider.commuter_balance_cents, commuter_refill_amount_cents: @rider.commuter_refill_amount_cents, company_id: @rider.company_id, first_name: @rider.first_name, last_name: @rider.last_name, stripe_customer_id: @rider.stripe_customer_id, stripe_recipient_id: @rider.stripe_recipient_id }
     assert_redirected_to rider_path(assigns(:rider))
   end
 

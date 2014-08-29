@@ -2,7 +2,7 @@ class SchedulerController < ApplicationController
   # GET /devices
   # GET /devices.json
   def index
-    @ride_requests = RideRequest.requested
+    @rides = Ride.requested
 
     respond_to do |format|
       format.html # index.html.erb
@@ -11,15 +11,15 @@ class SchedulerController < ApplicationController
   end
 
 	def failed
-		@ride_request = RideRequest.find(params[:id])
-		@ride_request.failed!
+		@ride = Ride.find(params[:id])
+		@ride.failed!
 		redirect_to action: "index"
 	end
 
 	# get all the drivers who are in the idle state and send them a push message inviting them
 	def offer_to_drivers 
 
-		ride = Ride.find(params[:ride_id])
+		ride = Fare.find(params[:ride_id])
 
 		push_tokens = Array.new
 		notified_drivers = Array.new
@@ -54,7 +54,7 @@ class SchedulerController < ApplicationController
 		# how important is this?
 		# it should probably be here
 		notified_drivers.each do |d|
-			d.offered_ride ride
+			d.offer ride
 		end
 
 		render text: 'done'

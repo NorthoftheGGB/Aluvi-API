@@ -19,7 +19,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should create user" do
     assert_difference('User.count') do
-      post :create, user: { commuter_balance_cents: @user.commuter_balance_cents, commuter_refill_amount_cents: @user.commuter_refill_amount_cents, company_id: @user.company_id, first_name: @user.first_name, is_driver: @user.is_driver, is_rider: @user.is_rider, last_name: @user.last_name, stripe_customer_id: @user.stripe_customer_id, stripe_recipient_id: @user.stripe_recipient_id }
+      post :create, user: { commuter_balance_cents: @user.commuter_balance_cents, commuter_refill_amount_cents: @user.commuter_refill_amount_cents, company_id: @user.company_id, first_name: @user.first_name, last_name: @user.last_name, stripe_customer_id: @user.stripe_customer_id, stripe_recipient_id: @user.stripe_recipient_id }
     end
 
     assert_redirected_to user_path(assigns(:user))
@@ -36,7 +36,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "should update user" do
-    put :update, id: @user, user: { commuter_balance_cents: @user.commuter_balance_cents, commuter_refill_amount_cents: @user.commuter_refill_amount_cents, company_id: @user.company_id, first_name: @user.first_name, is_driver: @user.is_driver, is_rider: @user.is_rider, last_name: @user.last_name, stripe_customer_id: @user.stripe_customer_id, stripe_recipient_id: @user.stripe_recipient_id }
+    put :update, id: @user, user: { commuter_balance_cents: @user.commuter_balance_cents, commuter_refill_amount_cents: @user.commuter_refill_amount_cents, company_id: @user.company_id, first_name: @user.first_name,last_name: @user.last_name, stripe_customer_id: @user.stripe_customer_id, stripe_recipient_id: @user.stripe_recipient_id }
     assert_redirected_to user_path(assigns(:user))
   end
 
