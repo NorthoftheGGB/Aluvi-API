@@ -84,6 +84,9 @@ class TripController
           when 'commuter'
 
             payment.initiation = 'Standard Payment'
+						if payment.amount_cents > 1200
+							payment.amount_cents = 1200
+						end
 
             customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
             charge = Stripe::Charge.create(
