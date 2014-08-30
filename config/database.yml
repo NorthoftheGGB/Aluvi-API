@@ -2,7 +2,7 @@ development:
   username: deepwinter1
   adapter: postgis
   host: localhost
-  database: voco_not_factored
+  database: voco
   pool: 5
   timeout: 5000
 

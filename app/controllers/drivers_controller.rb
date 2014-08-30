@@ -53,8 +53,6 @@ class DriversController < ApplicationController
   # POST /drivers
   # POST /drivers.json
   def create
-    @driver = Driver.new(params[:driver])
-
     respond_to do |format|
       if @driver.save
         format.html { redirect_to driver_path(@driver), notice: 'Driver was successfully created.' }
@@ -71,6 +69,20 @@ class DriversController < ApplicationController
   def update
     @driver = Driver.find(params[:id])
 		Rails.logger.debug params
+
+		if @driver.stripe_recipient_id.nil?
+			recipient = Stripe::Recipient.create(
+				:name => driver.full_name,
+				:type => 'individual',
+				:email => driver.email
+			)
+			if recipient.nil?
+				raise "Stripe recipient not created"
+			end
+			@driver.stripe_recipient_id = recipient.id
+			@driver.save
+		end
+
 
 		if params[:driver][:car] == ""
 			params[:driver].delete('car')

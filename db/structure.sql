@@ -622,7 +622,11 @@ CREATE TABLE users (
     commuter_pickup_time character varying(255),
     commuter_origin geometry(Point),
     commuter_destination geometry(Point),
-    commuter_return_time character varying(255)
+    commuter_return_time character varying(255),
+    recipient_card_brand character varying(255),
+    recipient_card_exp_month character varying(255),
+    recipient_card_month character varying(255),
+    recipient_card_last4 character varying(255)
 );
 
 
@@ -1064,4 +1068,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140828014459');
 INSERT INTO schema_migrations (version) VALUES ('20140828014630');
 
 INSERT INTO schema_migrations (version) VALUES ('20140828015919');
+
+INSERT INTO schema_migrations (version) VALUES ('20140830020701');
 

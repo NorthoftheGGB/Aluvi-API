@@ -184,6 +184,7 @@ class UsersAPI < Grape::API
 			optional :email, type: String
 			optional :phone, type: String
       optional :default_card_token, type: String
+			optional :default_recipient_debit_card_token, type: String
     end
     post "profile", jbuilder: "rider_profile" do
 			Rails.logger.debug params
@@ -216,8 +217,24 @@ class UsersAPI < Grape::API
         card.exp_year = default_card.exp_year
         card.save
 
-        ok
       end
+
+      unless params[:default_recipient_debit_card_token].nil?
+        # TODO handle in background, delayed job
+
+				driver = current_user.as_driver
+        recipient = Stripe::Recipient.retrieve(driver.stripe_recipient_id)
+				recipient.card = params[:default_recipient_debit_card_token]
+				recipient.save
+
+        default_debit_card = recipient.cards.all().data[0]
+				driver.recipient_card_brand = default_debit_card.brand	
+				driver.recipient_card_exp_month = default_debit_card.exp_month
+				#driver.recipient_card_exp_year = default_debit_card.exp_year
+				driver.recipient_card_last4 = default_debit_card.last4
+				driver.save
+      end
+
 
       fields = ['first_name', 'last_name', 'email', 'phone', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|

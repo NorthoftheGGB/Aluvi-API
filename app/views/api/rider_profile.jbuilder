@@ -9,3 +9,5 @@ unless @user.cards[0].nil?
 	json.card_last_four @user.cards[0].last4
 	json.card_brand @user.cards[0].brand
 end
+json.recipient_card_brand @user.recipient_card_brand
+json.recipient_card_last_four @user.recipient_card_last4
