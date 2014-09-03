@@ -74,9 +74,9 @@ class DriversController < ApplicationController
 
 		if @driver.stripe_recipient_id.nil?
 			recipient = Stripe::Recipient.create(
-				:name => driver.full_name,
+				:name => @driver.full_name,
 				:type => 'individual',
-				:email => driver.email
+				:email => @driver.email
 			)
 			if recipient.nil?
 				raise "Stripe recipient not created"
@@ -87,7 +87,7 @@ class DriversController < ApplicationController
 
 
 		if params[:driver][:car] == ""
-			params[:driver].delete('car')
+			@driver.delete('car')
 		end
 
     respond_to do |format|
