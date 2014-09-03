@@ -53,6 +53,8 @@ class DriversController < ApplicationController
   # POST /drivers
   # POST /drivers.json
   def create
+		@driver = Driver.new(params[:driver])
+
     respond_to do |format|
       if @driver.save
         format.html { redirect_to driver_path(@driver), notice: 'Driver was successfully created.' }
