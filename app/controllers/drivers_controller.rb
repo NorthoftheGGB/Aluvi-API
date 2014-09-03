@@ -87,7 +87,7 @@ class DriversController < ApplicationController
 
 
 		if params[:driver][:car] == ""
-			@driver.delete('car')
+			#@driver.delete('car')
 		end
 
     respond_to do |format|
