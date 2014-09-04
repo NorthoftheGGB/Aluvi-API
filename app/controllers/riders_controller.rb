@@ -70,9 +70,26 @@ class RidersController < ApplicationController
   # PUT /riders/1.json
   def update
     @rider = Rider.find(params[:id])
+
 		password = params[:rider][:password]
     respond_to do |format|
       if @rider.update_attributes(params[:rider])
+				
+				if @rider.stripe_customer_id.nil?
+					customer = Stripe::Customer.create(
+						:email => rider.email,
+						:metadata => {
+						:voco_id => rider.id,
+						:phone => rider.phone
+					}
+					) 
+					if customer.nil?
+						raise "Stripe customer not created"
+					end
+					@rider.stripe_customer_id = customer.id
+					@rider.save
+				end
+
         format.html { redirect_to rider_path(@rider), notice: 'Rider was successfully updated.' }
         format.json { head :no_content }
       else
