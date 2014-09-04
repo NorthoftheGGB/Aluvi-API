@@ -77,10 +77,10 @@ class RidersController < ApplicationController
 				
 				if @rider.stripe_customer_id.nil?
 					customer = Stripe::Customer.create(
-						:email => rider.email,
+						:email => @rider.email,
 						:metadata => {
-						:voco_id => rider.id,
-						:phone => rider.phone
+						:voco_id => @rider.id,
+						:phone => @rider.phone
 					}
 					) 
 					if customer.nil?
