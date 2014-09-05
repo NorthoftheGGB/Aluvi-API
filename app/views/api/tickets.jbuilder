@@ -33,15 +33,15 @@ json.array! @rides do |ride|
 		json.origin_short_name 'Work'
 		json.destination_short_name 'Home'
 	end
-	unless ride.fare.nil? || ride.fare.car.nil?
+	unless ride.fare.nil? || ride.fare.driver.nil? ||  ride.fare.driver.car.nil?
 		json.car do
-			json.id ride.fare.car.id
-			json.make ride.fare.car.make
-			json.model ride.fare.car.model
-			json.year ride.fare.car.year
-			json.license_plate ride.fare.car.license_plate
-			json.state ride.fare.car.state
-			json.car_photo ride.fare.car.car_photo.url( :thumb )
+			json.id ride.fare.driver.car.id
+			json.make ride.fare.driver.car.make
+			json.model ride.fare.driver.car.model
+			json.year ride.fare.driver.car.year
+			json.license_plate ride.fare.driver.car.license_plate
+			json.state ride.fare.driver.car.state
+			json.car_photo ride.fare.driver.car.car_photo.url( :thumb )
 		end
 	end
 	unless ride.fare.nil? || ride.fare.driver.nil?
