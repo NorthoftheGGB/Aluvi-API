@@ -69,6 +69,13 @@ class DriversController < ApplicationController
   # PUT /drivers/1
   # PUT /drivers/1.json
   def update
+
+
+		password = params[:driver][:password]
+		if password.nil? || password == ''
+			params[:driver].delete('password')	
+		end
+
     @driver = Driver.find(params[:id])
 		Rails.logger.debug params
 
