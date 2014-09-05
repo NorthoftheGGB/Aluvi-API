@@ -72,6 +72,9 @@ class RidersController < ApplicationController
     @rider = Rider.find(params[:id])
 
 		password = params[:rider][:password]
+		if password.nil? || password == ''
+			params[:rider].delete('password')	
+		end
     respond_to do |format|
       if @rider.update_attributes(params[:rider])
 				
