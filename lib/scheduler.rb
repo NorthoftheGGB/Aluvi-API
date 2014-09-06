@@ -3,6 +3,7 @@ module Scheduler
 	def self.build_commuter_trips
 		self.build_forward_fares
 		self.build_return_fares
+		self.calculate_costs
     self.notify_commuters
 	end
 
@@ -199,6 +200,7 @@ module Scheduler
 
 		# 2nd pass
 		# - attempt to assign to drivers from return rides of pending_return rides
+    Rails.logger.info "Seconrd Pass - Riders"
 		return_driving_rides.each do |r|
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
 			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )

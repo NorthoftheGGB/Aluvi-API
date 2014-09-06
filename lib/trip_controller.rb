@@ -75,7 +75,7 @@ class TripController
         payment.fare = fare
         payment.rider = rider
         payment.ride = ride
-        payment.amount_cents = fare.cost_per_rider
+        payment.amount_cents = ride.fixed_price
         payment.driver_earnings_cents = fare.fixed_earnings / fare.riders.count
         payment.stripe_customer_id = rider.stripe_customer_id
 
@@ -185,7 +185,7 @@ class TripController
   def self.calculated_fixed_earnings_for_fare fare
     fare.fixed_earnings = 0
     fare.rides.each do |ride|
-      fare.fixed_earnings += ride.fixed_cost * 82.25 / 100.0
+      fare.fixed_earnings += ride.fixed_price * 82.25 / 100.0
       fare.save
     end
   end
