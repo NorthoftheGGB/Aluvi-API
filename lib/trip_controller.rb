@@ -176,7 +176,7 @@ class TripController
 
   def self.calculate_fixed_price_for_commute trip
     # TODO use GIS shapes to calculate fixed price
-    trip.rides.each do |ride|
+    trip.rides.where.not(driving: true).each do |ride|
       ride.fixed_price = 500
       ride.save
     end
@@ -184,7 +184,7 @@ class TripController
 
   def self.calculated_fixed_earnings_for_fare fare
     fare.fixed_earnings = 0
-    fare.rides.each do |ride|
+    fare.rides.where.not(driving: true).each do |ride|
       fare.fixed_earnings += ride.fixed_price * 82.25 / 100.0
       fare.save
     end
