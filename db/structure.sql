@@ -210,7 +210,7 @@ CREATE TABLE fares (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     pickup_time timestamp without time zone,
-    fixed_earnings integer
+    fixed_earnings integer DEFAULT 0
 );
 
 
@@ -1070,4 +1070,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140828014630');
 INSERT INTO schema_migrations (version) VALUES ('20140828015919');
 
 INSERT INTO schema_migrations (version) VALUES ('20140830020701');
+
+INSERT INTO schema_migrations (version) VALUES ('20140905234323');
 

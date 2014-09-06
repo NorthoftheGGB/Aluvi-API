@@ -62,7 +62,7 @@ class TripController
   end
 
 
-  def fare_completed(fare)
+  def self.fare_completed(fare)
 
     # process the payment
     # TODO Refactor into delayed job
@@ -76,7 +76,7 @@ class TripController
         payment.rider = rider
         payment.ride = ride
         payment.amount_cents = fare.cost_per_rider
-        payment.driver_earnings_cents = earnings / fare.riders.count
+        payment.driver_earnings_cents = fare.fixed_earnings / fare.riders.count
         payment.stripe_customer_id = rider.stripe_customer_id
 
         case ride.request_type
