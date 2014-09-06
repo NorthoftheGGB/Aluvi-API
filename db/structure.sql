@@ -363,7 +363,7 @@ CREATE TABLE rides (
     driving boolean,
     trip_id integer,
     direction character varying(255),
-    fixed_price integer
+    fixed_price integer DEFAULT 0
 );
 
 
@@ -1072,4 +1072,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140828015919');
 INSERT INTO schema_migrations (version) VALUES ('20140830020701');
 
 INSERT INTO schema_migrations (version) VALUES ('20140905234323');
+
+INSERT INTO schema_migrations (version) VALUES ('20140906195950');
 
