@@ -45,8 +45,7 @@ describe RidesAPI do
 
   describe "POST /api/rides/request/cancel" do
     it "cancels a ride" do
-      @ride = FactoryGirl.create(:ride)
-      Rails.logger.info @ride.id
+      @ride = FactoryGirl.create(:on_demand_ride)
       post "/api/rides/request/cancel", {:ride_id => @ride.id}, {'HTTP_AUTHORIZATION' => encode_credentials(@ride.rider.token)}
       expect(response.status).to eq(201)
     end
@@ -72,16 +71,16 @@ describe RidesAPI do
     end
   end
 
-  describe "GET /api/rides/rides" do
-    it "recieves success" do
+  describe "GET /api/rides/tickets" do
+    it "receives success" do
       @rider = FactoryGirl.create(:rider)
-      get "/api/rides/rides", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      get "/api/rides/tickets", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
       expect(response.status).to eq(200)
     end
 
-    it "gets rides" do
+    it "gets tickets" do
 			@ride = FactoryGirl.create(:ride)
-      get "/api/rides/rides", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@ride.rider.token)}
+      get "/api/rides/tickets", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@ride.rider.token)}
       expect(response.status).to eq(200)
 
     end

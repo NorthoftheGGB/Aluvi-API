@@ -97,14 +97,13 @@ class RidesAPI< Grape::API
 			authenticate!
 			begin
 				ride = Ride.find(params[:ride_id])
+        Rails.logger.debug('hey')
 				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
         end
-        Rails.logger.debug ride
-        Rails.logger.debug ride.fare
 
         if ride.fare.nil?
-            ride.cancel!
+          ride.cancel!
         elsif ride.fare.scheduled?
           ride.cancel!
           ride.fare.rider_cancelled! ride.rider
@@ -113,10 +112,12 @@ class RidesAPI< Grape::API
           ride.cancel!
           ride.fare.retracted_by_rider! self.rider
         end
+        Rails.logger.debug 'ok'
 				ok
 			rescue ActiveRecord::RecordNotFound
 				ok
 			rescue ApiExceptions::WrongUserForEntityException
+		    Rails.loger.debug "WrongUserForEntityException"
 				Rails.logger.debug $!
 				forbidden $!
       rescue AASM::InvalidTransition => e

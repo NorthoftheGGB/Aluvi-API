@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	def self.authorize!(token)
+    Rails.logger.debug "Authorizing"
 		unless token == 'demo2398sdf09psd09f23'
 			User.where( :token => token ).first
 		else

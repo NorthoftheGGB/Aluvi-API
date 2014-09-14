@@ -44,8 +44,7 @@ class RidesController < ApplicationController
 
     respond_to do |format|
       if @ride.save
-				@ride.request!
-        format.html { redirect_to @ride, notice: 'Ride request was successfully created.' }
+        format.html { redirect_to @ride, notice: 'Ride was successfully created.' }
         format.json { render json: @ride, status: :created, location: @ride }
       else
         format.html { render action: "new" }
@@ -61,7 +60,7 @@ class RidesController < ApplicationController
 
     respond_to do |format|
       if @ride.update_attributes(params[:ride])
-        format.html { redirect_to @ride, notice: 'Ride request was successfully updated.' }
+        format.html { redirect_to @ride, notice: 'Ride  was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }

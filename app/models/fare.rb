@@ -117,13 +117,13 @@ class Fare < ActiveRecord::Base
 	end
  
 	def self.create ( pickup_time, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name )
-		ride = Fare.new
-		ride.pickup_time = pickup_time
-		ride.meeting_point = meeting_point
-		ride.meeting_point_place_name = meeting_point_place_name
-		ride.drop_off_point = drop_off_point
-		ride.drop_off_point_place_name = drop_off_point_place_name
-		ride
+		fare = Fare.new
+    fare.pickup_time = pickup_time
+    fare.meeting_point = meeting_point
+    fare.meeting_point_place_name = meeting_point_place_name
+    fare.drop_off_point = drop_off_point
+    fare.drop_off_point_place_name = drop_off_point_place_name
+    fare
 	end
 
 	def is_cancelled
@@ -158,8 +158,6 @@ class Fare < ActiveRecord::Base
 	def assign_driver(driver)
 		self.driver = driver	
 		self.car = driver.cars.first
-		# and mark all ride requests as scheduled
-		update_ride_requests_to_scheduled
 		# and mark all ride offers as closed 
 		offers.open_offers.each do |offer|
 			offer.closed!
@@ -187,10 +185,12 @@ class Fare < ActiveRecord::Base
 	
 	def rider_cancelled rider
 		Rails.logger.info "RIDER_CANCELLED"
-		if( self.riders.count == 1 ) 
-			# this is the only rider, cancel the whole ride
-			aasm_rider_cancelled rider
+		if( self.riders.count == 1 )
+      Rails.logger.info "RIDER_CANCELLED: last rider cancelled"
+      # this is the only rider, cancel the whole ride
+			aasm_rider_cancelled
 			self.finished = Time.now
+      save
 			notify_fare_cancelled_by_rider
 		else 
 			Rails.logger.info 'RIDER_CANCELLED: one rider cancelled'

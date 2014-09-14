@@ -7,7 +7,6 @@ describe DriversAPI do
 	describe "POST /api/drivers/driver_registration" do
 		it "returns sucesss" do
       @driver = FactoryGirl.create(:approved_driver)
-			credentials = ActionController::HttpAuthentication::Token.encode_credentials("test_access1")
 			post "/api/drivers/driver_registration",
 				{ 
 				:drivers_license_number => "KLSJLSKDF", 

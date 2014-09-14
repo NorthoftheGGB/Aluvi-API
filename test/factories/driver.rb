@@ -8,6 +8,7 @@ FactoryGirl.define do
 
     factory :approved_driver do
       driver_state 'approved'
+      token "asf2323s333"
     end
 
     factory :available_driver do

@@ -5,7 +5,7 @@ FactoryGirl.define do
 		last_name "Truttle"
     email "whatever@myhouse.com"
     phone "1234567890"
-    token '2309u09sjdf0'
+    token 'asdfasdf'
     webtoken '2309u09fffsjdf0'
     driver_state 'uninterested'
 
@@ -25,6 +25,7 @@ FactoryGirl.define do
     end
 
     factory :generated_rider do
+      token  { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
       first_name { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
       last_name  { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
       email { (0...10).map { ('a'..'z').to_a[rand(26)] }.join + "@example.com" }

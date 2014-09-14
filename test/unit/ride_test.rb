@@ -112,9 +112,6 @@ class RideTest < ActiveSupport::TestCase
 		fare.riders.each do |r|
 			riders.push(r)
 		end
-		Rails.logger.info "riders count"
-		Rails.logger.info fare.riders.count
-		Rails.logger.info riders
 
 		riders.each do |r|
 			fare.rider_cancelled!(r)
