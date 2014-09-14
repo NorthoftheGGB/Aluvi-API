@@ -34,26 +34,25 @@ class RidesAPI< Grape::API
 																						 params[:destination_place_name],
 																						 current_rider
 																						)
-			when 'commuter'
-         ride = CommuterRide.create(
-																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-																						 params[:departure_place_name],
-																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-																						 params[:destination_place_name],
-																						 params[:pickup_time],
-																						 params[:driving],
-                                             current_rider
-																						)
-				Rails.logger.debug params
-				unless params[:trip_id].nil?
-					ride.trip_id = params[:trip_id]
-				end
-				ride.save
+          ride.request!
+
+        when 'commuter'
+
+          ride = TripController.request_commute_leg(
+              RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+              params[:departure_place_name],
+              RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+              params[:destination_place_name],
+              params[:pickup_time],
+              params[:driving],
+              current_rider,
+              params[:trip_id]
+          )
+
 			else
 				raise "No request type set"
 			end
 
-      ride.request!
 
 			if params[:type] == 'commuter'
 				if false #current_user.demo

@@ -86,3 +86,5 @@ RSpec.configure do |config|
 	#	file_path: /spec\/api/
 	#}
 end
+
+ActiveRecord::Migration.maintain_test_schema!

@@ -13,7 +13,15 @@ FactoryGirl.define do
     factory :available_driver do
 			state "on_duty"
       token "asf2323s"
-		end
+    end
+
+    factory :generated_driver do
+      first_name { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
+      last_name  { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
+      email { (0...10).map { ('a'..'z').to_a[rand(26)] }.join + "@example.com" }
+      phone { (0...10).map { (0...9).to_a[rand(10)] }.join }
+      driver_state 'active'
+    end
 	end
 
 end

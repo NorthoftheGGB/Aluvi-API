@@ -62,6 +62,29 @@ class TripController
   end
 
 
+
+  # Commuter
+
+  def self.request_commute_leg( departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider, trip_id)
+    ride = CommuterRide.create(
+        departure_point,
+        departure_place_name,
+        destination_point,
+        destination_place_name,
+        pickup_time,
+        driving,
+        rider
+    )
+    unless trip_id.nil?
+      ride.trip_id = trip_id
+    end
+    ride.save
+    ride.request!
+    ride
+
+  end
+
+
   def self.fare_completed(fare)
 
     # process the payment

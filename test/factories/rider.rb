@@ -22,7 +22,14 @@ FactoryGirl.define do
 
 		factory :sandbox_rider do
 			email { "#{first_name}.#{phone}@example.com".downcase }
-		end
+    end
+
+    factory :generated_rider do
+      first_name { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
+      last_name  { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
+      email { (0...10).map { ('a'..'z').to_a[rand(26)] }.join + "@example.com" }
+      phone { (0...10).map { (0...9).to_a[rand(10)] }.join }
+    end
   end
 
 end

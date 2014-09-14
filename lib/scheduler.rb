@@ -51,73 +51,21 @@ module Scheduler
 		# 2nd pass 
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
-		driving_rides.each do |r|
-			rides = CommuterRide.where({ state: 'requested' })
-			rides = rides.where( direction: 'a' )
-			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
-			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin)")
-			rides.limit(1)
-			if rides[0].nil?
-				next
-			end
-			puts r.pickup_time
-			puts rides[0].pickup_time
-			assign_ride = rides[0]
-			assign_ride.fare = r.fare
-			assign_ride.save
-			assign_ride.promote_to_pending_return!
-    end
+    forward_ride_assignment_iteration(driving_rides)
 
 
-		# 3rd pass
+    Rails.logger.info "Third Pass - riders"
+    # 3rd pass
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
-		driving_rides.each do |r|
-			rides = CommuterRide.where({ state: 'requested' })
-			rides = rides.where( direction: 'a' )
-			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
-			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin)")
-			rides.limit(1)
-			if rides[0].nil?
-				next
-			end
-			puts r.pickup_time
-			puts rides[0].pickup_time
-			assign_ride = rides[0]
-			assign_ride.fare = r.fare
-			assign_ride.save
-			assign_ride.promote_to_pending_return!
-		end
+    forward_ride_assignment_iteration(driving_rides)
 
 
-
+    Rails.logger.info "Fourth Pass - riders"
     # 4th pass
 		# - get closest ride that doesn't already have a fare
 		# - and are withing 15 mins either side of the driver's ride
-		driving_rides.each do |r|
-			rides = CommuterRide.where({ state: 'requested' })
-			rides = rides.where( direction: 'a' )
-			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
-			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin)")
-			rides.limit(1)
-			if rides[0].nil?
-				next
-			end
-			puts r.pickup_time
-			puts rides[0].pickup_time
-			assign_ride = rides[0]
-			assign_ride.fare = r.fare
-			assign_ride.save
-			assign_ride.promote_to_pending_return!
-		end
-
-
+    forward_ride_assignment_iteration(driving_rides)
 
 
     # triangulation
@@ -168,8 +116,31 @@ module Scheduler
 
 	end
 
+  def self.forward_ride_assignment_iteration(driving_rides)
+    driving_rides.each do |r|
+      rides = CommuterRide.where({state: 'requested'})
+      rides = rides.where(direction: 'a')
+      rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes)
+      rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin])
+      rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination])
+      rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin)")
+      #rides.limit(1)
+      if rides[0].nil?
+        next
+      end
+      Rails.logger.debug r.pickup_time
+      Rails.logger.debug  rides[0].pickup_time
+      Rails.logger.debug rides.size
 
-	def self.build_return_fares
+      assign_ride = rides[0]
+      assign_ride.fare = r.fare
+      assign_ride.save
+      assign_ride.promote_to_pending_return!
+    end
+  end
+
+
+  def self.build_return_fares
     Rails.logger.info "Build Return Fares'"
 
 		# attempt to solve all return rides
