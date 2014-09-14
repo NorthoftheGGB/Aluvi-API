@@ -33,13 +33,14 @@ describe UsersAPI do
       @rider = FactoryGirl.create(:rider)
       @rider.password = 'whalesandthings'
       @rider.save
-			post "/api/users/login", :phone => @rider.phone, :password => 'whalesandthings'
+			post "/api/users/login", :email => @rider.email, :password => 'whalesandthings'
 			Rails.logger.info response.status.to_s + ':' + response.body
 			expect(response.status).to eq(201)
 		end
 
 		it "fails" do
-			post "/api/users/login", :phone => '123 123 1232', :password => 'snailsandthings'
+      @rider = FactoryGirl.create(:rider)
+      post "/api/users/login", :email => @rider.email, :password => 'snailsandthings'
 			Rails.logger.info response.status.to_s + ':' + response.body
 			expect(response.status).to eq(404)
 		end
