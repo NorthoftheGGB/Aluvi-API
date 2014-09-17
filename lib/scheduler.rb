@@ -292,6 +292,9 @@ module Scheduler
     CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
       if !r.trip.unfulfilled?
         r.trip.unfulfilled!
+				r.trip.rides.each do |r| 
+					r.abort! # make sure all lets of this trip for the driver are aborted
+				end
       end
     end
 
