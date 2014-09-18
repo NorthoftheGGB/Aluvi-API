@@ -23,24 +23,20 @@ describe 'Scheduler' do
   HOME4_LATITUDE = 41.322
   WORK4_LONGITUDE = -72.9082
   WORK4_LATITUDE = 41.3132
-  before(:all) do
 
+  let(:home1) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME1_LONGITUDE, HOME1_LATITUTE)}
+  let(:work1) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK1_LONGITUDE, WORK1_LATITUTE)}
+  let(:home2) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME2_LONGITUDE, HOME2_LATITUDE)}
+  let(:work2) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK2_LONGITUDE, WORK2_LATITUDE)}
 
-    @home1 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME1_LONGITUDE, HOME1_LATITUTE)
-    @work1 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK1_LONGITUDE, WORK1_LATITUTE)
+  let(:home3) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME3_LONGITUDE, HOME3_LATITUDE)}
+  let(:work3) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK3_LONGITUDE, WORK3_LATITUDE)}
 
-    @home2 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME2_LONGITUDE, HOME2_LATITUDE)
-    @work2 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK2_LONGITUDE, WORK2_LATITUDE)
+  let(:home4) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME4_LONGITUDE, HOME4_LATITUDE)}
+  let(:work4) {RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK4_LONGITUDE, WORK4_LATITUDE)}
 
-    @home3 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME3_LONGITUDE, HOME3_LATITUDE)
-    @work3 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK3_LONGITUDE, WORK3_LATITUDE)
-
-    @home4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME4_LONGITUDE, HOME4_LATITUDE)
-    @work4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK4_LONGITUDE, WORK4_LATITUDE)
-
-    @home_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days
-    @work_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5, min: 0, sec: 0) + 1.days
-  end
+  let(:home_pickup) {DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days}
+  let(:work_pickup) {DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5, min: 0, sec: 0) + 1.days}
 
   before(:each) do
     Ride.delete_all
@@ -54,8 +50,8 @@ describe 'Scheduler' do
       rider1 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, false, rider1, 0 )
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
 
       Scheduler.build_forward_fares
 
@@ -75,11 +71,11 @@ describe 'Scheduler' do
      rider1 = FactoryGirl.create(:generated_rider)
      driver1 = FactoryGirl.create(:generated_driver)
 
-     aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-     bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+     aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+     bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-     aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, false, rider1, 0 )
-     bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, false, rider1, aside2.trip_id)
+     aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
+     bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, false, rider1, aside2.trip_id)
 
      Scheduler.build_forward_fares
      Scheduler.build_return_fares
@@ -103,9 +99,9 @@ describe 'Scheduler' do
       rider2 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, false, rider1, 0 )
-      aside3 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, false, rider2, 0 )
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
+      aside3 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider2, 0 )
 
       Scheduler.build_forward_fares
 
@@ -126,14 +122,14 @@ describe 'Scheduler' do
       rider2 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, true, rider1, 0 )
-      bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, true, rider1, aside2.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, true, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, true, rider1, aside2.trip_id)
 
-      aside3 = TripController.request_commute_leg(@home3, "Home3", @work2, "Work3", @home_pickup, true, rider2, 0 )
-      bside3 = TripController.request_commute_leg(@work2, "Work3", @home3, "Home3", @work_pickup, true, rider2, aside3.trip_id)
+      aside3 = TripController.request_commute_leg(home3, "Home3", work2, "Work3", home_pickup, true, rider2, 0 )
+      bside3 = TripController.request_commute_leg(work2, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
@@ -162,14 +158,14 @@ describe 'Scheduler' do
       rider2 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, true, rider1, 0 )
-      bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, true, rider1, aside2.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, true, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, true, rider1, aside2.trip_id)
 
-      aside3 = TripController.request_commute_leg(@home3, "Home3", @work3, "Work3", @home_pickup, true, rider2, 0 )
-      bside3 = TripController.request_commute_leg(@work3, "Work3", @home3, "Home3", @work_pickup, true, rider2, aside3.trip_id)
+      aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup, true, rider2, 0 )
+      bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
@@ -199,17 +195,17 @@ describe 'Scheduler' do
       rider3 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, true, rider1, 0 )
-      bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, true, rider1, aside2.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, true, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, true, rider1, aside2.trip_id)
 
-      aside3 = TripController.request_commute_leg(@home3, "Home3", @work3, "Work3", @home_pickup, true, rider2, 0 )
-      bside3 = TripController.request_commute_leg(@work3, "Work3", @home3, "Home3", @work_pickup, true, rider2, aside3.trip_id)
+      aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup, true, rider2, 0 )
+      bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
-      aside4 = TripController.request_commute_leg(@home4, "Home4", @work4, "Work4", @home_pickup, true, rider3, 0 )
-      bside4 = TripController.request_commute_leg(@work4, "Work4", @home4, "Home4", @work_pickup, true, rider3, aside4.trip_id)
+      aside4 = TripController.request_commute_leg(home4, "Home4", work4, "Work4", home_pickup, true, rider3, 0 )
+      bside4 = TripController.request_commute_leg(work4, "Work4", home4, "Home4", work_pickup, true, rider3, aside4.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
@@ -242,11 +238,11 @@ describe 'Scheduler' do
       rider1 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup + 15.minutes, false, rider1, 0 )
-      bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, false, rider1, aside2.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup + 15.minutes, false, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, false, rider1, aside2.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
@@ -270,14 +266,14 @@ describe 'Scheduler' do
       rider2 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup, true, driver1.as_rider, 0 )
-      bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup + 15.minutes, true, rider1, 0 )
-      bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, true, rider1, aside2.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup + 15.minutes, true, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, true, rider1, aside2.trip_id)
 
-      aside3 = TripController.request_commute_leg(@home3, "Home3", @work3, "Work3", @home_pickup + 15.minutes, true, rider2, 0 )
-      bside3 = TripController.request_commute_leg(@work3, "Work3", @home3, "Home3", @work_pickup, true, rider2, aside3.trip_id)
+      aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup + 15.minutes, true, rider2, 0 )
+      bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
@@ -306,14 +302,14 @@ describe 'Scheduler' do
       rider2 = FactoryGirl.create(:generated_rider)
       driver1 = FactoryGirl.create(:generated_driver)
 
-      aside1 = TripController.request_commute_leg(@home1, "Home1", @work1, "Work1", @home_pickup + 15, true, driver1.as_rider, 0 )
-      bside1 = TripController.request_commute_leg(@work1, "Work1", @home1, "Home1", @work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup + 15, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-      aside2 = TripController.request_commute_leg(@home2, "Home2", @work2, "Work2", @home_pickup, true, rider1, 0 )
-      bside2 = TripController.request_commute_leg(@work2, "Work2", @home2, "Home2", @work_pickup, true, rider1, aside2.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, true, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, true, rider1, aside2.trip_id)
 
-      aside3 = TripController.request_commute_leg(@home3, "Home3", @work3, "Work3", @home_pickup + 15.minutes, true, rider2, 0 )
-      bside3 = TripController.request_commute_leg(@work3, "Work3", @home3, "Home3", @work_pickup, true, rider2, aside3.trip_id)
+      aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup + 15.minutes, true, rider2, 0 )
+      bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
