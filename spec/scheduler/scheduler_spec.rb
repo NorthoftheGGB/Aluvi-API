@@ -1,39 +1,42 @@
 require 'rspec'
 
 describe 'Scheduler' do
+  # set constants used by spherical factories
+  #POINT(-72.9109308480767 41.3187459427293) | POINT(-72.9038633595772 41.3121938789795) | a
+  HOME1_LONGITUDE = -72.9109308480767
+  HOME1_LATITUTE = 41.3187459427293
+  WORK1_LONGITUDE = -72.9038633595772
+  WORK1_LATITUTE = 41.3121938789795
 
+  #POINT(-72.91102501844 41.3189297086803)   | POINT(-72.9081076060728 41.3133458958975) | a
+  HOME2_LONGITUDE = -72.91102501844
+  HOME2_LATITUDE = 41.3189297086803
+  WORK2_LONGITUDE = -72.9081076060728
+  WORK2_LATITUDE = 41.3133458958975
+
+  HOME3_LONGITUDE = -72.917
+  HOME3_LATITUDE = 41.323
+  WORK3_LONGITUDE = -72.9082
+  WORK3_LATITUDE = 41.3134
+
+  HOME4_LONGITUDE = -72.917
+  HOME4_LATITUDE = 41.322
+  WORK4_LONGITUDE = -72.9082
+  WORK4_LATITUDE = 41.3132
   before(:all) do
 
 
-    #POINT(-72.9109308480767 41.3187459427293) | POINT(-72.9038633595772 41.3121938789795) | a
-    @home1_longitude = -72.9109308480767
-    @home1_latitude = 41.3187459427293
-    @work1_longitude = -72.9038633595772
-    @work1_latitude = 41.3121938789795
-    @home1 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@home1_longitude, @home1_latitude)
-    @work1 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@work1_longitude, @work1_latitude)
+    @home1 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME1_LONGITUDE, HOME1_LATITUTE)
+    @work1 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK1_LONGITUDE, WORK1_LATITUTE)
 
-    #POINT(-72.91102501844 41.3189297086803)   | POINT(-72.9081076060728 41.3133458958975) | a
-    @home2_longitude = -72.91102501844
-    @home2_latitude = 41.3189297086803
-    @work2_longitude = -72.9081076060728
-    @work2_latitude = 41.3133458958975
-    @home2 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@home2_longitude, @home2_latitude)
-    @work2 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@work2_longitude, @work2_latitude)
+    @home2 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME2_LONGITUDE, HOME2_LATITUDE)
+    @work2 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK2_LONGITUDE, WORK2_LATITUDE)
 
-    @home3_longitude = -72.917
-    @home3_latitude = 41.323
-    @work3_longitude = -72.9082
-    @work3_latitude = 41.3134
-    @home3 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@home3_longitude, @home3_latitude)
-    @work3 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@work3_longitude, @work3_latitude)
+    @home3 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME3_LONGITUDE, HOME3_LATITUDE)
+    @work3 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK3_LONGITUDE, WORK3_LATITUDE)
 
-    @home4_longitude = -72.917
-    @home4_latitude = 41.322
-    @work4_longitude = -72.9082
-    @work4_latitude = 41.3132
-    @home4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@home4_longitude, @home4_latitude)
-    @work4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@work4_longitude, @work4_latitude)
+    @home4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(HOME4_LONGITUDE, HOME4_LATITUDE)
+    @work4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(WORK4_LONGITUDE, WORK4_LATITUDE)
 
     @home_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days
     @work_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5, min: 0, sec: 0) + 1.days
