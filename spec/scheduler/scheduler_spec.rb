@@ -50,7 +50,7 @@ describe 'Scheduler' do
     Fare.delete_all
   end
 
-  describe 'Commuter Schedule' do
+  context 'Commuter Schedule' do
     it 'should schedule forward commuter rides' do
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
@@ -66,33 +66,27 @@ describe 'Scheduler' do
       expect(aside1.fare).to eq(aside2.fare)
 
     end
-  end
 
-  describe 'Commuter Schedule' do
-   it 'should schedule commuter rides for one driver and one rider' do
+    it 'should schedule commuter rides for one driver and one rider' do
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
+      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
-     aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
-     bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
+      aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
+      bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, false, rider1, aside2.trip_id)
 
-     aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
-     bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, false, rider1, aside2.trip_id)
+      Scheduler.build_forward_fares
+      Scheduler.build_return_fares
+      Scheduler.calculate_costs
 
-     Scheduler.build_forward_fares
-     Scheduler.build_return_fares
-     Scheduler.calculate_costs
+      expect(aside1.trip.state).to eq('fulfilled')
+      expect(bside1.trip.state).to eq('fulfilled')
+      expect(aside2.trip.state).to eq('fulfilled')
+      expect(bside2.trip.state).to eq('fulfilled')
 
-     expect(aside1.trip.state).to eq('fulfilled')
-     expect(bside1.trip.state).to eq('fulfilled')
-     expect(aside2.trip.state).to eq('fulfilled')
-     expect(bside2.trip.state).to eq('fulfilled')
+      expect(aside1.fare).to eq(aside2.fare)
+      expect(bside1.fare).to eq(bside2.fare)
+    end
 
-     expect(aside1.fare).to eq(aside2.fare)
-     expect(bside1.fare).to eq(bside2.fare)
-
-   end
-  end
-
-  describe 'Commuter Schedule' do
     it 'should schedule commuter forward rides for one driver and two riders with same times' do
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
@@ -107,13 +101,9 @@ describe 'Scheduler' do
 
       expect(aside1.fare).to eq(aside2.fare)
       expect(aside1.fare).to eq(aside3.fare)
-
     end
-  end
 
-  describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with same times and same work' do
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -139,11 +129,8 @@ describe 'Scheduler' do
 
       expect(bside1.fare).to eq(bside2.fare)
       expect(bside1.fare).to eq(bside3.fare)
-
     end
-  end
 
-  describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with same times and different work' do
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
@@ -171,13 +158,9 @@ describe 'Scheduler' do
 
       expect(bside1.fare).to eq(bside2.fare)
       expect(bside1.fare).to eq(bside3.fare)
-
     end
-  end
 
-  describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and three riders with same times and different work' do
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -210,14 +193,9 @@ describe 'Scheduler' do
       expect(bside1.fare).to eq(bside2.fare)
       expect(bside1.fare).to eq(bside3.fare)
       expect(bside1.fare).to eq(bside4.fare)
-
     end
-  end
 
-
-  describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and one rider with time apart by 15 mins' do
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -235,13 +213,9 @@ describe 'Scheduler' do
 
       expect(aside1.fare).to eq(aside2.fare)
       expect(bside1.fare).to eq(bside2.fare)
-
     end
-  end
 
-  describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with different times' do
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -267,13 +241,9 @@ describe 'Scheduler' do
 
       expect(bside1.fare).to eq(bside2.fare)
       expect(bside1.fare).to eq(bside3.fare)
-
     end
-  end
 
-  describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with different times' do
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup + 15, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -302,5 +272,4 @@ describe 'Scheduler' do
 
     end
   end
-
 end
