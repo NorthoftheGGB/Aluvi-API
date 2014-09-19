@@ -231,15 +231,24 @@ describe Scheduler do
       expect(bside1.fare).to eq(bside2.fare)
       expect(bside1.fare).to eq(bside3.fare)
 
-    it 'should schedule commuter rides for one driver and two riders with different times' do
-      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup + 15, true, driver1.as_rider, 0 )
+    end
+  end
+
+
+
+  context 'for one driver and three riders' do
+    it 'schedule commuter rides for different work locations and same pickup times' do
+      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, true, rider1, 0 )
       bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, true, rider1, aside2.trip_id)
 
-      aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup + 15.minutes, true, rider2, 0 )
+      aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup, true, rider2, 0 )
       bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
+
+      aside4 = TripController.request_commute_leg(home4, "Home4", work4, "Work4", home_pickup, true, rider3, 0 )
+      bside4 = TripController.request_commute_leg(work4, "Work4", home4, "Home4", work_pickup, true, rider3, aside4.trip_id)
 
       Scheduler.build_forward_fares
       Scheduler.build_return_fares
@@ -251,13 +260,16 @@ describe Scheduler do
       expect(bside2.trip.state).to eq('fulfilled')
       expect(aside3.trip.state).to eq('fulfilled')
       expect(bside3.trip.state).to eq('fulfilled')
+      expect(aside4.trip.state).to eq('fulfilled')
+      expect(bside4.trip.state).to eq('fulfilled')
 
       expect(aside1.fare).to eq(aside2.fare)
       expect(aside1.fare).to eq(aside3.fare)
+      expect(aside1.fare).to eq(aside4.fare)
 
       expect(bside1.fare).to eq(bside2.fare)
       expect(bside1.fare).to eq(bside3.fare)
-
+      expect(bside1.fare).to eq(bside4.fare)
     end
   end
 end
