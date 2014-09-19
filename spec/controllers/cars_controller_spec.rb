@@ -40,4 +40,26 @@ describe CarsController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before :each do
+      @car = FactoryGirl.create(:car, license_plate: 'EE9369')
+    end
+    context 'with valid parameters' do
+      it 'locates the requested @car' do
+        patch :update, id: @car, car: FactoryGirl.attributes_for(:car)
+        expect(assigns(:car)).to eq(@car)
+      end
+      it "changes @car's attributes" do
+        patch :update, id: @car,
+                car: FactoryGirl.attributes_for(:car, license_plate: 'EE9369')
+        @car.reload
+        expect(@car.license_plate).to eq('EE9369')
+      end
+      it "redirects to the updated content" do
+        patch :update, id: @car, car: FactoryGirl.attributes_for(:car)
+        expect(response).to redirect_to @car
+      end
+    end
+  end
 end
