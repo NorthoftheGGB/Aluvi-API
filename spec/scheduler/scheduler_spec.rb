@@ -38,6 +38,12 @@ describe 'Scheduler' do
   let(:home_pickup) {DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days}
   let(:work_pickup) {DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5, min: 0, sec: 0) + 1.days}
 
+  let(:rider1) {FactoryGirl.create(:generated_rider)}
+  let(:rider2) {FactoryGirl.create(:generated_rider)}
+  let(:rider3) {FactoryGirl.create(:generated_rider)}
+  let(:driver1) {FactoryGirl.create(:generated_driver)}
+
+
   before(:each) do
     Ride.delete_all
     Trip.delete_all
@@ -46,9 +52,6 @@ describe 'Scheduler' do
 
   describe 'Commuter Schedule' do
     it 'should schedule forward commuter rides' do
-
-      rider1 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
@@ -67,9 +70,6 @@ describe 'Scheduler' do
 
   describe 'Commuter Schedule' do
    it 'should schedule commuter rides for one driver and one rider' do
-
-     rider1 = FactoryGirl.create(:generated_rider)
-     driver1 = FactoryGirl.create(:generated_driver)
 
      aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
      bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
@@ -95,10 +95,6 @@ describe 'Scheduler' do
   describe 'Commuter Schedule' do
     it 'should schedule commuter forward rides for one driver and two riders with same times' do
 
-      rider1 = FactoryGirl.create(:generated_rider)
-      rider2 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
       aside3 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider2, 0 )
@@ -117,10 +113,6 @@ describe 'Scheduler' do
 
   describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with same times and same work' do
-
-      rider1 = FactoryGirl.create(:generated_rider)
-      rider2 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
@@ -154,10 +146,6 @@ describe 'Scheduler' do
   describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with same times and different work' do
 
-      rider1 = FactoryGirl.create(:generated_rider)
-      rider2 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -189,11 +177,6 @@ describe 'Scheduler' do
 
   describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and three riders with same times and different work' do
-
-      rider1 = FactoryGirl.create(:generated_rider)
-      rider2 = FactoryGirl.create(:generated_rider)
-      rider3 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
@@ -235,9 +218,6 @@ describe 'Scheduler' do
   describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and one rider with time apart by 15 mins' do
 
-      rider1 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
-
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
 
@@ -261,10 +241,6 @@ describe 'Scheduler' do
 
   describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with different times' do
-
-      rider1 = FactoryGirl.create(:generated_rider)
-      rider2 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
@@ -297,10 +273,6 @@ describe 'Scheduler' do
 
   describe 'Commuter Schedule' do
     it 'should schedule commuter rides for one driver and two riders with different times' do
-
-      rider1 = FactoryGirl.create(:generated_rider)
-      rider2 = FactoryGirl.create(:generated_rider)
-      driver1 = FactoryGirl.create(:generated_driver)
 
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup + 15, true, driver1.as_rider, 0 )
       bside1 = TripController.request_commute_leg(work1, "Work1", home1, "Home1", work_pickup, true, driver1.as_rider, aside1.trip_id)
