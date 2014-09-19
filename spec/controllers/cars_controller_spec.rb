@@ -9,4 +9,10 @@ describe CarsController do
       expect(assigns(:cars)).to_not be(nil)
     end
   end
+  context 'GET #new' do
+    it 'gets a successful response' do
+      get :new
+      expect(response.status).to equal(200)
+    end
+  end
 end
