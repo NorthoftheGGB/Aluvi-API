@@ -62,4 +62,17 @@ describe CarsController do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    before :each do
+      @car = FactoryGirl.create(:car)
+    end
+    it 'deletes the car' do
+      expect{delete :destroy, id: @car}.to change(Car, :count).by(-1)
+    end
+    it 'redirects to car#index' do
+      delete :destroy, id: @car
+      expect(response).to redirect_to cars_path
+    end
+  end
 end
