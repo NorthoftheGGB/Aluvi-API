@@ -30,6 +30,7 @@ json.array! @rides do |ride|
 	else
 		json.pickup_time ride.pickup_time
 	end
+	json.direction ride.direction
 	if ride.direction == 'a'
 		json.origin_short_name 'Home'
 		json.destination_short_name 'Work'
