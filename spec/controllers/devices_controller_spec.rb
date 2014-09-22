@@ -39,4 +39,26 @@ describe DevicesController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before :each do
+      @device = FactoryGirl.create(:device, hardware: 'iPhone 5S')
+    end
+    context 'with valid parameters' do
+      it 'locates the requested @device' do
+        patch :update, id: @device, device: FactoryGirl.attributes_for(:device)
+        expect(assigns(:device)).to eq(@device)
+      end
+      it "changes @device's attributes" do
+        patch :update, id: @device,
+                device: FactoryGirl.attributes_for(:device, hardware: 'iPhone 5S')
+        @device.reload
+        expect(@device.hardware).to eq('iPhone 5S')
+      end
+      it "redirects to the updated content" do
+        patch :update, id: @device, device: FactoryGirl.attributes_for(:device)
+        expect(response).to redirect_to @device
+      end
+    end
+  end
 end
