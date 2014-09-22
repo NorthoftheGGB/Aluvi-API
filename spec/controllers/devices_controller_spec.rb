@@ -61,4 +61,17 @@ describe DevicesController do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    before :each do
+      @device = FactoryGirl.create(:device)
+    end
+    it 'deletes the device' do
+      expect{delete :destroy, id: @device}.to change(Device, :count).by(-1)
+    end
+    it 'redirects to device#index' do
+      delete :destroy, id: @device
+      expect(response).to redirect_to devices_path
+    end
+  end
 end
