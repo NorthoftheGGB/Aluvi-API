@@ -1,0 +1,2 @@
+describe DevicesController do
+end
