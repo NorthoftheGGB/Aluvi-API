@@ -18,4 +18,18 @@ describe DevicesController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid parameters' do
+      it 'saves the new device to the database' do
+        expect{
+          post :create, device: FactoryGirl.attributes_for(:device)
+        }.to change(Device, :count).by(1)
+      end
+      it 'redirects to devices#show' do
+        post :create, device: FactoryGirl.attributes_for(:device)
+        expect(response).to redirect_to device_path(assigns(:device))
+      end
+    end
+  end
 end
