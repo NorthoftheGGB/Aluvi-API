@@ -55,4 +55,17 @@ describe OffersController do
       it "redirects to the updated content"
     end
   end
+
+  describe 'DELETE #destroy' do
+    before :each do
+      @offer = offer
+    end
+    it 'deletes the offer' do
+      expect{delete :destroy, id: @offer}.to change(Offer, :count).by(-1)
+    end
+    it 'redirects to offer#index' do
+      delete :destroy, id: @offer
+      expect(response).to redirect_to offers_path
+    end
+  end
 end
