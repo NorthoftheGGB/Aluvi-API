@@ -39,4 +39,28 @@ describe FaresController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before :each do
+      @fare = FactoryGirl.create(:scheduled_fare)
+    end
+    context 'with valid parameters' do
+      it 'locates the requested @fare' do
+        patch :update, id: @fare, fare: FactoryGirl.attributes_for(:scheduled_fare)
+        expect(assigns(:fare)).to eq(@fare)
+      end
+      it "changes @fare's attributes" do
+        patch :update, id: @fare,
+                fare: FactoryGirl.attributes_for(:scheduled_fare, state: 'completed')
+        @fare.reload
+        expect(@fare.state).to eq('completed')
+      end
+      it "redirects to the updated content" do
+        patch :update, id: @fare, fare: FactoryGirl.attributes_for(:fare)
+        expect(response).to redirect_to @fare
+      end
+    end
+  end
+
+
 end
