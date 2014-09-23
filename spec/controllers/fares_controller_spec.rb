@@ -62,5 +62,16 @@ describe FaresController do
     end
   end
 
-
+  describe 'DELETE #destroy' do
+    before :each do
+      @fare = FactoryGirl.create(:fare)
+    end
+    it 'deletes the fare' do
+      expect{delete :destroy, id: @fare}.to change(Fare, :count).by(-1)
+    end
+    it 'redirects to fare#index' do
+      delete :destroy, id: @fare
+      expect(response).to redirect_to fares_path
+    end
+  end
 end
