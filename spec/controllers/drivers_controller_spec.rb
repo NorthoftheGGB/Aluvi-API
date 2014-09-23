@@ -61,4 +61,17 @@ describe DriversController do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    before :each do
+      @driver = FactoryGirl.create(:driver)
+    end
+    it 'deletes the driver' do
+      expect{delete :destroy, id: @driver}.to change(Driver, :count).by(-1)
+    end
+    it 'redirects to driver#index' do
+      delete :destroy, id: @driver
+      expect(response).to redirect_to drivers_path
+    end
+  end
 end
