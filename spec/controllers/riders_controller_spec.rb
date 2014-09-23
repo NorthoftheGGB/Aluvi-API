@@ -18,4 +18,18 @@ describe RidersController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid parameters' do
+      it 'saves the new rider to the database' do
+        expect{
+          post :create, rider: FactoryGirl.attributes_for(:rider)
+        }.to change(Rider, :count).by(1)
+      end
+      it 'redirects to riders#show' do
+        post :create, rider: FactoryGirl.attributes_for(:rider)
+        expect(response).to redirect_to rider_path(assigns(:rider))
+      end
+    end
+  end
 end
