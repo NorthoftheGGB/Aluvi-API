@@ -39,4 +39,26 @@ describe DriversController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before :each do
+      @driver = FactoryGirl.create(:driver, first_name: "Jane")
+    end
+    context 'with valid parameters' do
+      it 'locates the requested @driver' do
+        patch :update, id: @driver, driver: FactoryGirl.attributes_for(:driver)
+        expect(assigns(:driver)).to eq(@driver)
+      end
+      it "changes @driver's attributes" do
+        patch :update, id: @driver,
+                driver: FactoryGirl.attributes_for(:driver, first_name: 'Jane')
+        @driver.reload
+        expect(@driver.first_name).to eq('Jane')
+      end
+      it "redirects to the updated content" do
+        patch :update, id: @driver, driver: FactoryGirl.attributes_for(:driver)
+        expect(response).to redirect_to @driver
+      end
+    end
+  end
 end
