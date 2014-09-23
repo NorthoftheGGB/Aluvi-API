@@ -40,4 +40,11 @@ describe OffersController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'GET #edit' do
+    it 'gets a successful response' do
+      get :edit, id: offer
+      expect(response.status).to equal(200)
+    end
+  end
 end
