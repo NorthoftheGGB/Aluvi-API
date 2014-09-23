@@ -40,6 +40,13 @@ describe FaresController do
     end
   end
 
+  describe 'GET #edit' do
+    it 'gets a successful response' do
+      get :edit, id: fare
+      expect(response.status).to equal(200)
+    end
+  end
+
   describe 'PATCH #update' do
     before :each do
       @fare = FactoryGirl.create(:scheduled_fare)
