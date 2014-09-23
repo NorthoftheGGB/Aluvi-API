@@ -1,0 +1,2 @@
+describe OffersController do
+end
