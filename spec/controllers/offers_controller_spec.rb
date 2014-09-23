@@ -18,4 +18,19 @@ describe OffersController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid parameters' do
+      let!(:offer_params) {{driver_id: offer.driver_id, fare_id: offer.fare_id}}
+      it 'saves the new offer to the database' do
+        expect{
+          post :create, offer: offer_params
+        }.to change(Offer, :count).by(1)
+      end
+      it 'redirects to offers#show' do
+        post :create, offer: offer_params
+        expect(response).to redirect_to offer_path(assigns(:offer))
+      end
+    end
+  end
 end
