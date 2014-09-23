@@ -40,6 +40,13 @@ describe DevicesController do
     end
   end
 
+  describe 'GET #edit' do
+    it 'gets a successful response' do
+      get :edit, id: device
+      expect(response.status).to equal(200)
+    end
+  end
+
   describe 'PATCH #update' do
     before :each do
       @device = FactoryGirl.create(:device, hardware: 'iPhone 5S')
