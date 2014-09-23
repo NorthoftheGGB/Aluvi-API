@@ -18,4 +18,18 @@ describe DriversController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid parameters' do
+      it 'saves the new driver to the database' do
+        expect{
+          post :create, driver: FactoryGirl.attributes_for(:driver)
+        }.to change(Driver, :count).by(1)
+      end
+      it 'redirects to drivers#show' do
+        post :create, driver: FactoryGirl.attributes_for(:driver)
+        expect(response).to redirect_to driver_path(assigns(:driver))
+      end
+    end
+  end
 end
