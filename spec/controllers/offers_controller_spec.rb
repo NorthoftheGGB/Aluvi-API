@@ -47,4 +47,12 @@ describe OffersController do
       expect(response.status).to equal(200)
     end
   end
+
+  describe 'PATCH #update' do
+    context 'with valid parameters' do
+      it 'locates the requested @offer'
+      it "changes @offer's attributes"
+      it "redirects to the updated content"
+    end
+  end
 end
