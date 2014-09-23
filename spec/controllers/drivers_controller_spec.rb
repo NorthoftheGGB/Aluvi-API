@@ -32,4 +32,11 @@ describe DriversController do
       end
     end
   end
+
+  describe 'GET #show' do
+    it 'gets a successful response' do
+      get :show, id: driver
+      expect(response.status).to equal(200)
+    end
+  end
 end
