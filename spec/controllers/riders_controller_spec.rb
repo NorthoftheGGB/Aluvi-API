@@ -1,0 +1,2 @@
+describe RidersController do
+end
