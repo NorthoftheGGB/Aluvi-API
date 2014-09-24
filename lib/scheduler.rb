@@ -293,7 +293,7 @@ module Scheduler
       if !r.trip.unfulfilled?
         r.trip.unfulfilled!
 				r.trip.rides.each do |r| 
-					r.abort! # make sure all lets of this trip for the driver are aborted
+					r.commute_scheduler_failed! # make sure all lets of this trip for the driver are marked as failed
 				end
       end
     end
