@@ -41,21 +41,6 @@ describe OffersController do
     end
   end
 
-  describe 'GET #edit' do
-    it 'gets a successful response' do
-      get :edit, id: offer
-      expect(response.status).to equal(200)
-    end
-  end
-
-  describe 'PATCH #update' do
-    context 'with valid parameters' do
-      it 'locates the requested @offer'
-      it "changes @offer's attributes"
-      it "redirects to the updated content"
-    end
-  end
-
   describe 'DELETE #destroy' do
     before :each do
       @offer = offer
