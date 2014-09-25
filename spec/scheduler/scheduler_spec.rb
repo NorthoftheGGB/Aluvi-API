@@ -4,7 +4,7 @@ describe 'Scheduler' do
 
   before(:all) do
 
-
+	forward_ride.trip_id
     #POINT(-72.9109308480767 41.3187459427293) | POINT(-72.9038633595772 41.3121938789795) | a
     @home1_longitude = -72.9109308480767
     @home1_latitude = 41.3187459427293
@@ -36,7 +36,7 @@ describe 'Scheduler' do
     @work4 = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(@work4_longitude, @work4_latitude)
 
     @home_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days
-    @work_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5, min: 0, sec: 0) + 1.days
+    @work_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5+12, min: 0, sec: 0) + 1.days
   end
 
   before(:each) do

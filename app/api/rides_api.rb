@@ -255,6 +255,7 @@ class RidesAPI< Grape::API
 		end
 		post :driver_cancelled do
 			authenticate!
+			# TODO move this logic to TripController
 			begin
         fare = Fare.find(params[:fare_id])
         if fare.driver.id != current_user.id

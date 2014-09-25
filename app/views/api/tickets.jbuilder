@@ -1,5 +1,6 @@
 json.array! @rides do |ride|
   json.ride_id ride.id
+	json.trip_id ride.trip_id
 
   json.origin_place_name ride.origin_place_name
   unless ride.origin.nil?

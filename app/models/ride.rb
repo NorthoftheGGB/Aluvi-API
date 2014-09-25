@@ -47,10 +47,9 @@ class Ride < ActiveRecord::Base
 			transitions :from => :requested, :to => :scheduled
     end
 
-		# unused - originally for commute driver without riders, changed to commute_scheduler_failed
-    #event :abort do
-    #  transitions :from => :scheduled, :to => :aborted
-    #end
+    event :abort do
+      transitions :from => :scheduled, :to => :aborted
+    end
 
 		event :commute_scheduler_failed, :after => :clear_fare do
 			transitions :from => :requested, :to => :commute_scheduler_failed
