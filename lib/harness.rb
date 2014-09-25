@@ -1,13 +1,13 @@
 module Harness
 
 	def self.schedule_driver
-		driver = Driver.all.first
-		self.schedule_default(driver.as_rider, true);
+		driver = Driver.where(email: 'v3@vocotransportation.com')
+		self.schedule_default(driver.as_rider, true)
 	end
 
 	def self.schedule_rider
-		rider = Rider.all.first
-		self.schedule_default(rider, true);
+		rider = Rider.where(email: 'v1@vocotransportation.com')
+		self.schedule_default(rider, true)
 	end
 
 	def self.schedule_driver_and_rider
