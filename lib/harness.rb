@@ -1,12 +1,12 @@
 module Harness
 
 	def self.schedule_driver
-		driver = Driver.where(email: 'v3@vocotransportation.com')
+		driver = Driver.where(email: 'v3@vocotransportation.com').first
 		self.schedule_default(driver.as_rider, true)
 	end
 
 	def self.schedule_rider
-		rider = Rider.where(email: 'v1@vocotransportation.com')
+		rider = Rider.where(email: 'v1@vocotransportation.com').first
 		self.schedule_default(rider, true)
 	end
 
