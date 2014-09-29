@@ -49,6 +49,7 @@ describe PayoutsController do
 
   describe 'PATCH #update' do
     before(:each) {@payout = FactoryGirl.create(:payout)}
+
     context 'with valid params' do
       it 'locates the requested payout' do
         patch :update, id: @payout, payout: FactoryGirl.attributes_for(:payout)
@@ -62,6 +63,20 @@ describe PayoutsController do
       it 'redirects to payout#show' do
         patch :update, id: @payout, payout: FactoryGirl.attributes_for(:payout)
         expect(response).to redirect_to @payout
+      end
+    end
+
+    describe 'DELETE #destroy' do
+      let!(:payout) {FactoryGirl.create(:payout)}
+
+      it 'deletes the payout from the database' do
+        expect{
+          delete :destroy, id: payout
+          }.to change(Payout, :count).by(-1)
+      end
+      it 'redirects back to payouts#index' do
+        delete :destroy, id: payout
+        expect(response).to redirect_to payouts_path
       end
     end
   end
