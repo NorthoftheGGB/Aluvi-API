@@ -32,4 +32,11 @@ describe RidesController do
       end
     end
   end
+
+  describe 'GET #show' do
+    it 'gets a successful response' do
+      get :show, id: ride
+      expect(response.status).to be(200)
+    end
+  end
 end
