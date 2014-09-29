@@ -18,4 +18,20 @@ describe PaymentsController do
       expect(response.status).to eq(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid parameters' do
+      it 'saves a new payment to the database' do
+        expect{
+          post :create, payment: FactoryGirl.attributes_for(:payment)
+        }.to change(Payment, :count).by(1)
+      end
+      it 'redirects to payments#show' do
+        post :create, payment: FactoryGirl.attributes_for(:payment)
+        expect(response).to redirect_to payment_path(assigns(:payment))
+      end
+    end
+  end
+
+
 end
