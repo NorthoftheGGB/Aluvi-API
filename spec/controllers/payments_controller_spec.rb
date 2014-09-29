@@ -47,4 +47,28 @@ describe PaymentsController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before(:each) do
+      @payment = FactoryGirl.create(:payment)
+    end
+    context 'with valid params' do
+      it 'locates the requested @payment' do
+        patch :update, id: @payment,
+              payment: FactoryGirl.attributes_for(:payment)
+        expect(assigns(:payment)).to eq(@payment)
+      end
+      it "changes @payment's attributes" do
+        patch :update, id: @payment,
+              payment: FactoryGirl.attributes_for(:payment, amount_cents: 500)
+        @payment.reload
+        expect(@payment.amount_cents).to eq(500)
+      end
+      it 'redirects to the updated content' do
+        patch :update, id: @payment,
+              payment: FactoryGirl.attributes_for(:payment)
+        expect(response).to redirect_to @payment
+      end
+    end
+  end
 end
