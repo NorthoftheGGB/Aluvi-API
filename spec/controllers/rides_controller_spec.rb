@@ -39,4 +39,11 @@ describe RidesController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'GET #edit' do
+    it 'gets a successful response' do
+      get :edit, id: ride
+      expect(response.status).to be(200)
+    end
+  end
 end
