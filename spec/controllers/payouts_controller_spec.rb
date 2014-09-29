@@ -18,4 +18,18 @@ describe PayoutsController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid params' do
+      it 'creates a new payout to the database' do
+        expect{
+          post :create, payout: FactoryGirl.attributes_for(:payout)
+        }.to change(Payout, :count).by(1)
+      end
+      it 'redirects to the payouts#show' do
+        post :create, payout: FactoryGirl.attributes_for(:payout)
+        expect(response).to redirect_to payout_path(assigns(:payout))
+      end
+    end
+  end
 end
