@@ -71,4 +71,20 @@ describe PaymentsController do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    before(:each) do
+      @payment = FactoryGirl.create(:payment)
+    end
+
+    it 'deletes the payment' do
+      expect{
+        delete :destroy, id: @payment
+      }.to change(Payment, :count).by(-1)
+    end
+    it 'redirects to payments#index' do
+      delete :destroy, id: @payment
+      expect(response).to redirect_to payments_path
+    end
+  end
 end
