@@ -11,4 +11,11 @@ describe RidesController do
       expect(assigns(:rides)).to_not be(nil)
     end
   end
+
+  describe 'GET #new' do
+    it 'gets a successful response' do
+      get :new
+      expect(response.status).to be(200)
+    end
+  end
 end
