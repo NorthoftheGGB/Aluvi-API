@@ -1,0 +1,2 @@
+describe PayoutsController do
+end
