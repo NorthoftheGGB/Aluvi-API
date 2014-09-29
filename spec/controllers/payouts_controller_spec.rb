@@ -46,4 +46,23 @@ describe PayoutsController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before(:each) {@payout = FactoryGirl.create(:payout)}
+    context 'with valid params' do
+      it 'locates the requested payout' do
+        patch :update, id: @payout, payout: FactoryGirl.attributes_for(:payout)
+        expect(assigns(:payout)).to eq(@payout)
+      end
+      it "updates @payout's attributes" do
+        patch :update, id: @payout, payout: FactoryGirl.attributes_for(:payout, amount_cents: 300)
+        @payout.reload
+        expect(@payout.amount_cents).to be(300)
+      end
+      it 'redirects to payout#show' do
+        patch :update, id: @payout, payout: FactoryGirl.attributes_for(:payout)
+        expect(response).to redirect_to @payout
+      end
+    end
+  end
 end
