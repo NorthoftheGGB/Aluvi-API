@@ -39,4 +39,11 @@ describe PayoutsController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'GET #edit' do
+    it 'returns a successful response' do
+      get :edit, id: payout
+      expect(response.status).to be(200)
+    end
+  end
 end
