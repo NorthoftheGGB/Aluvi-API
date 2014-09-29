@@ -46,4 +46,24 @@ describe RidesController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'PATCH #update' do
+    before(:each) {@ride = FactoryGirl.create(:on_demand_ride)}
+    context 'with valid params' do
+      it 'locates the requested @ride' do
+        patch :update, id: @ride, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        expect(assigns(:ride)).to eq(@ride)
+      end
+      it "changes the ride's attributes" do
+        patch :update, id: @ride,
+              ride: FactoryGirl.attributes_for(:on_demand_ride, destination_place_name: "Empire State Building")
+        @ride.reload
+        expect(@ride.destination_place_name).to eq("Empire State Building")
+      end
+      it 'redirects to ride#show' do
+        patch :update, id: @ride, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        expect(response).to redirect_to @ride
+      end
+    end
+  end
 end
