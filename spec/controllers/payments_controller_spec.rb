@@ -1,0 +1,2 @@
+describe PaymentsController do
+end
