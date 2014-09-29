@@ -18,4 +18,18 @@ describe RidesController do
       expect(response.status).to be(200)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid params' do
+      it 'creates a new ride' do
+        expect{
+          post :create, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        }.to change(Ride, :count).by(1)
+      end
+      it 'redirects to rides#show' do
+        post :create, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        expect(response).to redirect_to ride_path(assigns(:ride))
+      end
+    end
+  end
 end
