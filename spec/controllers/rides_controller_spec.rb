@@ -66,4 +66,17 @@ describe RidesController do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    before(:each) {@ride = FactoryGirl.create(:ride)}
+    it 'deletes the ride from the database' do
+      expect{
+        delete :destroy, id: @ride
+      }.to change(Ride, :count).by(-1)
+    end
+    it 'redirects to rides#index' do
+      delete :destroy, id: @ride
+      expect(response).to redirect_to rides_path
+    end
+  end
 end
