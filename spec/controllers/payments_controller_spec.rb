@@ -31,7 +31,13 @@ describe PaymentsController do
         expect(response).to redirect_to payment_path(assigns(:payment))
       end
     end
+
   end
 
-
+  describe 'GET #show' do
+    it 'gets a successful response' do
+      get :show, id: payment
+      expect(response.status).to be(200)
+    end
+  end
 end
