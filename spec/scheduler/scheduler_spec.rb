@@ -43,12 +43,6 @@ describe Scheduler do
   let(:rider2) {FactoryGirl.create(:generated_rider)}
   let(:rider3) {FactoryGirl.create(:generated_rider)}
 
-  before(:each) do
-    Ride.delete_all
-    Trip.delete_all
-    Fare.delete_all
-  end
-
   context 'for one driver and one rider' do
     it 'schedules one-way (forward) commuter rides for same pickup times' do
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
