@@ -24,6 +24,23 @@ RSpec.configure do |config|
 
 	config.include Rack::Test::Methods
 
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with :truncation, {:except => %w[spatial_ref_sys]}
+  end
+
+  config.before(:each, js: true) do
+    DatabaseCleaner.strategy = :truncation, {:except => %w[spatial_ref_sys]}
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin

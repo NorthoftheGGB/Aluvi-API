@@ -1,5 +1,5 @@
 development:
-  username: deepwinter1
+  username: apprentice
   adapter: postgis
   host: localhost
   database: voco
@@ -19,7 +19,7 @@ development_mysql:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  username: deepwinter1
+  username: apprentice
   adapter: postgis
   host: localhost
   database: voco_test

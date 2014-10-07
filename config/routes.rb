@@ -2,7 +2,7 @@ Voco::Application.routes.draw do
 
 	mount VocoAPI => '/api/'
 
-  resources :offers
+  resources :offers, except: [:update, :edit]
   resources :rider_fares
 
   resources :rides
