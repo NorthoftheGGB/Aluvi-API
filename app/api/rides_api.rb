@@ -130,6 +130,12 @@ class RidesAPI< Grape::API
 			end
 		end
 
+		desc "Cancel and entire trip"
+		delete 'trips/:trip_id' do
+			authenticate!
+			trip = Trip.find(params[:trip_id])
+		end
+
 		desc "Get list of offered rides"
 		get 'offers', jbuilder: 'offer' do
 			authenticate!
