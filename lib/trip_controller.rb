@@ -195,14 +195,29 @@ class TripController
   end
 
 	def self.cancel_trip trip
-		trip.rides.each do |r|
-			if r.requested?
-				r.cancel!
-			elsif r.scheduled?
-				r.abort!
+
+		ActiveRecord::Base.transaction do
+			trip.aborted!
+			trip.rides.each do |r|
+				self.cancel_request r
 			end
 		end
-		trip.aborted!
+	end
+
+	def self.cancel_request ride
+
+		if ride.fare.nil?
+			# the other control paths should really never be reached, they are here to smooth out inconsitent states in the mobile segment
+			ride.cancel!
+		elsif ride.fare.scheduled?
+			ride.cancel!
+			ride.fare.rider_cancelled! ride.rider
+		else
+			# if ride found has not yet been delivered to phone, cancel fare instead of ride anyway
+			ride.cancel!
+			ride.fare.retracted_by_rider! self.rider
+		end
+
 	end
 
 

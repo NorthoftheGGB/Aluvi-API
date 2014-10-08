@@ -17,7 +17,9 @@ FactoryGirl.define do
 
 		factory :commuter_ride do
 
-			request_type 'on_demand'
+			request_type 'commuter_ride'
+      state 'requested'
+
 			factory :commuter_ride_inbound do
 				direction 'a'
 			end

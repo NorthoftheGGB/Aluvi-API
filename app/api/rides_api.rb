@@ -97,22 +97,10 @@ class RidesAPI< Grape::API
 			authenticate!
 			begin
 				ride = Ride.find(params[:ride_id])
-        Rails.logger.debug('hey')
 				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
-        end
-
-        if ride.fare.nil?
-          ride.cancel!
-        elsif ride.fare.scheduled?
-          ride.cancel!
-          ride.fare.rider_cancelled! ride.rider
-        else
-          #if ride found has not yet been delivered to phone, cancel fare instead of ride anyway
-          ride.cancel!
-          ride.fare.retracted_by_rider! self.rider
-        end
-        Rails.logger.debug 'ok'
+				end
+				TripController.cancel_request ride
 				ok
 			rescue ActiveRecord::RecordNotFound
 				ok
@@ -133,8 +121,8 @@ class RidesAPI< Grape::API
 		desc "Cancel an entire trip"
 		delete 'trips/:trip_id' do
 			authenticate!
-			trip = Trip.find(params[:trip_id])
 			begin
+				trip = Trip.find(params[:trip_id])
 				TripController.cancel_trip(trip)
 				ok
 			rescue
@@ -307,6 +295,7 @@ class RidesAPI< Grape::API
 		end
 		post :rider_cancelled do
 			authenticate!
+
 			# TODO rider should only be able to cancel their own ride
 			begin
 				fare = Fare.find(params[:fare_id])
