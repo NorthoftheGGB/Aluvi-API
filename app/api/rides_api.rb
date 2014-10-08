@@ -130,10 +130,19 @@ class RidesAPI< Grape::API
 			end
 		end
 
-		desc "Cancel and entire trip"
+		desc "Cancel an entire trip"
 		delete 'trips/:trip_id' do
 			authenticate!
 			trip = Trip.find(params[:trip_id])
+			begin
+				TripController.cancel_trip(trip)
+				ok
+			rescue
+        Rails.logger.error $!
+				Rails.logger.error $!.backtrace.join("\n")
+				error! $!.message, 400, 'X-Error-Detail' => $!.message
+			end
+				
 		end
 
 		desc "Get list of offered rides"

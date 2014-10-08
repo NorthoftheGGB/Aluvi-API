@@ -194,6 +194,17 @@ class TripController
 
   end
 
+	def self.cancel_trip trip
+		trip.rides.each do |r|
+			if r.requested?
+				r.cancel!
+			elsif r.scheduled?
+				r.abort!
+			end
+		end
+		trip.aborted!
+	end
+
 
   # Commuter
 

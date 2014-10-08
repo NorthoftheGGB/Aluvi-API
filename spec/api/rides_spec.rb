@@ -117,4 +117,12 @@ describe RidesAPI do
     end
   end
 
+	describe "DELETE /api/rides/trips/cancel/:id" do
+		it "cancels an entire trip" do
+			@trip = FactoryGirl.create(:trip)
+			delete "/api/rides/trips/" + @trip.id.to_s, {}, {'HTTP_AUTHORIZATION' => encode_credentials(@trip.rides[0].rider.token)}
+			expect(response.status).to eq(200)
+		end
+	end
+
 end

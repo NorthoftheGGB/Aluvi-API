@@ -9,13 +9,21 @@ FactoryGirl.define do
     destination_place_name 'My Work'
     state 'created'
 
+
 		factory :on_demand_ride do
 			request_type 'on_demand'
       state 'requested'
     end
 
-    factory :commuter_ride do
-      request_type 'on_demand'
+		factory :commuter_ride do
+
+			request_type 'on_demand'
+			factory :commuter_ride_inbound do
+				direction 'a'
+			end
+			factory :commuter_ride_outbound do
+				direction 'b'
+			end
     end
 	end
 end
