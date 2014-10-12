@@ -26,6 +26,10 @@ class Trip < ActiveRecord::Base
       transitions :from => :requested, :to => :unfulfilled
     end
 
+		event :aborted do
+			transitions :from => :requested, :to => :aborted
+		end
+
   end
 
 end

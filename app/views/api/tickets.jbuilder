@@ -1,5 +1,6 @@
 json.array! @rides do |ride|
   json.ride_id ride.id
+	json.trip_id ride.trip_id
 
   json.origin_place_name ride.origin_place_name
   unless ride.origin.nil?
@@ -30,6 +31,7 @@ json.array! @rides do |ride|
 	else
 		json.pickup_time ride.pickup_time
 	end
+	json.direction ride.direction
 	if ride.direction == 'a'
 		json.origin_short_name 'Home'
 		json.destination_short_name 'Work'

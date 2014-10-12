@@ -54,6 +54,7 @@ class Ride < ActiveRecord::Base
 		event :commute_scheduler_failed, :after => :clear_fare do
 			transitions :from => :requested, :to => :commute_scheduler_failed
 			transitions :from => :pending_return, :to => :commute_scheduler_failed
+      transitions :from => :scheduled, :to => :commute_scheduler_failed
 		end
 
 	end
