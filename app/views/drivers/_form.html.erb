@@ -45,14 +45,8 @@
   </div>
 
 	<div class="field">
-		<%= f.label "Currently Driving Car:" %>
-		<% unless @driver.car.nil? %>
-			<%= link_to @driver.car.summary, car_path(@driver.car) %>
-		<% else %>
-			No Car Assigned
-		<% end %>
-        <%= f.select :car, @driver.cars, :include_blank => true %>
-    </div>
+
+  </div>
 
 	<div class="field">
 		<%= f.label :drivers_license %><br />
