@@ -56,8 +56,8 @@ CREATE TABLE cards (
     funding character varying(255),
     exp_month character varying(255),
     exp_year character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -92,13 +92,14 @@ CREATE TABLE cars (
     license_plate character varying(255),
     state character varying(255),
     location geography(Point,4326),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     year character varying(255),
     car_photo_file_name character varying(255),
     car_photo_content_type character varying(255),
     car_photo_file_size integer,
-    car_photo_updated_at timestamp without time zone
+    car_photo_updated_at timestamp without time zone,
+    color character varying(255)
 );
 
 
@@ -133,8 +134,8 @@ CREATE TABLE devices (
     platform character varying(255),
     push_token character varying(255),
     uuid character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -167,8 +168,8 @@ CREATE TABLE driver_location_histories (
     fare_id integer,
     datetime timestamp without time zone,
     location geography(Point,4326),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -207,8 +208,8 @@ CREATE TABLE fares (
     meeting_point_place_name character varying(255),
     drop_off_point geography(Point,4326),
     drop_off_point_place_name character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     pickup_time timestamp without time zone,
     fixed_earnings integer DEFAULT 0
 );
@@ -241,8 +242,8 @@ CREATE TABLE offers (
     id integer NOT NULL,
     driver_id integer,
     fare_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     state character varying(255)
 );
 
@@ -281,8 +282,8 @@ CREATE TABLE payments (
     stripe_charge_status character varying(255),
     initiation character varying(255),
     captured_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     driver_earnings_cents integer,
     ride_id integer,
     paid boolean
@@ -317,8 +318,8 @@ CREATE TABLE payouts (
     driver_id integer,
     date timestamp without time zone,
     amount_cents integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     stripe_transfer_id character varying(255)
 );
 
@@ -357,8 +358,8 @@ CREATE TABLE rides (
     origin_place_name character varying(255),
     destination geography(Point,4326),
     destination_place_name character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     pickup_time timestamp with time zone,
     driving boolean,
     trip_id integer,
@@ -387,20 +388,6 @@ ALTER SEQUENCE rides_id_seq OWNED BY rides.id;
 
 
 --
--- Name: rides_summary_view; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW rides_summary_view AS
- SELECT rides.trip_id,
-    rides.direction,
-    rides.state,
-    rides.pickup_time,
-    rides.driving,
-    timezone('PDT'::text, rides.pickup_time) AS timezone
-   FROM rides;
-
-
---
 -- Name: rpush_apps; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -411,8 +398,8 @@ CREATE TABLE rpush_apps (
     certificate text,
     password character varying(255),
     connections integer DEFAULT 1 NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     type character varying(255) NOT NULL,
     auth_key character varying(255),
     client_id character varying(255),
@@ -449,8 +436,8 @@ CREATE TABLE rpush_feedback (
     id integer NOT NULL,
     device_token character varying(64) NOT NULL,
     failed_at timestamp without time zone NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     app character varying(255)
 );
 
@@ -493,8 +480,8 @@ CREATE TABLE rpush_notifications (
     error_code integer,
     error_description text,
     deliver_after timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     alert_is_json boolean DEFAULT false,
     type character varying(255) NOT NULL,
     collapse_key character varying(255),
@@ -583,8 +570,8 @@ CREATE TABLE users (
     commuter_balance_cents integer,
     commuter_refill_amount_cents integer,
     location geography(Point,4326),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     rider_location geometry(Point,4326),
     phone character varying(255),
     password character varying(255),
@@ -626,7 +613,8 @@ CREATE TABLE users (
     recipient_card_brand character varying(255),
     recipient_card_exp_month character varying(255),
     recipient_card_month character varying(255),
-    recipient_card_last4 character varying(255)
+    recipient_card_last4 character varying(255),
+    zip_code character varying(255)
 );
 
 
@@ -1074,4 +1062,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140830020701');
 INSERT INTO schema_migrations (version) VALUES ('20140905234323');
 
 INSERT INTO schema_migrations (version) VALUES ('20140906195950');
+
+INSERT INTO schema_migrations (version) VALUES ('20141012232135');
+
+INSERT INTO schema_migrations (version) VALUES ('20141012232655');
 
