@@ -32,8 +32,8 @@
     <%= f.text_field :email %>
   </div>
   <div class="field">
-    <%= label_tag :zipcode %>  (Note: no zip field in database, so this will not store currently)<br />
-    <%= text_field_tag :zipcode %>
+    <%= f.label :zip_code %><br />
+    <%= f.text_field :zip_code %>
   </div>
   <div class="field">
     <%= f.label :password %><br />
