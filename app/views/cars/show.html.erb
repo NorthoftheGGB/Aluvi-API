@@ -20,7 +20,17 @@
   <%= @car.state %>
 </p>
 
-<p>Car Photo: 
+<p>
+  <b>Color:</b>
+  <%= @car.color %>
+</p>
+
+<p>
+  <b>Year:</b>
+  <%= @car.year %>
+</p>
+
+<p>Car Photo:
 	<%= link_to image_tag(@car.car_photo.url(:thumb)), @car.car_photo.url %>
 </p>
 
