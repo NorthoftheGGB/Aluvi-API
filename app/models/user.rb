@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 	has_many :devices
 	# has_one :company, :foreign_key => :user_id
+  attr_accessible :driver_state, :rider_state
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :stripe_customer_id, :stripe_recipient_id, :bank_account_name, :salt, :token, :phone, :password, :email, :driver_state, :rider_state, :webtoken, :demo, :recipient_card_last_four, :recipient_card_brand, :recipient_card_exp_year, :recipient_card_exp_month
 
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
@@ -73,7 +74,7 @@ class User < ActiveRecord::Base
 
 
 
-	
+
 	# access
 	def involved_in_fare fare
 

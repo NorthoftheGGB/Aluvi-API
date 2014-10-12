@@ -43,8 +43,12 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
 
     respond_to do |format|
-      if @user.save
+      case @user.save
+      when true && @user.driver_state=="uninterested"
         format.html { redirect_to @user, notice: 'User was successfully created.' }
+        format.json { render json: @user, status: :created, location: @user }
+      when true && @user.driver_state=="interested"
+        format.html { redirect_to edit_driver_path(@user.as_driver), notice: 'User was successfully created.' }
         format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }
@@ -85,7 +89,7 @@ class UsersController < ApplicationController
     end
   end
 
-	def csv_import    
+	def csv_import
 		file_data = params[:file].read
 		csv_rows  = CSV.parse(file_data, :headers => true)
 
