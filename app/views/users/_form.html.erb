@@ -23,17 +23,55 @@
     <%= f.label :last_name %><br />
     <%= f.text_field :last_name %>
   </div>
-
-	<h2>Commuter Card</h2>
   <div class="field">
-    <%= f.label :commuter_balance_cents %><br />
+    <%= f.label :phone %><br />
+    <%= f.text_field :phone %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= label_tag :zipcode %>  (Note: no zip field in database, so this will not store currently)<br />
+    <%= text_field_tag :zipcode %>
+  </div>
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.password_field :password %>
+  </div>
+  <div class="field">
+    <%= f.label "Rider State" %><br />
+    <%= f.select :rider_state, ['no state', 'activate'] %>
+  </div>
+  <div class="field">
+    <%= f.label "Interest in being a driver" %><br />
+    <%= f.select :driver_state, %w[uninterested interested] %>
+  </div>
+
+  <h2>Commuter Card</h2>
+  <h4>the following fields submit to database:</h4>
+  <div class="field">
+    <%= f.label :commuter_balance_cents %>
     <%= f.number_field :commuter_balance_cents %>
   </div>
   <div class="field">
-    <%= f.label :commuter_refill_amount_cents %><br />
+    <%= f.label :commuter_refill_amount_cents %>
     <%= f.number_field :commuter_refill_amount_cents %>
   </div>
-
+  <h4>the following fields do not submit to database:</h4>
+  <div class="field">
+    <%= label_tag "Credit Card Number" %>
+    <%= text_field_tag "credit_card" %>
+  </div>
+  <div class="field">
+    <%= label_tag "Expiration Date" %>
+    <%= select_month Time.now %>
+    <%= select_year Time.now %>
+  </div>
+  <div class="field">
+    <%= label_tag "CVC_code" %>
+    <%= text_field_tag "cvc_code" %>
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>
