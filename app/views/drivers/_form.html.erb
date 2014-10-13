@@ -35,25 +35,19 @@
 
   <div class="field">
     <%= f.label :demo %><br />
-		<%= f.select :demo, [ true, false], :include_blank => true %>
+    <%= f.select :demo, [ true, false], :include_blank => true %>
   </div>
-	<h2>Driver Role</h2>
+  <h2>Driver Role</h2>
   <div class="field">
     <%= f.label "Driver State" %><br />
     <%= f.label @driver.state %><br />
-		<%= f.select :driver_state_event, @driver.aasm.events, :include_blank => true %>
-  </div>
-
-	<div class="field">
-
+    <%= f.select :driver_state_event, @driver.aasm.events, :include_blank => true %>
   </div>
 
 	<div class="field">
 		<%= f.label :drivers_license %><br />
 		<%= f.file_field :drivers_license %>
-		<% unless @driver.nil? %>
-			<%= image_tag @driver.drivers_license.url(:thumb) %>
-		<% end %>
+		<%= image_tag @driver.drivers_license.url(:thumb) %>
 	</div>
 
 	<div class="field">
@@ -74,7 +68,24 @@
 		<%= image_tag @driver.national_database_check.url(:thumb) %>
 	</div>
 
-  <div class="actions">
+
+  <h2>Driver's Debit Card</h2>
+  <h4>the following fields do not submit to database:</h4>
+  <div class="field">
+    <%= label_tag "Debit Card Number" %>
+    <%= text_field_tag "credit_card" %>
+  </div>
+  <div class="field">
+    <%= label_tag "Expiration Date" %>
+    <%= select_month Time.now %>
+    <%= select_year Time.now %>
+  </div>
+  <div class="field">
+    <%= label_tag "CVC_code" %>
+    <%= text_field_tag "cvc_code" %>
+  </div>
+
+ <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
