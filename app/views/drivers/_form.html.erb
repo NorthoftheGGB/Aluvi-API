@@ -68,6 +68,37 @@
 		<%= image_tag @driver.national_database_check.url(:thumb) %>
 	</div>
 
+  <h2>Driver's car</h2>
+    <%= fields_for :cars do |car_form| %>
+      <div class="field">
+        <%= car_form.label :make %><br />
+        <%= car_form.text_field :make %>
+      </div>
+      <div class="field">
+        <%= car_form.label :model %><br />
+        <%= car_form.text_field :model %>
+      </div>
+      <div class="field">
+        <%= car_form.label :year %>
+        <%= select_year(Date.today.year, start_year: (Date.today.year-20), end_year: (Date.today.year+2), prefix: :cars, max_years_allowed: 24) %>
+      </div>
+      <div class="field">
+        <%= car_form.label :license_plate %><br />
+        <%= car_form.text_field :license_plate %>
+      </div>
+      <div class="field">
+        <%= car_form.label :state %><br />
+        <%= car_form.text_field :state %>
+      </div>
+      <div class="field">
+        <%= car_form.label :color %><br />
+        <%= car_form.text_field :color %>
+      </div>
+      <div class="field">
+        <%= car_form.label :car_photo %><br />
+        <%= car_form.file_field :car_photo %>
+      </div>
+  <% end %>
 
   <h2>Driver's Debit Card</h2>
   <h4>the following fields do not submit to database:</h4>

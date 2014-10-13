@@ -48,6 +48,7 @@ class DriversController < ApplicationController
   # GET /drivers/1/edit
   def edit
     @driver = Driver.find(params[:id])
+    @driver.cars.build
   end
 
   # POST /drivers
@@ -70,10 +71,9 @@ class DriversController < ApplicationController
   # PUT /drivers/1.json
   def update
 
-
 		password = params[:driver][:password]
 		if password.nil? || password == ''
-			params[:driver].delete('password')	
+			params[:driver].delete('password')
 		end
 
     @driver = Driver.find(params[:id])
@@ -92,10 +92,8 @@ class DriversController < ApplicationController
 			@driver.save
 		end
 
-
-		if params[:driver][:car] == ""
-			#@driver.delete('car')
-		end
+    @car = @driver.cars.new(params[:cars])
+    @car.save
 
     respond_to do |format|
       if @driver.update_attributes(params[:driver])
@@ -120,7 +118,7 @@ class DriversController < ApplicationController
     end
   end
 
-	def csv_import    
+	def csv_import
 		file_data = params[:file].read
 		csv_rows  = CSV.parse(file_data, :headers => true)
 
