@@ -8,6 +8,7 @@ FactoryGirl.define do
     token 'asdfasdf'
     webtoken '2309u09fffsjdf0'
     driver_state 'uninterested'
+    zip_code '20852'
 
     factory :rider_with_fares do
       after(:create) do |rider|
