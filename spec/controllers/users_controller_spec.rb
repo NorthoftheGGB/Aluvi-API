@@ -41,5 +41,10 @@ describe UsersController do
     end
   end
 
-
+  describe 'GET #show' do
+    it 'returns a successful response' do
+      get :show, id: user
+      expect(response.status).to be(200)
+    end
+  end
 end
