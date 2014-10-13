@@ -11,4 +11,11 @@ describe UsersController do
       expect(assigns(:users)).to_not be(nil)
     end
   end
+
+  describe 'GET #new' do
+    it 'gets a successful response' do
+      get :new
+      expect(response.status).to eq(200)
+    end
+  end
 end
