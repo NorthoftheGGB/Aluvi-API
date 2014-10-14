@@ -38,9 +38,15 @@ describe UsersAPI do
 			expect(response.status).to eq(201)
 		end
 
-		it "fails" do
+		it "returns forbidden" do
       @rider = FactoryGirl.create(:rider)
       post "/api/users/login", :email => @rider.email, :password => 'snailsandthings'
+			Rails.logger.info response.status.to_s + ':' + response.body
+			expect(response.status).to eq(403)
+		end
+
+		it "returns not found" do
+      post "/api/users/login", :email => "asdflkjasldfjkaslxdfjaxlsdkjf@you.com", :password => 'snailsandthings'
 			Rails.logger.info response.status.to_s + ':' + response.body
 			expect(response.status).to eq(404)
 		end

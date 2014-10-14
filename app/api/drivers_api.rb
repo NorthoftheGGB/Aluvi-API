@@ -24,9 +24,6 @@ class DriversAPI < Grape::API
 		desc "Register Driver"
 		params do 
 			requires :drivers_license_number, type: String
-			requires :bank_account_name, type: String
-			requires :bank_account_number, type: String, regexp: /^[0-9]+$/
-			requires :bank_account_routing, type: String, regexp: /^[0-9]+$/
 			requires :car_brand, type: String
 			requires :car_model, type: String
 			requires :car_year, type: String #, regexp: /^[0-9][0-9][0-9][0-9]$/
@@ -36,41 +33,26 @@ class DriversAPI < Grape::API
 		post "driver_registration" do
 			authenticate!
 			begin
+				driver = Driver.unscoped.find(current_user.id)
+					ActiveRecord::Base.transaction do
+					driver.interested
+					driver.approve
 
-				ActiveRecord::Base.transaction do
 					car = Car.new
 					car.make = params[:car_brand]
 					car.model = params[:car_model]
 					car.year = params[:car_year]
 					car.license_plate = params[:car_license_plate]
 					car.save
-					driver = Driver.find(current_user.id)
 					driver.cars << car
 					driver.car = car	
 					driver.drivers_license_number = params[:drivers_license_number]
 					# need to handle referral codes	
 
-					# directly set up Stripe recipient, don't store banking information on our server
-					# TODO: Refactor, this should be moved to its own class and happen via a delayed job
-					recipient = Stripe::Recipient.create(
-						:name => driver.full_name,
-						:type => 'individual',
-						:bank_account => {
-					  	:country => 'US',
-					  	:routing_number => params[:bank_account_routing],
-					  	:account_number => params[:bank_account_number]
-					  },
-						:email => driver.email
-					)
-
-					if recipient.nil?
-						raise "Stripe recipient not created"
-					end
-					driver.stripe_recipient_id = recipient.id
-					driver.bank_account_name = recipient.active_account.bank_name
-
 					driver.save
-					driver.register!
+					driver.register
+					driver.activate
+					driver.save
 					ok
 				end
 
@@ -78,10 +60,15 @@ class DriversAPI < Grape::API
 				client_error $!.message
 
 			rescue AASM::InvalidTransition
-				client_error $!.message
+				if driver.active?
+					ok
+				else
+					client_error $!.message
+				end
 
 			rescue
 				Rails.logger.debug "driver registration failure"
+				Rails.logger.error $!.message
         Rails.logger.error $!.backtrace.join("\n")
 				client_error $!
 			end

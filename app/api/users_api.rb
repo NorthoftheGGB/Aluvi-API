@@ -19,22 +19,16 @@ class UsersAPI < Grape::API
     end
     post do
 
-			check = User.where( email: params['email'] ).first
-			unless check.nil?
-				raise "Email already registered with an account"
+			user = User.where(:email => params[:email] ).first
+			unless user.nil?
+				error! 'Already Registered', 200, 'X-Error-Detail' => 'Already Registered for Riding'
+				return
 			end
 
       begin
         ActiveRecord::Base.transaction do
 
-          user = User.user_with_phone params[:phone]
-          unless user.nil?
-            error! 'Already Registered', 403, 'X-Error-Detail' => 'Already Registered for Riding'
-            return
-          end
-          Rails.logger.info 'hioho'
-
-          user = User.new
+                  user = User.new
           user.first_name = params[:first_name]
           user.last_name = params[:last_name]
           user.phone = params[:phone]
@@ -43,13 +37,9 @@ class UsersAPI < Grape::API
           user.referral_code = params[:referral_code]
           user.setup
           user.save
-          Rails.logger.info '2222222222'
 
           rider = Rider.find(user.id)
-          Rails.logger.info '2222222222'
-
           rider.activate!
-          Rails.logger.info '33333333333333'
 
           # directly set up Stripe customer
           # TODO: Refactor, this should be moved to it's own class and happen via a delayed job
@@ -105,11 +95,11 @@ class UsersAPI < Grape::API
       begin
         user = User.where(:email => params['email']).first
         if user.nil?
-          raise "User not found"
+          raise ApiExceptions::UserNotFoundException
         end
         if user.password != user.hash_password(params['password'])
           Rails.logger.info user.hash_password(params['password'])
-          raise "Wrong password"
+          raise ApiExceptions::BadPasswordException
         end
         token = user.generate_token!
         user.devices.each do |device|
@@ -121,9 +111,12 @@ class UsersAPI < Grape::API
         response["rider_state"] = user.rider_state
         response["driver_state"] = user.driver_state
         response
-      rescue
+      rescue ApiExceptions::UserNotFoundException
         Rails.logger.info $!.message
-        error! 'Invalid Login', 404, 'X-Error-Detail' => 'Invalid Login'
+        error! ApiExceptions::UserNotFoundException.message, 404, 'X-Error-Detail' => ApiExceptions::UserNotFoundException.message
+      rescue ApiExceptions::BadPasswordException
+        Rails.logger.info $!.message
+        error! ApiExceptions::BadPasswordException.message, 403, 'X-Error-Detail' => ApiExceptions::BadPasswordException.message
       end
     end
 
@@ -221,20 +214,8 @@ class UsersAPI < Grape::API
 
       unless params[:default_recipient_debit_card_token].nil?
         # TODO handle in background, delayed job
-
-				driver = current_user.as_driver
-        recipient = Stripe::Recipient.retrieve(driver.stripe_recipient_id)
-				recipient.card = params[:default_recipient_debit_card_token]
-				recipient.save
-
-        default_debit_card = recipient.cards.all().data[0]
-				driver.recipient_card_brand = default_debit_card.brand	
-				driver.recipient_card_exp_month = default_debit_card.exp_month
-				#driver.recipient_card_exp_year = default_debit_card.exp_year
-				driver.recipient_card_last4 = default_debit_card.last4
-				driver.save
+				StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
       end
-
 
       fields = ['first_name', 'last_name', 'email', 'phone', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|

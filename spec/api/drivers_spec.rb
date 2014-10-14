@@ -10,9 +10,6 @@ describe DriversAPI do
 			post "/api/drivers/driver_registration",
 				{ 
 				:drivers_license_number => "KLSJLSKDF", 
-				:bank_account_name => "STRIPE TEST BANK", 
-				:bank_account_number => "000123456789", 
-				:bank_account_routing => "110000000", 
 				:car_brand => "Toyota", 
 				:car_model => "Pickup Truck", 
 				:car_year => "1985", 

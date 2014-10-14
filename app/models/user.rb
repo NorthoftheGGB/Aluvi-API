@@ -23,11 +23,6 @@ class User < ActiveRecord::Base
 		end
 	end
 
-
-	def self.user_with_phone(phone)
-		user = User.where( :phone => phone).first
-  end
-
   def setup
     # need to set initial states when making users
     write_attribute("driver_state", "uninterested")
