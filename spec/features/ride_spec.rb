@@ -1,0 +1,3 @@
+feature 'Rides' do
+
+end
