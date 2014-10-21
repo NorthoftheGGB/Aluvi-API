@@ -1,5 +1,3 @@
-require 'rspec'
-
 describe Scheduler do
   # set constants used by spherical factories
   #POINT(-72.9109308480767 41.3187459427293) | POINT(-72.9038633595772 41.3121938789795) | a
