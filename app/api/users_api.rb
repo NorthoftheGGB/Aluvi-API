@@ -28,7 +28,7 @@ class UsersAPI < Grape::API
       begin
         ActiveRecord::Base.transaction do
 
-                  user = User.new
+					user = User.new
           user.first_name = params[:first_name]
           user.last_name = params[:last_name]
           user.phone = params[:phone]
@@ -74,11 +74,16 @@ class UsersAPI < Grape::API
     end
     post "forgot_password" do
       user = User.where(:email => params['email']).first
+
       unless (user.nil?)
-        g = GmailSender.new("users@vocotransportation.com", "38sd9*VV")
+				new_password = (0...8).map { (65 + rand(26)).chr }.join
+				user.password = new_password.downcase
+				user.save
+
+        g = GmailSender.new("users@vocotransportation.com", "aluviusers111")
         g.send(:to => user.email,
                :subject => "Password Reset",
-               :content => "Click here to reset your password")
+               :content => "Here is a new password for Aluvi: " + user.password)
         ok
       else
         error! 'User not found', 404, 'X-Error-Detail' => 'User not found'
