@@ -67,4 +67,13 @@ describe UsersAPI do
 		end
 	end
 
+	describe "POST /api/users/support" do
+		it "returns success" do
+      @rider = FactoryGirl.create(:rider)
+			post "/api/users/support", { :message => 'support message' },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+			expect(response.status).to eq(201)
+			Rails.logger.info response.status.to_s + ':' + response.body
+		end
+	end
+
 end

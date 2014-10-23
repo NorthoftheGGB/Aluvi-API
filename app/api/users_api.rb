@@ -144,7 +144,7 @@ class UsersAPI < Grape::API
 				driver = Driver.unscoped.find(current_user.id)
 				driver.interested!
       else
-        user = User.user_with_phone params[:phone]
+        user = User.where(:email => params[:email] ).first
         if user.nil?
           user = User.new
           user.phone = params[:phone]
@@ -264,6 +264,21 @@ class UsersAPI < Grape::API
         error! 'Problem charging this card', 406
       end
     end
+
+		desc "Support Message"
+		params do
+			requires "message"
+		end
+		post "support" do
+			authenticate!
+			support = Support.new
+			support.user = current_user
+			support.messsage = params.message
+			support.save
+
+			ok
+
+		end
 
   end
 

@@ -1,4 +1,8 @@
 Voco::Application.routes.draw do
+  resources :supports
+
+  resources :routes
+
   root to: 'panel#index'
 	mount VocoAPI => '/api/'
 

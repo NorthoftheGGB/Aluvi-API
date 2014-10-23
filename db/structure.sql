@@ -402,6 +402,42 @@ CREATE VIEW rides_summary_view AS
 
 
 --
+-- Name: routes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE routes (
+    id integer NOT NULL,
+    rider_id integer,
+    origin geography(Point,4326),
+    pickup_time timestamp with time zone,
+    destination geography(Point,4326),
+    return_time timestamp with time zone,
+    driving boolean,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: routes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE routes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: routes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE routes_id_seq OWNED BY routes.id;
+
+
+--
 -- Name: rpush_apps; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -534,6 +570,38 @@ ALTER SEQUENCE rpush_notifications_id_seq OWNED BY rpush_notifications.id;
 CREATE TABLE schema_migrations (
     version character varying(255) NOT NULL
 );
+
+
+--
+-- Name: supports; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE supports (
+    id integer NOT NULL,
+    user_id integer,
+    messsage character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: supports_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE supports_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: supports_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE supports_id_seq OWNED BY supports.id;
 
 
 --
@@ -718,6 +786,13 @@ ALTER TABLE ONLY rides ALTER COLUMN id SET DEFAULT nextval('rides_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY routes ALTER COLUMN id SET DEFAULT nextval('routes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY rpush_apps ALTER COLUMN id SET DEFAULT nextval('rpush_apps_id_seq'::regclass);
 
 
@@ -733,6 +808,13 @@ ALTER TABLE ONLY rpush_feedback ALTER COLUMN id SET DEFAULT nextval('rpush_feedb
 --
 
 ALTER TABLE ONLY rpush_notifications ALTER COLUMN id SET DEFAULT nextval('rpush_notifications_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY supports ALTER COLUMN id SET DEFAULT nextval('supports_id_seq'::regclass);
 
 
 --
@@ -843,6 +925,22 @@ ALTER TABLE ONLY rides
 
 ALTER TABLE ONLY fares
     ADD CONSTRAINT rides_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: routes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY routes
+    ADD CONSTRAINT routes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: supports_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY supports
+    ADD CONSTRAINT supports_pkey PRIMARY KEY (id);
 
 
 --
@@ -1080,4 +1178,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140906195950');
 INSERT INTO schema_migrations (version) VALUES ('20141012232135');
 
 INSERT INTO schema_migrations (version) VALUES ('20141012232655');
+
+INSERT INTO schema_migrations (version) VALUES ('20141023014240');
+
+INSERT INTO schema_migrations (version) VALUES ('20141023022350');
 

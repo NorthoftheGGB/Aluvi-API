@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Rider:</strong>
+  <%= @route.rider_id %>
+</p>
+
+<p>
+  <strong>Origin:</strong>
+  <%= @route.origin %>
+</p>
+
+<p>
+  <strong>Pickup time:</strong>
+  <%= @route.pickup_time %>
+</p>
+
+<p>
+  <strong>Destination:</strong>
+  <%= @route.destination %>
+</p>
+
+<p>
+  <strong>Return time:</strong>
+  <%= @route.return_time %>
+</p>
+
+<p>
+  <strong>Driving:</strong>
+  <%= @route.driving %>
+</p>
+
+<%= link_to 'Edit', edit_route_path(@route) %> |
+<%= link_to 'Back', routes_path %>

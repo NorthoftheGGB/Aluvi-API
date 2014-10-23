@@ -381,5 +381,27 @@ class RidesAPI< Grape::API
 			end
 		end
 
+
+		desc "Update Route"
+		params do
+			requires :origin_latitude, type: BigDecimal
+			requires :origin_longitude, type: BigDecimal
+			requires :origin_place_name, type: String
+			requires :destination_latitude, type: BigDecimal
+			requires :destination_longitude, type: BigDecimal
+			requires :destination_place_name, type: String
+			optional :pickup_time, type: DateTime
+			optional :return_time, type: DateTime
+			optional :driving, type: Boolean
+		end
+		post :route do
+			authenticate!
+			# assume single route per user	
+			route = Route.where('rider_id' => current_user.id).first
+			if route.nil?
+				route = Route.new
+			end
+		end
+
 		end
 end
