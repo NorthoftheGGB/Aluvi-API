@@ -11,3 +11,5 @@ unless @user.cards[0].nil?
 end
 json.recipient_card_brand @user.recipient_card_brand
 json.recipient_card_last_four @user.recipient_card_last4
+json.image_small @user.image.url(:small)
+json.image_large @user.image.url

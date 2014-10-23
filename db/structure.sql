@@ -696,7 +696,11 @@ CREATE TABLE users (
     recipient_card_exp_month character varying(255),
     recipient_card_month character varying(255),
     recipient_card_last4 character varying(255),
-    zip_code character varying(255)
+    zip_code character varying(255),
+    image_file_name character varying(255),
+    image_content_type character varying(255),
+    image_file_size integer,
+    image_updated_at timestamp without time zone
 );
 
 
@@ -1182,4 +1186,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141012232655');
 INSERT INTO schema_migrations (version) VALUES ('20141023014240');
 
 INSERT INTO schema_migrations (version) VALUES ('20141023022350');
+
+INSERT INTO schema_migrations (version) VALUES ('20141023053633');
 

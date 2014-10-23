@@ -59,6 +59,8 @@ json.array! @rides do |ride|
 			unless ride.fare.driver.nil?
 				json.drivers_license_number ride.fare.driver.drivers_license_number
 			end
+			json.large_image ride.fare.driver.image.url
+			json.small_image ride.fare.driver.image.url(:small)
 		end
 	end
 end   

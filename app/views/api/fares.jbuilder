@@ -15,6 +15,8 @@ json.array! @fares do |fare|
       json.first_name rider.first_name
       json.last_name rider.last_name
       json.phone rider.phone
+			json.large_image rider.image.url
+			json.small_image rider.image.url(:small)
   end
 
 end

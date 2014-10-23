@@ -8,6 +8,8 @@ class Rider < User
 
 	attr_accessible :rider_state, :rider_state_event
 
+	has_attached_file :image, :styles => { :small => "212x249>" }, :default_url => "/images/missing.png", :storage => :s3
+
 	def self.states
 		[ :registered, :active, :payment_problem, :suspended ]
 	end
