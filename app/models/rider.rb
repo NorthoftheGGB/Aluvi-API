@@ -9,6 +9,7 @@ class Rider < User
 	attr_accessible :rider_state, :rider_state_event
 
 	has_attached_file :image, :styles => { :small => "212x249>" }, :default_url => "/images/missing.png", :storage => :s3
+	validates_attachment_content_type :image, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
 	def self.states
 		[ :registered, :active, :payment_problem, :suspended ]

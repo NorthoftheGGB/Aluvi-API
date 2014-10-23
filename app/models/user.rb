@@ -4,6 +4,9 @@ class User < ActiveRecord::Base
   attr_accessible :driver_state, :rider_state
   attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :zip_code, :stripe_customer_id, :stripe_recipient_id, :bank_account_name, :salt, :token, :phone, :password, :email, :driver_state, :rider_state, :webtoken, :demo, :recipient_card_last_four, :recipient_card_brand, :recipient_card_exp_year, :recipient_card_exp_month
 
+	has_attached_file :image, :styles => { :small => "212x249>" }, :default_url => "/images/missing.png", :storage => :s3
+	validates_attachment_content_type :image, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
+
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	def self.authorize!(token)

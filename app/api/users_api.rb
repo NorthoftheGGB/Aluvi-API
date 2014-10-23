@@ -225,11 +225,26 @@ class UsersAPI < Grape::API
       fields = ['first_name', 'last_name', 'email', 'phone', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|
         unless params[field].nil? || params[field] == ""
-					Rails.logger.debug field
-					Rails.logger.debug params[field]
           current_rider.update_attribute(field, params[field])
         end
       end
+
+			image = params[:image]
+			unless image.nil?
+
+				attachment = {
+					:filename => image[:filename],
+					:type => image[:type],
+					:headers => image[:head],
+					:tempfile => image[:tempfile]
+				}
+
+				current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
+
+				Rails.logger.debug attachment
+
+			end
+
       current_rider.save
 			@user = current_rider
 
