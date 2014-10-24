@@ -65,4 +65,12 @@ feature 'Rides' do
     expect(scheduled_multirider_fare.state).to eq("scheduled")
     expect(scheduled_multirider_fare.finished).to be(nil)
   end
+
+  scenario 'both riders cancel multi rider fare' do
+    riders = []
+    scheduled_multirider_fare.riders.each {|rider| riders.push(rider)}
+    riders.each {|rider| scheduled_multirider_fare.rider_cancelled!(rider)}
+    expect(scheduled_multirider_fare.state).to eq("rider_cancelled")
+    expect(scheduled_multirider_fare.finished).to_not be nil
+  end
 end
