@@ -7,6 +7,8 @@ feature 'Rides' do
   let(:rider) {FactoryGirl.create(:rider)}
   let(:ride) {OnDemandRide.create!(ORIGIN, ORIGIN_PLACE_NAME, DESTINATION, DESTINATION_PLACE_NAME, rider)}
   let(:fare) {ride.fare}
+  let(:scheduled_fare) {FactoryGirl.create(:scheduled_fare)}
+  let(:scheduled_multirider_fare) {FactoryGirl.create(:scheduled_multirider_fare)}
 
   scenario 'request on demand ride' do
     ride.request!
@@ -44,5 +46,11 @@ feature 'Rides' do
 
     expect(offer_to_decline.state).to eq("declined")
     expect(offer_to_accept.state).to eq("offered")
+  end
+
+  scenario 'driver cancels scheduled fare' do
+    scheduled_fare.driver_cancelled!
+    expect(scheduled_fare.state).to eq("driver_cancelled")
+    expect(scheduled_fare.finished).to_not be(nil)
   end
 end
