@@ -59,4 +59,10 @@ feature 'Rides' do
     expect(scheduled_fare.state).to eq("rider_cancelled")
     expect(scheduled_fare.finished).to_not be(nil)
   end
+
+  scenario "rider cancels multi rider fare" do
+    scheduled_multirider_fare.rider_cancelled!(scheduled_multirider_fare.riders.first)
+    expect(scheduled_multirider_fare.state).to eq("scheduled")
+    expect(scheduled_multirider_fare.finished).to be(nil)
+  end
 end
