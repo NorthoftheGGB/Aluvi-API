@@ -30,5 +30,19 @@ feature 'Rides' do
     expect(offer.state).to eq("accepted")
   end
 
+  scenario 'driver declines fare' do
+    2.times {FactoryGirl.create(:available_driver)}
+    ride.request!
+    drivers = Driver.available_drivers
+    drivers.each {|driver| driver.offer_fare(fare)}
+    denied_driver = drivers.first
+    accepted_driver = drivers.last
 
+    offer_to_decline = denied_driver.offers.where(fare_id: fare.id).first
+    offer_to_decline.declined!
+    offer_to_accept = accepted_driver.offers.where(fare_id: fare.id).first
+
+    expect(offer_to_decline.state).to eq("declined")
+    expect(offer_to_accept.state).to eq("offered")
+  end
 end
