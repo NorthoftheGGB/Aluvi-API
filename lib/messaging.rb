@@ -1,16 +1,16 @@
 module Messaging
 
-	def self.sendReadyToCommuterMessage user
+	def self.send_ready_to_commuter_message user
 		PushHelper.send_notification user do |notification|
-			notification.alert = "Feel free to register for a commute..."
+			notification.alert = "It's finally time! Would you like to schedule a commute for tomorrow?"
 			notification.data = { type: :commute_reminder }
 		end
 	end
 
 
-	def self.sendGenericMessage(user, message)
+	def self.send_generic_message(user, message)
 		PushHelper.send_notification user do |notification|
-			notification.alert = "Message"
+			notification.alert = message
 			notification.data = { type: :generic }
 		end
 
