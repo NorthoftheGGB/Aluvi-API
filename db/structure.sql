@@ -135,7 +135,8 @@ CREATE TABLE devices (
     push_token character varying(255),
     uuid character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    app_version character varying(255)
 );
 
 
@@ -1194,4 +1195,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141023053633');
 INSERT INTO schema_migrations (version) VALUES ('20141026231156');
 
 INSERT INTO schema_migrations (version) VALUES ('20141027030123');
+
+INSERT INTO schema_migrations (version) VALUES ('20141027035200');
 

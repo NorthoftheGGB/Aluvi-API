@@ -7,6 +7,7 @@ class DevicesAPI < Grape::API
 		desc "Update or create device record"
 		params do
 			optional :push_token, type: String
+			optional :app_version, type: String
 			optional :latitude, type: BigDecimal
 			optional :longitude, type: BigDecimal
 		end
@@ -36,6 +37,9 @@ class DevicesAPI < Grape::API
 				device.user = current_user
 			else
 				device.user_id = params['user_id']
+			end
+			unless params[:app_version].nil?
+				device.app_version = params[:app_version]
 			end
 			device.save
 			device

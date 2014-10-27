@@ -15,6 +15,18 @@ module PushHelper
 		n
 	end
 
+  def self.send_notification user
+    user.devices.each do |d|
+      if(d.push_token.nil? || d.push_token == '')
+        next
+      end
+      notification = PushHelper::push_message(d)
+      yield notification
+      notification.save!
+    end
+  end
+
+
 end
 
 

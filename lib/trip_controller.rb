@@ -34,7 +34,7 @@ class TripController
   def self.send_offer_closed_messages fare
 
     fare.offers.offer_closed_delivered.each do |offer|
-      self.send_notification offer.driver do |notification|
+      PushHelper.send_notification offer.driver do |notification|
         n.alert = ""
         n.content_available = true
         n.data = { type: :offer_closed, offer_id: offer.id, fare_id: fare.id }
@@ -175,7 +175,7 @@ class TripController
         payment.save
       end
 
-      send_notification rider do |notification|
+      PushHelper.send_notification rider do |notification|
         if payment.paid == true
           notification.alert = "Receipt For Your Ride"
           notification.data = { type: :ride_receipt, fare_id: fare.id, amount: payment.amount_cents }
@@ -254,22 +254,11 @@ class TripController
   end
 
   def self.send_trip_notification trip
-    send_notification trip.rides[0].rider do |notification|
+    PushHelper.send_notification trip.rides[0].rider do |notification|
       yield notification
     end
     trip.notified = true
     trip.save!
   end
 
-  #TODO move this to PushHelper
-  def self.send_notification user
-    user.devices.each do |d|
-      if(d.push_token.nil? || d.push_token == '')
-        next
-      end
-      notification = PushHelper::push_message(d)
-      yield notification
-      notification.save!
-    end
-  end
-end
+ end
