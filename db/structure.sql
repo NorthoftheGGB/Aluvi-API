@@ -409,12 +409,14 @@ CREATE TABLE routes (
     id integer NOT NULL,
     rider_id integer,
     origin geography(Point,4326),
-    pickup_time timestamp with time zone,
+    pickup_time character varying(255),
     destination geography(Point,4326),
-    return_time timestamp with time zone,
+    return_time character varying(255),
     driving boolean,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    destination_place_name character varying(255),
+    origin_place_name character varying(255)
 );
 
 
@@ -1188,4 +1190,8 @@ INSERT INTO schema_migrations (version) VALUES ('20141023014240');
 INSERT INTO schema_migrations (version) VALUES ('20141023022350');
 
 INSERT INTO schema_migrations (version) VALUES ('20141023053633');
+
+INSERT INTO schema_migrations (version) VALUES ('20141026231156');
+
+INSERT INTO schema_migrations (version) VALUES ('20141027030123');
 

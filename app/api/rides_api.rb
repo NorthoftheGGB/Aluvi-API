@@ -384,22 +384,55 @@ class RidesAPI< Grape::API
 
 		desc "Update Route"
 		params do
-			requires :origin_latitude, type: BigDecimal
-			requires :origin_longitude, type: BigDecimal
+			requires :origin, type: Hash do
+				requires :latitude
+				requires :longitude
+			end
 			requires :origin_place_name, type: String
-			requires :destination_latitude, type: BigDecimal
-			requires :destination_longitude, type: BigDecimal
+			requires :destination, type: Hash do
+				requires :latitude
+				requires :longitude
+			end
 			requires :destination_place_name, type: String
-			optional :pickup_time, type: DateTime
-			optional :return_time, type: DateTime
-			optional :driving, type: Boolean
+			requires :pickup_time, type: String
+			requires :return_time, type: String
+			requires :driving, type: Boolean
 		end
 		post :route do
 			authenticate!
+			Rails.logger.debug params
 			# assume single route per user	
 			route = Route.where('rider_id' => current_user.id).first
 			if route.nil?
 				route = Route.new
+			end
+
+			origin = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:origin][:longitude], params[:origin][:latitude])
+			destination = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination][:longitude], params[:destination][:latitude])
+			Rails.logger.debug destination
+			route.rider = current_user.as_rider
+			route.origin = origin;
+			route.destination = destination;
+			route.origin_place_name = params[:origin_place_name];
+			route.destination_place_name = params[:destination_place_name];
+			route.pickup_time = params[:pickup_time];
+			route.return_time = params[:return_time];
+			route.driving = params[:driving];
+			Rails.logger.debug route
+			route.save
+			ok
+
+		end
+
+		desc "Get Route"
+		get :route, jbuilder: 'route' do
+			authenticate!
+			# assume single route per user	
+			@route = Route.where('rider_id' => current_user.id).first
+			if @route.nil?
+				not_found	
+			else
+				@route
 			end
 		end
 
