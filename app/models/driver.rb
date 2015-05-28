@@ -26,7 +26,7 @@ class Driver < User
 	validates_attachment_content_type :national_database_check, :content_type => /\Aimage\/.*\Z/
 
 	include AASM
-	aasm_column :driver_state
+	aasm.attribute_name :driver_state
 
 	aasm do
 		state :uninterested, :initial => true

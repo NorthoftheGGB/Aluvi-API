@@ -7,7 +7,7 @@ class Offer < ActiveRecord::Base
 	scope :open_offers, -> { where(state: [:offered, :offer_delivered]) }
 
 	include AASM
-	aasm_column :state
+	aasm.attribute_name :state
 
 	aasm do
 		state :offered, :initial => true

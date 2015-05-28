@@ -1,8 +1,7 @@
 development:
-  username: deepwinter1
+  username: admin
   adapter: postgis
-  host: localhost
-  database: voco
+  database: aluvi_alpha
   pool: 5
   timeout: 5000
 

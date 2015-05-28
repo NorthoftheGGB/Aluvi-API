@@ -16,7 +16,7 @@ class Rider < User
 	end
 
 	include AASM
-	aasm_column :rider_state
+	aasm.attribute_name :rider_state
 
 	aasm do
 		state :registered, :initial => true
