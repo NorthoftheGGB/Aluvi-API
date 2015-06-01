@@ -136,7 +136,8 @@ CREATE TABLE devices (
     uuid character varying(255),
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    app_version character varying(255)
+    app_version character varying(255),
+    app_identifier character varying(255)
 );
 
 
@@ -1193,4 +1194,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150528190732');
 INSERT INTO schema_migrations (version) VALUES ('20150528190844');
 
 INSERT INTO schema_migrations (version) VALUES ('20150528200000');
+
+INSERT INTO schema_migrations (version) VALUES ('20150601180837');
+
+INSERT INTO schema_migrations (version) VALUES ('20150601193951');
 
