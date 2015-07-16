@@ -1,7 +1,12 @@
-source 'https://code.stripe.com'
 source 'https://rubygems.org'
 
 gem 'rails', '4.1'
+
+# javascript runtime
+gem 'execjs'
+gem 'therubyracer'
+
+# rails features
 gem 'protected_attributes'
 gem 'rails-observers'
 
@@ -31,7 +36,7 @@ gem 'aasm'
 # Handle Money, Currencies, and Stripe API
 gem 'money-rails'
 gem 'monetize'
-gem 'stripe'
+gem 'stripe', :source => 'https://code.stripe.com'
 
 # Geolocation
 gem 'rgeo'

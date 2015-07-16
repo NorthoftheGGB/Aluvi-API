@@ -1,8 +1,8 @@
-class AddApplicationForRpush < ActiveRecord::Migration
+class AddRpushApplicationDevAlpha < ActiveRecord::Migration
   def up
 		app = Rpush::Apns::App.new
-		app.name = "com.vocotransporation.alpha"
-		app.certificate = File.read("alpha_push_certificate.pem")
+		app.name = "com.vocotransporation.aluvi.dev"
+		app.certificate = File.read("keys/aluvi_alpha_dev_push.pem")
 		app.environment = "sandbox" # APNs environment.
 		app.password = ""
 		app.connections = 1

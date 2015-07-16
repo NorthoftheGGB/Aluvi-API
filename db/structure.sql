@@ -56,8 +56,8 @@ CREATE TABLE cards (
     funding character varying(255),
     exp_month character varying(255),
     exp_year character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -92,8 +92,8 @@ CREATE TABLE cars (
     license_plate character varying(255),
     state character varying(255),
     location geography(Point,4326),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     year character varying(255),
     car_photo_file_name character varying(255),
     car_photo_content_type character varying(255),
@@ -134,9 +134,10 @@ CREATE TABLE devices (
     platform character varying(255),
     push_token character varying(255),
     uuid character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    app_version character varying(255)
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    app_version character varying(255),
+    app_identifier character varying(255)
 );
 
 
@@ -169,8 +170,8 @@ CREATE TABLE driver_location_histories (
     fare_id integer,
     datetime timestamp without time zone,
     location geography(Point,4326),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -209,8 +210,8 @@ CREATE TABLE fares (
     meeting_point_place_name character varying(255),
     drop_off_point geography(Point,4326),
     drop_off_point_place_name character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     pickup_time timestamp without time zone,
     fixed_earnings integer DEFAULT 0
 );
@@ -243,8 +244,8 @@ CREATE TABLE offers (
     id integer NOT NULL,
     driver_id integer,
     fare_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     state character varying(255)
 );
 
@@ -283,8 +284,8 @@ CREATE TABLE payments (
     stripe_charge_status character varying(255),
     initiation character varying(255),
     captured_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     driver_earnings_cents integer,
     ride_id integer,
     paid boolean
@@ -319,8 +320,8 @@ CREATE TABLE payouts (
     driver_id integer,
     date timestamp without time zone,
     amount_cents integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     stripe_transfer_id character varying(255)
 );
 
@@ -359,8 +360,8 @@ CREATE TABLE rides (
     origin_place_name character varying(255),
     destination geography(Point,4326),
     destination_place_name character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     pickup_time timestamp with time zone,
     driving boolean,
     trip_id integer,
@@ -386,20 +387,6 @@ CREATE SEQUENCE rides_id_seq
 --
 
 ALTER SEQUENCE rides_id_seq OWNED BY rides.id;
-
-
---
--- Name: rides_summary_view; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW rides_summary_view AS
- SELECT rides.trip_id,
-    rides.direction,
-    rides.state,
-    rides.pickup_time,
-    rides.driving,
-    timezone('PDT'::text, rides.pickup_time) AS timezone
-   FROM rides;
 
 
 --
@@ -451,8 +438,8 @@ CREATE TABLE rpush_apps (
     certificate text,
     password character varying(255),
     connections integer DEFAULT 1 NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     type character varying(255) NOT NULL,
     auth_key character varying(255),
     client_id character varying(255),
@@ -489,9 +476,9 @@ CREATE TABLE rpush_feedback (
     id integer NOT NULL,
     device_token character varying(64) NOT NULL,
     failed_at timestamp without time zone NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    app character varying(255)
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    app_id integer
 );
 
 
@@ -533,8 +520,8 @@ CREATE TABLE rpush_notifications (
     error_code integer,
     error_description text,
     deliver_after timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     alert_is_json boolean DEFAULT false,
     type character varying(255) NOT NULL,
     collapse_key character varying(255),
@@ -543,7 +530,11 @@ CREATE TABLE rpush_notifications (
     app_id integer NOT NULL,
     retries integer DEFAULT 0,
     uri character varying(255),
-    fail_after timestamp without time zone
+    fail_after timestamp without time zone,
+    processing boolean DEFAULT false NOT NULL,
+    priority integer,
+    url_args text,
+    category character varying(255)
 );
 
 
@@ -655,8 +646,8 @@ CREATE TABLE users (
     commuter_balance_cents integer,
     commuter_refill_amount_cents integer,
     location geography(Point,4326),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     rider_location geometry(Point,4326),
     phone character varying(255),
     password character varying(255),
@@ -977,7 +968,7 @@ CREATE INDEX index_rpush_feedback_on_device_token ON rpush_feedback USING btree 
 -- Name: index_rpush_notifications_multi; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_rpush_notifications_multi ON rpush_notifications USING btree (app_id, delivered, failed, deliver_after);
+CREATE INDEX index_rpush_notifications_multi ON rpush_notifications USING btree (delivered, failed) WHERE ((NOT delivered) AND (NOT failed));
 
 
 --
@@ -1036,8 +1027,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140527201119');
 
 INSERT INTO schema_migrations (version) VALUES ('20140528000417');
 
-INSERT INTO schema_migrations (version) VALUES ('20140529231120');
-
 INSERT INTO schema_migrations (version) VALUES ('20140609032342');
 
 INSERT INTO schema_migrations (version) VALUES ('20140609032948');
@@ -1061,8 +1050,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140609200048');
 INSERT INTO schema_migrations (version) VALUES ('20140609200128');
 
 INSERT INTO schema_migrations (version) VALUES ('20140609200135');
-
-INSERT INTO schema_migrations (version) VALUES ('20140609222744');
 
 INSERT INTO schema_migrations (version) VALUES ('20140610001847');
 
@@ -1116,11 +1103,7 @@ INSERT INTO schema_migrations (version) VALUES ('20140717093604');
 
 INSERT INTO schema_migrations (version) VALUES ('20140717100519');
 
-INSERT INTO schema_migrations (version) VALUES ('20140718012544');
-
 INSERT INTO schema_migrations (version) VALUES ('20140718063716');
-
-INSERT INTO schema_migrations (version) VALUES ('20140722212042');
 
 INSERT INTO schema_migrations (version) VALUES ('20140723232128');
 
@@ -1197,4 +1180,22 @@ INSERT INTO schema_migrations (version) VALUES ('20141026231156');
 INSERT INTO schema_migrations (version) VALUES ('20141027030123');
 
 INSERT INTO schema_migrations (version) VALUES ('20141027035200');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528184828');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528184829');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528184830');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528185840');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528190732');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528190844');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528200000');
+
+INSERT INTO schema_migrations (version) VALUES ('20150601180837');
+
+INSERT INTO schema_migrations (version) VALUES ('20150601193951');
 

@@ -1,4 +1,4 @@
-class AddDevPushConfiguration < ActiveRecord::Migration
+class AddRpushDevPushConfig < ActiveRecord::Migration
 	def up
 		app = Rpush::Apns::App.new
 		app.name = "com.vocotransportation.dev"

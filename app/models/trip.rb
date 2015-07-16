@@ -9,7 +9,7 @@ class Trip < ActiveRecord::Base
   scope :unfulfilled_pending_notification, ->{ where({:state => :unfulfilled, :notified => false}) }
 
   include AASM
-  aasm_column :state
+  aasm.attribute_name :state
 
   aasm do
     state :requested, :initial => true

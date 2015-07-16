@@ -15,7 +15,7 @@ class Fare < ActiveRecord::Base
 	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 
 	include AASM
-	aasm_column :state
+	aasm.attribute_name :state
 
 	aasm do
 		state :unscheduled, :initial => true
