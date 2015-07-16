@@ -5,6 +5,54 @@ class RidesAPI< Grape::API
 
 	resources :rides do
 
+		desc "Request Commuter Trip "
+		params do
+			requires :departure_latitude, type: BigDecimal
+			requires :departure_longitude, type: BigDecimal
+			requires :departure_place_name, type: String
+			requires :destination_latitude, type: BigDecimal
+			requires :destination_longitude, type: BigDecimal
+			requires :destination_place_name, type: String
+			optional :departure_pickup_time, type: DateTime
+			optional :return_pickup_time, type: DateTime
+			optional :driving, type: Boolean
+		end
+		post :commute do
+			authenticate!
+
+			outgoing_ride = TripController.request_commute_leg(
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+				params[:departure_place_name],
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+				params[:destination_place_name],
+				params[:departure_pickup_time],
+				params[:driving],
+				current_rider,
+				nil
+			)
+
+			return_ride = TripController.request_commute_leg(
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+				params[:destination_place_name],
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+				params[:departure_place_name],
+				params[:return_pickup_time],
+				params[:driving],
+				current_rider,
+				outgoing_ride.trip_id
+			)
+
+			rval = Hash.new
+			rval[:outgoing_ride_id] = outgoing_ride.id
+			rval[:outgoing_trip_id] = outgoing_ride.trip_id
+			rval[:return_ride_id] = return_ride.id
+			rval[:return_trip_id] = return_ride.trip_id
+			rval
+		end
+
+
+
+
 		desc "Request a ride"
 		params do
 			requires :type, type: String
@@ -18,24 +66,10 @@ class RidesAPI< Grape::API
 			optional :driving, type: Boolean
 			optional :trip_id, type: Integer
 		end
+
 		post :request do
 			authenticate!
 			case params[:type]
-        when 'on_demand'
-					stale_requests = current_rider.rides.where( state: :requested).all
-					stale_requests.each do |request|
-						request.cancel!
-					end
-
-					ride = OnDemandRide.create!(
-																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-																						 params[:departure_place_name],
-																						 RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-																						 params[:destination_place_name],
-																						 current_rider
-																						)
-          ride.request!
-
         when 'commuter'
 
           ride = TripController.request_commute_leg(
