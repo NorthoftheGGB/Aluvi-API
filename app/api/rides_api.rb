@@ -121,6 +121,7 @@ class RidesAPI< Grape::API
 			rval[:trip_id] = ride.trip_id
 			rval
 
+			status 200
 		end
 		
 		desc "Cancel a ride request"
@@ -135,9 +136,9 @@ class RidesAPI< Grape::API
 					raise ApiExceptions::WrongUserForEntityException
 				end
 				TripController.cancel_request ride
-				ok
+				status 200
 			rescue ActiveRecord::RecordNotFound
-				ok
+				status 200
 			rescue ApiExceptions::WrongUserForEntityException
 		    Rails.loger.debug "WrongUserForEntityException"
 				Rails.logger.debug $!
@@ -158,7 +159,7 @@ class RidesAPI< Grape::API
 			begin
 				trip = Trip.find(params[:trip_id])
 				TripController.cancel_trip(trip)
-				ok
+				status 200
 			rescue
         Rails.logger.error $!
 				Rails.logger.error $!.backtrace.join("\n")
@@ -230,61 +231,6 @@ class RidesAPI< Grape::API
 				not_found
 			end
 		end
-
-
-		desc "Driver accepted fare"
-		params do
-			requires :fare_id, type: Integer
-		end
-		post :accepted do
-			authenticate!
-			fare = Fare.find(params[:fare_id])
-
-			unless(["created", "unscheduled"].include? fare.state)
-				if( fare.driver == current_user )
-					# ok to return HTTP success
-					ok
-				else
-					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
-					return
-				end
-			else 
-				begin
-					driver = Driver.find(current_user.id)
-          TripController.driver_accepted_on_demand_fare(driver, fare)
-					ok
-				rescue AASM::InvalidTransition => e
-					if fare.state == "accepted" && fare.driver.id == driver.id
-						ok
-					else 
-						error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
-					end
-				end
-			end
-
-		end
-
-		desc "Driver declined fare"
-		params do
-			requires :fare_id, type: Integer
-		end
-		post :declined do
-			authenticate!
-			fare = Fare.find(params[:fare_id])
-			if(fare.state != "created")
-				if( fare.driver == current_user )
-					error! 'Already assigned to this driver', 404, 'X-Error-Detail' => 'Already assigned to this driver'
-				else
-					error! 'Ride no longer available', 403, 'X-Error-Detail' => 'Ride is no longer available'
-					return
-				end
-			end
-
-			current_user.declined_fare(fare)
-			ok
-
-		end
-
 
 		desc "Driver cancelled fare"
 		params do
