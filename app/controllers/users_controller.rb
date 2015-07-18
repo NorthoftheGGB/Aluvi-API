@@ -60,6 +60,11 @@ class UsersController < ApplicationController
   # PUT /users/1
   # PUT /users/1.json
   def update
+    respond_to do |format|
+        format.html { render html: "Use the Riders or Drivers interface" }
+        format.json { render json: "Disabled" }
+		end
+		return
     @user = User.find(params[:id])
 		if(params[:password] == '')
 			params[:model].delete("password")
