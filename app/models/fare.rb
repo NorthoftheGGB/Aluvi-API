@@ -185,6 +185,7 @@ class Fare < ActiveRecord::Base
 	
 	def rider_cancelled rider
 		Rails.logger.info "RIDER_CANCELLED"
+		Rails.logger.info self.riders.count
 		if( self.riders.count == 1 )
       Rails.logger.info "RIDER_CANCELLED: last rider cancelled"
       # this is the only rider, cancel the whole ride

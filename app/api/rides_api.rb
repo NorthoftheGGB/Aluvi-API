@@ -13,11 +13,13 @@ class RidesAPI< Grape::API
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
 			requires :destination_place_name, type: String
-			optional :departure_pickup_time, type: DateTime
-			optional :return_pickup_time, type: DateTime
+		#	optional :departure_pickup_time, type: DateTime
+	#		optional :return_pickup_time, type: DateTime
 			optional :driving, type: Boolean
 		end
 		post :commute do
+			Rails.logger.debug "hello"
+			Rails.logger.debug params
 			authenticate!
 
 			outgoing_ride = TripController.request_commute_leg(
@@ -44,9 +46,8 @@ class RidesAPI< Grape::API
 
 			rval = Hash.new
 			rval[:outgoing_ride_id] = outgoing_ride.id
-			rval[:outgoing_trip_id] = outgoing_ride.trip_id
 			rval[:return_ride_id] = return_ride.id
-			rval[:return_trip_id] = return_ride.trip_id
+			rval[:trip_id] = outgoing_ride.trip_id
 			rval
 		end
 

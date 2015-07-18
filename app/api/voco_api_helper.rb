@@ -4,7 +4,6 @@ module VocoApiHelper
       return nil
     end
 		auth = token_and_options(headers['Authorization'])
-		Rails.logger.info auth
 		token = auth[0]
 		@current_user ||= User.authorize!(auth[0])
 	end
@@ -27,6 +26,7 @@ module VocoApiHelper
 
 	# from https://github.com/technoweenie/http_token_authentication/blob/master/lib/http_token_authentication.rb
 	def token_and_options(header)
+		Rails.logger.debug header
 		value_string = header.match(/Token (.*)/)[1]
 		values = value_string.split(',').
 			inject({}) do |memo, value|

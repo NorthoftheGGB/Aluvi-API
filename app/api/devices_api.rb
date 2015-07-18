@@ -36,8 +36,12 @@ class DevicesAPI < Grape::API
 				end
 			end
 			if params['user_id'].nil?	
+				Rails.logger.debug "is null"
+				Rails.logger.debug current_user
 				device.user = current_user
 			else
+				Rails.logger.debug "isn't null"
+				Rails.logger.debug params['user_id']
 				device.user_id = params['user_id']
 			end
 			unless params[:app_version].nil?
