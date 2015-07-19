@@ -179,17 +179,6 @@ class RidesAPI< Grape::API
 				
 		end
 
-		desc "Get list of offered rides"
-		get 'offers', jbuilder: 'offer' do
-			authenticate!
-      driver = Driver.find(current_user.id)
-			@offers = driver.offers.open_offers
-      driver.offers.undelivered_offers.each do |offer|
-				offer.offer_delivered!
-			end
-			@offers
-		end
-
 		desc "Get list of fares assigned to driver"
 		get 'fares', jbuilder: 'fares' do
 			authenticate!
