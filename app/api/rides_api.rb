@@ -117,12 +117,12 @@ class RidesAPI< Grape::API
 				end
 			end
 
+			status 200
 			rval = Hash.new
 			rval[:ride_id] = ride.id
 			rval[:trip_id] = ride.trip_id
 			rval
 
-			status 200
 		end
 		
 		desc "Cancel a ride request"
@@ -138,15 +138,23 @@ class RidesAPI< Grape::API
 				end
 				TripController.cancel_request ride
 				status 200
+				ok
 			rescue ActiveRecord::RecordNotFound
 				status 200
+				ok
 			rescue ApiExceptions::WrongUserForEntityException
 		    Rails.loger.debug "WrongUserForEntityException"
 				Rails.logger.debug $!
 				forbidden $!
       rescue AASM::InvalidTransition => e
-				Rails.logger.error e
-				forbidden e
+				if(ride.state == 'cancelled')
+					status 200
+					ok
+				else
+					Rails.logger.error e
+					Rails.logger.debug ride.id
+					forbidden e
+				end
       rescue
         Rails.logger.error $!
 				Rails.logger.error $!.backtrace.join("\n")
@@ -161,9 +169,11 @@ class RidesAPI< Grape::API
 				trip = Trip.find(params[:trip_id])
 				TripController.cancel_trip(trip)
 				status 200
+				ok
 			rescue
         Rails.logger.error $!
-				Rails.logger.error $!.backtrace.join("\n")
+				#Rails.logger.error $!.backtrace.join("\n")
+				Rails.logger.debug params[:trip_id]
 				error! $!.message, 400, 'X-Error-Detail' => $!.message
 			end
 				

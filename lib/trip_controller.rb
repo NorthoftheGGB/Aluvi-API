@@ -199,7 +199,9 @@ class TripController
 		ActiveRecord::Base.transaction do
 			trip.aborted!
 			trip.rides.each do |r|
-				self.cancel_request r
+				if r.state != 'cancelled'
+					self.cancel_request r
+				end
 			end
 		end
 	end
