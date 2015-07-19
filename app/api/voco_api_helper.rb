@@ -40,7 +40,7 @@ module VocoApiHelper
 	end
 
 	def ok
-		Hash.new	
+		status 201
 	end
 
 	def forbidden exception
