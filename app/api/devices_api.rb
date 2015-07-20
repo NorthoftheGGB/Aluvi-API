@@ -52,7 +52,7 @@ class DevicesAPI < Grape::API
 				device.app_identifier = params[:app_identifier]
 			end
 			unless params[:platform].nil?
-				device.app_identifier = params[:platform]
+				device.platform = params[:platform]
 			end
 			Rails.logger.debug device.inspect
 			device.save
