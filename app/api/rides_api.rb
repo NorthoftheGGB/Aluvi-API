@@ -13,8 +13,8 @@ class RidesAPI< Grape::API
 			requires :destination_latitude, type: BigDecimal
 			requires :destination_longitude, type: BigDecimal
 			requires :destination_place_name, type: String
-		#	optional :departure_pickup_time, type: DateTime
-	#		optional :return_pickup_time, type: DateTime
+			requires :departure_pickup_time, type: DateTime
+			requires :return_pickup_time, type: DateTime
 			optional :driving, type: Boolean
 		end
 		post :commute do
