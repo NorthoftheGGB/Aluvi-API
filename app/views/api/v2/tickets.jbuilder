@@ -30,6 +30,16 @@ json.array! @rides do |ride|
 			json.drop_off_point_place_name ride.fare.drop_off_point_place_name
 			json.drop_off_point_latitude ride.fare.drop_off_point.latitude
 			json.drop_off_point_longitude ride.fare.drop_off_point.longitude
+			json.estimated_earnings ride.fare.fixed_earnings
+		  json.riders ride.fare.riders.where.not( id: ride.fare.driver_id) do |rider|
+					json.id rider.id
+					json.first_name rider.first_name
+					json.last_name rider.last_name
+					json.phone rider.phone
+					json.large_image rider.image.url
+					json.small_image rider.image.url(:small)
+			end
+
 		end
 	else
 		json.pickup_time ride.pickup_time
