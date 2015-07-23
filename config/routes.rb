@@ -4,8 +4,7 @@ Voco::Application.routes.draw do
   resources :routes
 
   root to: 'panel#index'
-	mount VocoAPI => '/api/'
-	mount VocoAPIv2 => '/api/v2/'
+	mount API => '/api/'
 
   resources :offers, except: [:update, :edit]
   resources :rider_fares
