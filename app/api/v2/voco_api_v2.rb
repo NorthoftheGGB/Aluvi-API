@@ -1,6 +1,6 @@
 require 'grape-swagger'
 
-class VocoAPI < Grape::API
+class VocoAPIv2 < Grape::API
 	version 'v2', using: :header, vendor: 'voco', cascade: false
 	format :json
 	content_type :json, "application/json"
