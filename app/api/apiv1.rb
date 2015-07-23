@@ -1,10 +1,8 @@
 require 'grape-swagger'
-
-class VocoAPI < Grape::API
-	version 'v1', using: :header, vendor: 'voco', cascade: false
+class APIV1 < Grape::API
+	version 'v1', using: :path
 	format :json
 	content_type :json, "application/json"
-
 
 	before do
 		# Rails.logger.debug "WARNING: CORS is wide open for whole application, allowing for swagger UI to publish api docs"
@@ -24,5 +22,4 @@ class VocoAPI < Grape::API
 	mount UsersAPI
 	mount DriversAPI
 	mount WebAPI
-	#add_swagger_documentation :base_path => "http://localhost:3000/api/"
 end

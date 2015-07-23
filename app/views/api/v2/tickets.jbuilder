@@ -21,26 +21,24 @@ json.array! @rides do |ride|
   json.driving ride.driving
 	unless ride.fare.nil?
 		json.pickup_time ride.fare.pickup_time
-		json.fare do
-			json.id ride.fare.id
-			json.state ride.fare.state
-			json.meeting_point_place_name ride.fare.meeting_point_place_name
-			json.meeting_point_latitude ride.fare.meeting_point.latitude
-			json.meeting_point_longitude ride.fare.meeting_point.longitude
-			json.drop_off_point_place_name ride.fare.drop_off_point_place_name
-			json.drop_off_point_latitude ride.fare.drop_off_point.latitude
-			json.drop_off_point_longitude ride.fare.drop_off_point.longitude
-			json.estimated_earnings ride.fare.fixed_earnings
-		  json.riders ride.fare.riders.where.not( id: ride.fare.driver_id) do |rider|
-					json.id rider.id
-					json.first_name rider.first_name
-					json.last_name rider.last_name
-					json.phone rider.phone
-					json.large_image rider.image.url
-					json.small_image rider.image.url(:small)
-			end
-
+		json.id ride.fare.id
+		json.state ride.fare.state
+		json.meeting_point_place_name ride.fare.meeting_point_place_name
+		json.meeting_point_latitude ride.fare.meeting_point.latitude
+		json.meeting_point_longitude ride.fare.meeting_point.longitude
+		json.drop_off_point_place_name ride.fare.drop_off_point_place_name
+		json.drop_off_point_latitude ride.fare.drop_off_point.latitude
+		json.drop_off_point_longitude ride.fare.drop_off_point.longitude
+		json.estimated_earnings ride.fare.fixed_earnings
+		json.riders ride.fare.riders.where.not( id: ride.fare.driver_id) do |rider|
+				json.id rider.id
+				json.first_name rider.first_name
+				json.last_name rider.last_name
+				json.phone rider.phone
+				json.large_image rider.image.url
+				json.small_image rider.image.url(:small)
 		end
+
 	else
 		json.pickup_time ride.pickup_time
 	end
