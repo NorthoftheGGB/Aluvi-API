@@ -2,6 +2,7 @@ module PushHelper
 	def self.push_message(device)
 		Rails.logger.debug device
 		if device.platform == 'gcm'
+			n = Rpush::Gcm::Notification.new
 			n.app = Rpush::Gcm::App.find_by_name(device.app_identifier)
 			n.registration_ids = [device.push_token]
 		else 
