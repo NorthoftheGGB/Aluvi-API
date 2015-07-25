@@ -192,6 +192,7 @@ class Fare < ActiveRecord::Base
 			aasm_rider_cancelled
 			self.finished = Time.now
       save
+			self.rides.first.abort!
 			notify_fare_cancelled_by_rider
 		else 
 			Rails.logger.info 'RIDER_CANCELLED: one rider cancelled'
