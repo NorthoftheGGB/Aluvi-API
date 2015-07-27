@@ -306,7 +306,6 @@ class RidesAPI< Grape::API
 			end
 		end
 
-
 		desc "Driver picked up rider"
 		params do
 			requires :fare_id, type: Integer
