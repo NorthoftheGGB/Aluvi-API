@@ -9,6 +9,7 @@ module Messaging
 
 
 	def self.send_generic_message(user, message)
+		Rails.logger.debug "sending generic"
 		PushHelper.send_notification user do |notification|
 			notification.alert = message
 			notification.data = { type: :generic }

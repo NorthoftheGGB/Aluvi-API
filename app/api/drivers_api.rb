@@ -53,6 +53,7 @@ class DriversAPI < Grape::API
 					driver.register
 					driver.activate
 					driver.save
+					status 200
 					ok
 				end
 

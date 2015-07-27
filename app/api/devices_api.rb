@@ -9,6 +9,7 @@ class DevicesAPI < Grape::API
 			optional :push_token, type: String
 			optional :app_version, type: String
 			optional :app_identifier, type: String
+			optional :platform, type: String
 			optional :latitude, type: BigDecimal
 			optional :longitude, type: BigDecimal
 		end
@@ -49,6 +50,9 @@ class DevicesAPI < Grape::API
 			end
 			unless params[:app_identifier].nil?
 				device.app_identifier = params[:app_identifier]
+			end
+			unless params[:platform].nil?
+				device.platform = params[:platform]
 			end
 			Rails.logger.debug device.inspect
 			device.save
