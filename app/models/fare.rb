@@ -199,6 +199,8 @@ class Fare < ActiveRecord::Base
 			Rails.logger.debug rider.id
 			Rails.logger.debug self.id
 			self.riders.delete(rider)
+			ride = fare.rides.where( rider_id: rider.id).take
+			ride.abort!
 		end
 	end
 

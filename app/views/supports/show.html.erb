@@ -3,7 +3,7 @@
 <p>
   <strong>User:</strong>
 
-	<% unless support.user.nil? %>
+	<% unless @support.user.nil? %>
 	<%= @support.user.first_name %> <%= @support.user.last_name %> <%= @support.user.email %>
 	<% end %>
 </p>
