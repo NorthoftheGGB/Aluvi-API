@@ -69,6 +69,6 @@ class SupportsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def support_params
-      params.require(:support).permit(:user_id, :messsage)
+      params.require(:support).permit(:user_id, :message)
     end
 end

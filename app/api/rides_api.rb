@@ -239,32 +239,34 @@ class RidesAPI< Grape::API
 		post :driver_cancelled do
 			authenticate!
 			# TODO move this logic to TripController
-			begin
-        fare = Fare.find(params[:fare_id])
-        if fare.driver.id != current_user.id
-					raise ApiExceptions::RideNotAssignedToThisDriverException
-        end
-        if !fare.is_cancelled
-          fare.driver_cancelled!
-        end
-        fare.rides.each do |ride|
-          unless ride.aborted?
-            ride.abort!
-          end
-        end
-				ok  
-			rescue AASM::InvalidTransition => e
-				if(fare.is_cancelled)
-					ok
-				else
-					raise e
+			ActiveRecord::Base.transaction do
+				begin
+					fare = Fare.find(params[:fare_id])
+					if fare.driver.id != current_user.id
+						raise ApiExceptions::RideNotAssignedToThisDriverException
+					end
+					if !fare.is_cancelled
+						fare.driver_cancelled!
+					end
+					fare.rides.each do |ride|
+						unless ride.aborted?
+							ride.abort!
+						end
+					end
+					ok  
+				rescue AASM::InvalidTransition => e
+					if(fare.is_cancelled)
+						ok
+					else
+						raise e
+					end
+				rescue ApiExceptions::RideNotAssignedToThisDriverException
+					error! $!.message, 403, 'X-Error-Detail' => $!.message
+				rescue ActiveRecord::RecordNotFound
+					if fare.nil?
+						ok
+					end
 				end
-			rescue ApiExceptions::RideNotAssignedToThisDriverException
-				error! $!.message, 403, 'X-Error-Detail' => $!.message
-      rescue ActiveRecord::RecordNotFound
-        if fare.nil?
-          ok
-        end
 			end
 		end
 
@@ -277,35 +279,37 @@ class RidesAPI< Grape::API
 			authenticate!
 
 			# TODO rider should only be able to cancel their own ride
-			begin
-				fare = Fare.find(params[:fare_id])
-        ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
-        unless ride.nil?
-          unless ride.aborted?
-            ride.abort!
-          end
-          unless ride.fare.nil?
-            unless fare.is_cancelled
-             fare.rider_cancelled!(current_user.as_rider)
-            end
-          end
-        end
-				ok
-      rescue AASM::InvalidTransition => e
-        if(fare.is_cancelled && ride.is_aborted)
+			# TODO move this logic to TripController in lib/
+			ActiveRecord::Base.transaction do
+				begin
+					fare = Fare.find(params[:fare_id])
+					ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
+					unless ride.nil?
+						unless ride.aborted?
+							ride.abort!
+						end
+						unless ride.fare.nil?
+							unless fare.is_cancelled
+								fare.rider_cancelled!(current_user.as_rider)
+							end
+						end
+					end
 					ok
-				else
-					raise e
-				end
-			rescue ActiveRecord::RecordNotFound => e
-				if fare.nil?
-					ok
-				else
-					raise e
+				rescue AASM::InvalidTransition => e
+					if(fare.is_cancelled && ride.aborted?)
+						ok
+					else
+						raise e
+					end
+				rescue ActiveRecord::RecordNotFound => e
+					if fare.nil?
+						ok
+					else
+						raise e
+					end
 				end
 			end
 		end
-
 
 		desc "Driver picked up rider"
 		params do

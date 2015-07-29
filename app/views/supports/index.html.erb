@@ -12,7 +12,10 @@
   <tbody>
     <% @supports.each do |support| %>
       <tr>
-			<td><%= support.user.first_name %> <%= support.user.last_name %> <%= support.user.email %></td>
+				<td><% unless support.user.nil? %>
+					<%= support.user.first_name %> <%= support.user.last_name %> <%= support.user.email %>
+				<% end %>
+				</td>
         <td><%= support.messsage %></td>
         <td><%= link_to 'Show', support %></td>
         <td><%= link_to 'Edit', edit_support_path(support) %></td>

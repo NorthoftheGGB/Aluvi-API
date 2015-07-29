@@ -36,7 +36,7 @@ class RidesAPIV2< Grape::API
         end
 				ok
       rescue AASM::InvalidTransition => e
-        if(fare.is_cancelled && ride.is_aborted)
+        if(fare.is_cancelled && ride.aborted?)
 					ok
 				else
 					raise e

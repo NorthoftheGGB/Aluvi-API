@@ -185,17 +185,22 @@ class Fare < ActiveRecord::Base
 	
 	def rider_cancelled rider
 		Rails.logger.info "RIDER_CANCELLED"
-		Rails.logger.info self.riders.count
-		if( self.riders.count == 1 )
+		Rails.logger.info self.rides.scheduled.count
+		if( self.rides.scheduled.count == 1 )
       Rails.logger.info "RIDER_CANCELLED: last rider cancelled"
       # this is the only rider, cancel the whole ride
 			aasm_rider_cancelled
 			self.finished = Time.now
       save
+			self.rides.first.abort!
 			notify_fare_cancelled_by_rider
 		else 
 			Rails.logger.info 'RIDER_CANCELLED: one rider cancelled'
+			Rails.logger.debug rider.id
+			Rails.logger.debug self.id
 			self.riders.delete(rider)
+			ride = self.rides.where( rider_id: rider.id).take
+			ride.abort!
 		end
 	end
 
