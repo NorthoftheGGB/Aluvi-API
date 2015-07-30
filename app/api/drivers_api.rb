@@ -76,28 +76,6 @@ class DriversAPI < Grape::API
 			 
 		end
 
-		desc "Clock On"
-		params do 
-		end
-		post "clock_on" do
-			authenticate!
-			unless current_driver.state == 'on_duty'
-				current_driver.clock_on!
-			end
-			ok
-		end
-
-		desc "Clock Off"
-		params do 
-		end
-		post "clock_off" do
-			authenticate!
-			if current_driver.state == 'on_duty'
-				current_driver.clock_off!
-			end
-			ok
-		end
-
 		desc "Load Fare Details for Driver"
 		get "fares/:id", jbuilder: 'fare' do
 			authenticate!
