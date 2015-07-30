@@ -59,6 +59,9 @@ module Voco
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+		# Opt into new tranactional callback error raise behavior
+		config.active_record.raise_in_transactional_callbacks = true
+
 		# Activate observers that should always be running
 		config.active_record.observers = [:ride_observer, :fare_observer, :driver_observer]
 
