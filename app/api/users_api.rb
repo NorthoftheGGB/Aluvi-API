@@ -80,7 +80,7 @@ class UsersAPI < Grape::API
 				user.password = new_password.downcase
 				user.save
 
-        g = GmailSender.new("users@vocotransportation.com", "aluviusers111")
+        g = GmailSender.new("support@aluviapp.com", "HM>H%5nr")
         g.send(:to => user.email,
                :subject => "Password Reset",
                :content => "Here is a new password for Aluvi: " + user.password)
