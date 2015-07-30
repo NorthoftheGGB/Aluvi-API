@@ -37,5 +37,10 @@ Voco::Application.configure do
 
 	config.eager_load = true
 
+	Rails.application.configure do
+		config.active_support.test_order = :random
+	end
+
+	# Aluvi specific config
 	config.voco_demo_commuter_assembly_trigger_threshold = 0
 end

@@ -23,6 +23,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -67,6 +81,29 @@ ALTER SEQUENCE cards_id_seq OWNED BY cards.id;
 
 
 --
+-- Name: cars; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE cars (
+    id integer NOT NULL,
+    driver_id integer,
+    make character varying(255),
+    model character varying(255),
+    license_plate character varying(255),
+    state character varying(255),
+    location geography(Point,4326),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    year character varying(255),
+    car_photo_file_name character varying(255),
+    car_photo_content_type character varying(255),
+    car_photo_file_size integer,
+    car_photo_updated_at timestamp without time zone,
+    color character varying(255)
+);
+
+
+--
 -- Name: cars_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -76,6 +113,13 @@ CREATE SEQUENCE cars_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
+
+--
+-- Name: cars_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE cars_id_seq OWNED BY cars.id;
 
 
 --
@@ -117,6 +161,21 @@ ALTER SEQUENCE devices_id_seq OWNED BY devices.id;
 
 
 --
+-- Name: driver_location_histories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE driver_location_histories (
+    id integer NOT NULL,
+    driver_id integer,
+    fare_id integer,
+    datetime timestamp without time zone,
+    location geography(Point,4326),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
 -- Name: driver_location_histories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -129,6 +188,36 @@ CREATE SEQUENCE driver_location_histories_id_seq
 
 
 --
+-- Name: driver_location_histories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE driver_location_histories_id_seq OWNED BY driver_location_histories.id;
+
+
+--
+-- Name: fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE fares (
+    id integer NOT NULL,
+    driver_id integer,
+    car_id integer,
+    state character varying(255),
+    scheduled timestamp without time zone,
+    started timestamp without time zone,
+    finished timestamp without time zone,
+    meeting_point geography(Point,4326),
+    meeting_point_place_name character varying(255),
+    drop_off_point geography(Point,4326),
+    drop_off_point_place_name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    pickup_time timestamp without time zone,
+    fixed_earnings integer DEFAULT 0
+);
+
+
+--
 -- Name: fares_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -138,6 +227,13 @@ CREATE SEQUENCE fares_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
+
+--
+-- Name: fares_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE fares_id_seq OWNED BY fares.id;
 
 
 --
@@ -250,6 +346,31 @@ ALTER SEQUENCE payouts_id_seq OWNED BY payouts.id;
 
 
 --
+-- Name: rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE rides (
+    id integer NOT NULL,
+    rider_id integer,
+    fare_id integer,
+    state character varying(255),
+    request_type character varying(255),
+    requested_datetime timestamp without time zone,
+    origin geography(Point,4326),
+    origin_place_name character varying(255),
+    destination geography(Point,4326),
+    destination_place_name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    pickup_time timestamp with time zone,
+    driving boolean,
+    trip_id integer,
+    direction character varying(255),
+    fixed_price integer DEFAULT 0
+);
+
+
+--
 -- Name: rides_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -262,6 +383,32 @@ CREATE SEQUENCE rides_id_seq
 
 
 --
+-- Name: rides_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE rides_id_seq OWNED BY rides.id;
+
+
+--
+-- Name: routes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE routes (
+    id integer NOT NULL,
+    rider_id integer,
+    origin geography(Point,4326),
+    pickup_time character varying(255),
+    destination geography(Point,4326),
+    return_time character varying(255),
+    driving boolean,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    destination_place_name character varying(255),
+    origin_place_name character varying(255)
+);
+
+
+--
 -- Name: routes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -271,6 +418,13 @@ CREATE SEQUENCE routes_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
+
+--
+-- Name: routes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE routes_id_seq OWNED BY routes.id;
 
 
 --
@@ -477,6 +631,74 @@ ALTER SEQUENCE trips_id_seq OWNED BY trips.id;
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    stripe_customer_id character varying(255),
+    stripe_recipient_id character varying(255),
+    company_id integer,
+    first_name character varying(255),
+    last_name character varying(255),
+    is_driver boolean,
+    is_rider boolean,
+    commuter_balance_cents integer,
+    commuter_refill_amount_cents integer,
+    location geography(Point,4326),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    rider_location geometry(Point,4326),
+    phone character varying(255),
+    password character varying(255),
+    email character varying(255),
+    referral_code character varying(255),
+    salt character varying(255),
+    token character varying(255),
+    driver_request_region character varying(255),
+    driver_referral_code character varying(255),
+    webtoken character varying(255),
+    demo boolean,
+    current_fare_id integer,
+    car_id integer,
+    commuter_refill_enabled boolean,
+    bank_account_name character varying(255),
+    driver_state character varying(255),
+    rider_state character varying(255),
+    drivers_license_file_name character varying(255),
+    drivers_license_content_type character varying(255),
+    drivers_license_file_size integer,
+    drivers_license_updated_at timestamp without time zone,
+    vehicle_registration_file_name character varying(255),
+    vehicle_registration_content_type character varying(255),
+    vehicle_registration_file_size integer,
+    vehicle_registration_updated_at timestamp without time zone,
+    proof_of_insurance_file_name character varying(255),
+    proof_of_insurance_content_type character varying(255),
+    proof_of_insurance_file_size integer,
+    proof_of_insurance_updated_at timestamp without time zone,
+    national_database_check_file_name character varying(255),
+    national_database_check_content_type character varying(255),
+    national_database_check_file_size integer,
+    national_database_check_updated_at timestamp without time zone,
+    drivers_license_number character varying(255),
+    commuter_pickup_time character varying(255),
+    commuter_origin geometry(Point),
+    commuter_destination geometry(Point),
+    commuter_return_time character varying(255),
+    recipient_card_brand character varying(255),
+    recipient_card_exp_month character varying(255),
+    recipient_card_month character varying(255),
+    recipient_card_last4 character varying(255),
+    zip_code character varying(255),
+    image_file_name character varying(255),
+    image_content_type character varying(255),
+    image_file_size integer,
+    image_updated_at timestamp without time zone
+);
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -486,6 +708,13 @@ CREATE SEQUENCE users_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
@@ -499,7 +728,28 @@ ALTER TABLE ONLY cards ALTER COLUMN id SET DEFAULT nextval('cards_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY cars ALTER COLUMN id SET DEFAULT nextval('cars_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY devices ALTER COLUMN id SET DEFAULT nextval('devices_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY driver_location_histories ALTER COLUMN id SET DEFAULT nextval('driver_location_histories_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY fares ALTER COLUMN id SET DEFAULT nextval('fares_id_seq'::regclass);
 
 
 --
@@ -521,6 +771,20 @@ ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq':
 --
 
 ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rides ALTER COLUMN id SET DEFAULT nextval('rides_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY routes ALTER COLUMN id SET DEFAULT nextval('routes_id_seq'::regclass);
 
 
 --
@@ -559,6 +823,13 @@ ALTER TABLE ONLY trips ALTER COLUMN id SET DEFAULT nextval('trips_id_seq'::regcl
 
 
 --
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
 -- Name: cards_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -567,11 +838,27 @@ ALTER TABLE ONLY cards
 
 
 --
+-- Name: cars_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY cars
+    ADD CONSTRAINT cars_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: devices_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY devices
     ADD CONSTRAINT devices_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: driver_location_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY driver_location_histories
+    ADD CONSTRAINT driver_location_histories_pkey PRIMARY KEY (id);
 
 
 --
@@ -623,6 +910,30 @@ ALTER TABLE ONLY rpush_notifications
 
 
 --
+-- Name: ride_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rides
+    ADD CONSTRAINT ride_requests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY fares
+    ADD CONSTRAINT rides_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: routes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY routes
+    ADD CONSTRAINT routes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: supports_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -636,6 +947,14 @@ ALTER TABLE ONLY supports
 
 ALTER TABLE ONLY trips
     ADD CONSTRAINT table_trips_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --
@@ -653,10 +972,25 @@ CREATE INDEX index_rpush_notifications_multi ON rpush_notifications USING btree 
 
 
 --
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: rides_rider_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rides
+    ADD CONSTRAINT rides_rider_id_fk FOREIGN KEY (rider_id) REFERENCES users(id);
 
 
 --
