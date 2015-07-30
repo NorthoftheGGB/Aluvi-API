@@ -50,5 +50,63 @@ class RidesAPIV2< Grape::API
 			end
 		end
 
+
+		desc "Driver picked up rider"
+		params do
+			requires :ride_id, type: Integer # ride_id of the driver's ride
+			optional :rider_id, type: Integer
+		end
+		post :pickup do
+			Rails.logger.debug params
+			authenticate!
+			# TODO validate driver and or rider is matched to ride
+			begin
+				ride = Ride.fine(params[:ride_id])
+				fare = ride.fare
+				if fare.driver.id != current_user.id
+					raise ApiExceptions::RideNotAssignedToThisDriverException
+				end
+
+				if(params[:rider_id].nil?)
+          fare.pickup!
+				else
+					rider = Rider.find(params[:rider_id])
+          fare.pickup! rider
+				end
+				ok
+			rescue ApiExceptions::RideNotAssignedToThisDriverException
+				forbidden $!
+			end
+		end
+
+
+		desc "Driver dropped off rider(s)"
+		params do
+			requires :ride_id, type: Integer
+		end
+		post :arrived do
+			authenticate!
+			begin
+				ride = Ride.fine(params[:ride_id])
+				fare = ride.fare
+				if fare.driver.id != current_user.id
+					raise ApiExceptions::RideNotAssignedToThisDriverException
+				end
+
+        fare = Fare.find(params[:fare_id])
+			  TripController.fare_completed fare
+
+				# either way notify the driver
+				response = Hash.new
+				response['amount'] = fare.cost
+				response['driver_earnings'] = fare.fixed_earnings
+				response
+
+			rescue ApiExceptions::RideNotAssignedToThisDriverException
+				forbidden $!
+			end
+		end
+
+
 	end
 end
