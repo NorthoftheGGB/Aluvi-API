@@ -12,6 +12,8 @@ class DevicesAPI < Grape::API
 			optional :platform, type: String
 			optional :latitude, type: BigDecimal
 			optional :longitude, type: BigDecimal
+			optional :hardware, type: String
+			optional :os, type: String
 		end
 		patch ':uuid' do
 			#validate api token
@@ -53,6 +55,12 @@ class DevicesAPI < Grape::API
 			end
 			unless params[:platform].nil?
 				device.platform = params[:platform]
+			end
+			unless params[:hardware].nil?
+				device.hardware = params[:hardware]
+			end
+			unless params[:os].nil?
+				device.os = params[:os]
 			end
 			Rails.logger.debug device.inspect
 			device.save
