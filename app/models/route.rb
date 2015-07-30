@@ -3,5 +3,4 @@ class Route < ActiveRecord::Base
 
 	attr_accessible :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :pickup_time, :return_time, :driving
 
-	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
 end

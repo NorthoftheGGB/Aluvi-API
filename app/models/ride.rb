@@ -8,8 +8,6 @@ class Ride < ActiveRecord::Base
 
 	before_create :before_create
 
-	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
-
 	include AASM
 	aasm.attribute_name :state
 

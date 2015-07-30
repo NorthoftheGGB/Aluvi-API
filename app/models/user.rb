@@ -7,8 +7,6 @@ class User < ActiveRecord::Base
 	has_attached_file :image, :styles => { :small => "212x249>" }, :default_url => "/images/missing.png", :storage => :s3
 	validates_attachment_content_type :image, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
-	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
-
 	def self.authorize!(token)
     Rails.logger.debug "Authorizing"
 		unless token == 'demo2398sdf09psd09f23'
