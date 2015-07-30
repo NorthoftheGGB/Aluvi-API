@@ -8,7 +8,7 @@ class RidesAPIV2< Grape::API
 		desc "Get requested and underway ride requests"
 		get 'tickets', jbuilder: 'v2/tickets' do
 			authenticate!
-      rider = Rider.find(current_user.id)
+			rider = Rider.find(current_user.id)
 			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
 			@rides
 		end
@@ -22,21 +22,21 @@ class RidesAPIV2< Grape::API
 
 			# TODO rider should only be able to cancel their own ride
 			begin
-        ride = current_user.as_rider.rides.where(ride_id: params[:ride_id]).first
+				ride = current_user.as_rider.rides.where(ride_id: params[:ride_id]).first
 				fare = ride.fare
-        unless ride.nil?
-          unless ride.aborted?
-            ride.abort!
-          end
-          unless ride.fare.nil?
-            unless fare.is_cancelled
-             fare.rider_cancelled!(current_user.as_rider)
-            end
-          end
-        end
+				unless ride.nil?
+					unless ride.aborted?
+						ride.abort!
+					end
+					unless ride.fare.nil?
+						unless fare.is_cancelled
+							fare.rider_cancelled!(current_user.as_rider)
+						end
+					end
+				end
 				ok
-      rescue AASM::InvalidTransition => e
-        if(fare.is_cancelled && ride.aborted?)
+			rescue AASM::InvalidTransition => e
+				if(fare.is_cancelled && ride.aborted?)
 					ok
 				else
 					raise e
@@ -68,10 +68,10 @@ class RidesAPIV2< Grape::API
 				end
 
 				if(params[:rider_id].nil?)
-          fare.pickup!
+					fare.pickup!
 				else
 					rider = Rider.find(params[:rider_id])
-          fare.pickup! rider
+					fare.pickup! rider
 				end
 				ok
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
@@ -93,8 +93,8 @@ class RidesAPIV2< Grape::API
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
-        fare = Fare.find(params[:fare_id])
-			  TripController.fare_completed fare
+				fare = Fare.find(params[:fare_id])
+				TripController.fare_completed fare
 
 				# either way notify the driver
 				response = Hash.new
