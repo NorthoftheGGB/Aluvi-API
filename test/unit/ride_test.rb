@@ -92,14 +92,14 @@ class RideTest < ActiveSupport::TestCase
 
 	test "rider cancels single rider fare" do
 		fare = FactoryGirl.create(:scheduled_fare)
-		fare.rider_cancelled!(fare.riders.first)
+		fare.ride_cancelled!(fare.rides.where(driving: false).first)
 		assert_equal("rider_cancelled", fare.state)
 		assert_not_nil(fare.finished)
 	end
 
 	test "rider cancels multi rider fare" do
 		fare = FactoryGirl.create(:scheduled_multirider_fare)
-		fare.rider_cancelled!(fare.riders.first)
+		fare.ride_cancelled!(fare.rides.where(driving: false).first)
 		assert_equal("scheduled", fare.state)
 		assert_nil(fare.finished)
 	end
@@ -108,13 +108,9 @@ class RideTest < ActiveSupport::TestCase
 		Rails.logger.info "both riders cancel multi rider fare" 
 		fare = FactoryGirl.create(:scheduled_multirider_fare)
 
-		riders = Array.new
-		fare.riders.each do |r|
-			riders.push(r)
-		end
-
-		riders.each do |r|
-			fare.rider_cancelled!(r)
+		fare.rides.where(driving: false).each do |r|
+			Rails.logger.info "cancelling one" 
+			fare.ride_cancelled!(r)
 		end
 		assert_equal("rider_cancelled", fare.state)
 		assert_not_nil(fare.finished)

@@ -2,8 +2,8 @@ class Fare < ActiveRecord::Base
 
 	belongs_to :driver, inverse_of: :fares
 	belongs_to :car, inverse_of: :fares
-	has_many :riders, through: :rides
 	has_many :rides, inverse_of: :fare
+	has_many :riders, through: :rides
 	has_many :offers, inverse_of: :fare
 	has_many :payments
 
@@ -70,6 +70,8 @@ class Fare < ActiveRecord::Base
 	alias aasm_pickup! pickup!
 	alias aasm_retracted_by_rider retracted_by_rider
 	alias aasm_retracted_by_rider! retracted_by_rider!
+	alias aasm_driver_cancelled driver_cancelled
+	alias aasm_driver_cancelled! driver_cancelled!
 
 	def self.assemble_fare_from_rides requests_arg
 
@@ -180,8 +182,43 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
+
+	def ride_cancelled! ride
+		Rails.logger.info "RIDE_CANCELLED"
+		Rails.logger.info self.rides.scheduled.count
+		if( ride.driving? )
+			Rails.logger.debug "driving"
+			aasm_driver_cancelled
+			self.finished = Time.now
+			save
+			self.driver.current_fare = nil
+			self.driver.save
+			self.rides.each do |ride|
+				unless ride.aborted?
+					ride.abort!
+				end
+			end
+			notify_observers :fare_cancelled_by_driver
+
+		elsif( self.rides.scheduled.count == 2 )
+      Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
+      # this is the only rider, cancel the whole ride
+			aasm_rider_cancelled
+			self.finished = Time.now
+      save
+			self.rides.scheduled.each do |ride|
+				ride.abort!
+			end
+			notify_fare_cancelled_by_rider
+
+		else 
+			Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
+			ride.abort!
+		end
+	end
 	
 	def rider_cancelled rider
+		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
 		Rails.logger.info "RIDER_CANCELLED"
 		Rails.logger.info self.rides.scheduled.count
 		if( self.rides.scheduled.count == 1 )
@@ -197,7 +234,7 @@ class Fare < ActiveRecord::Base
 			Rails.logger.debug rider.id
 			Rails.logger.debug self.id
 			self.riders.delete(rider)
-			ride = self.rides.where( rider_id: rider.id).take
+			ride = self.rides.where( rider_id: rider.id).first
 			ride.abort!
 		end
 	end
@@ -257,6 +294,7 @@ class Fare < ActiveRecord::Base
 	end
 
 	def driver_cancelled_ride
+		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
 		self.finished = Time.now
 		save
 		self.driver.current_fare = nil

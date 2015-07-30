@@ -8,6 +8,7 @@ FactoryGirl.define do
     #destination_longitude -122.7
     destination_place_name 'My Work'
     state 'created'
+		driving false
 
 
 		factory :on_demand_ride do

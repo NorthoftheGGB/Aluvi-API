@@ -7,15 +7,17 @@ FactoryGirl.define do
     factory :scheduled_fare do
 			state "scheduled"
       after(:create) do |fare|
-        fare.riders << FactoryGirl.create(:rider)
+				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled', driving: true)
+				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled')
       end
 		end
 
 		factory :scheduled_multirider_fare do
 			state "scheduled"
 			after(:create) do |fare|
-				fare.riders << FactoryGirl.create(:rider)
-				fare.riders << FactoryGirl.create(:rider, email: "another@meme.com")
+				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled', driving: true)
+				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled')
+				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled')
 			end
 
 		end
