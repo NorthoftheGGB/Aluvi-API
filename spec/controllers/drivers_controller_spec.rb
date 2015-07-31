@@ -1,5 +1,5 @@
 describe DriversController do
-  let(:driver) {FactoryGirl.create(:driver)}
+  let(:driver) {FactoryGirl.create(:interested_driver)}
 
   describe "GET #index" do
     it 'gets a successful response' do
@@ -23,11 +23,11 @@ describe DriversController do
     context 'with valid parameters' do
       it 'saves the new driver to the database' do
         expect{
-          post :create, driver: FactoryGirl.attributes_for(:driver)
+          post :create, driver: FactoryGirl.attributes_for(:interested_driver)
         }.to change(Driver, :count).by(1)
       end
       it 'redirects to drivers#show' do
-        post :create, driver: FactoryGirl.attributes_for(:driver)
+        post :create, driver: FactoryGirl.attributes_for(:interested_driver)
         expect(response).to redirect_to driver_path(assigns(:driver))
       end
     end
@@ -49,16 +49,16 @@ describe DriversController do
 
   describe 'PATCH #update' do
     before :each do
-      @driver = FactoryGirl.create(:driver, first_name: "Jane")
+      @driver = FactoryGirl.create(:interested_driver, first_name: "Jane")
     end
     context 'with valid parameters' do
       it 'locates the requested @driver' do
-        patch :update, id: @driver, driver: FactoryGirl.attributes_for(:driver)
+        patch :update, id: @driver, driver: FactoryGirl.attributes_for(:interested_driver)
         expect(assigns(:driver)).to eq(@driver)
       end
       it "changes @driver's attributes" do
         patch :update, id: @driver,
-                driver: FactoryGirl.attributes_for(:driver, first_name: 'Jane')
+                driver: FactoryGirl.attributes_for(:interested_driver, first_name: 'Jane')
         @driver.reload
         expect(@driver.first_name).to eq('Jane')
       end
@@ -71,7 +71,7 @@ describe DriversController do
 
   describe 'DELETE #destroy' do
     before :each do
-      @driver = FactoryGirl.create(:driver)
+      @driver = FactoryGirl.create(:interested_driver)
     end
     it 'deletes the driver' do
       expect{delete :destroy, id: @driver}.to change(Driver, :count).by(-1)

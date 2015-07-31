@@ -11,11 +11,6 @@ FactoryGirl.define do
 		driving false
 
 
-		factory :on_demand_ride do
-			request_type 'on_demand'
-      state 'requested'
-    end
-
 		factory :commuter_ride do
 
 			request_type 'commuter_ride'

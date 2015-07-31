@@ -92,7 +92,7 @@ gem 'capistrano'
 group :test do
 	gem "factory_girl_rails", "~> 4.0"
 	gem 'rspec'
-	gem 'rspec-rails', '~> 3.0.0'
+	gem 'rspec-rails', '~> 3.1'
   gem 'database_cleaner'
 end
 

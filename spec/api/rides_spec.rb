@@ -14,15 +14,6 @@ describe RidesAPI do
  # end
 
 	describe "POST /api/rides/request" do
-		it "processes on demand ride request" do
-      @rider = FactoryGirl.create(:rider)
-			post "/api/rides/request", {:type => 'on_demand',:departure_latitude => 45.5,
-           :departure_longitude => -122.3, :departure_place_name => "My House",
-           :destination_latitude => 46.5, :destination_longitude => -122.4,
-           :destination_place_name => 'My Work'}, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
-			expect(response.status).to eq(201)
-    end
-
     it "processes commuter ride request" do
       @rider = FactoryGirl.create(:rider)
       post "/api/rides/request", {:type => 'commuter',:departure_latitude => 45.5,
@@ -45,19 +36,9 @@ describe RidesAPI do
 
   describe "POST /api/rides/request/cancel" do
     it "cancels a ride" do
-      @ride = FactoryGirl.create(:on_demand_ride)
+      @ride = FactoryGirl.create(:commuter_ride)
       post "/api/rides/request/cancel", {:ride_id => @ride.id}, {'HTTP_AUTHORIZATION' => encode_credentials(@ride.rider.token)}
-      expect(response.status).to eq(201)
-    end
-  end
-
-  describe "GET /api/rides/offers" do
-    it "gets offers" do
-      @driver = FactoryGirl.create(:driver)
-      @offer = FactoryGirl.create(:offer)
-      get "/api/rides/offers", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
       expect(response.status).to eq(200)
-
     end
   end
 
@@ -97,7 +78,7 @@ describe RidesAPI do
 
   describe "GET /api/rides/earnings" do
     it "gets earnings" do
-      @driver = FactoryGirl.create(:driver)
+      @driver = FactoryGirl.create(:approved_driver)
       get "/api/rides/earnings", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
       expect(response.status).to eq(200)
 

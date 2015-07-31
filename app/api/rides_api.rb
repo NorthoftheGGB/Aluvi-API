@@ -117,7 +117,7 @@ class RidesAPI< Grape::API
 				end
 			end
 
-			status 200
+			status 201
 			rval = Hash.new
 			rval[:ride_id] = ride.id
 			rval[:trip_id] = ride.trip_id
