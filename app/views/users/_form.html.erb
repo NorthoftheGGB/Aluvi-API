@@ -41,11 +41,11 @@
   </div>
   <div class="field">
     <%= f.label "Rider State" %><br />
-    <%= f.select :rider_state, ['activate','no state'] %>
+    <%= f.select :rider_state, ['active'] %>
   </div>
   <div class="field">
     <%= f.label "Interest in being a driver" %><br />
-    <%= f.select :driver_state, %w[uninterested interested] %>
+    <%= f.select :driver_state, %w[uninterested active] %>
   </div>
 
   <h2>Commuter Card</h2>
