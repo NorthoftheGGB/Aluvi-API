@@ -290,7 +290,7 @@ class RidesAPI< Grape::API
 						end
 						unless ride.fare.nil?
 							unless fare.is_cancelled
-								fare.rider_cancelled!(current_user.as_rider)
+								fare.ride_cancelled!(ride)
 							end
 						end
 					end

@@ -2,7 +2,7 @@
 
 class RidesControllerTest < ActionController::TestCase
   setup do
-    @ride = FactoryGirl.create(:on_demand_ride)
+    @ride = FactoryGirl.create(:commuter_ride)
   end
 
   test "should get index" do
