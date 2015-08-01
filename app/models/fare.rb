@@ -73,49 +73,7 @@ class Fare < ActiveRecord::Base
 	alias aasm_driver_cancelled driver_cancelled
 	alias aasm_driver_cancelled! driver_cancelled!
 
-	def self.assemble_fare_from_rides requests_arg
 
-		Rails.logger.debug requests_arg
-		requests = Array.new
-		requests_arg.each do |r|
-			if(r.is_a? Integer)
-				requests << Ride.find(r)
-			elsif (r.is_a? String)
-				requests << Ride.find(r.to_i)
-			else
-				requests << r	
-			end
-		end
-		Rails.logger.debug requests
-
-		meeting_point_latitude = 0
-		meeting_point_longitude = 0
-		drop_off_point_latitude = 0
-		drop_off_point_longitude = 0
-		requests.each do |request|
-			meeting_point_latitude += request.origin.latitude
-			meeting_point_longitude += request.origin.longitude
-			drop_off_point_latitude += request.destination.latitude
-			drop_off_point_longitude += request.destination.longitude
-		end
-		meeting_point_latitude = meeting_point_latitude / requests.size
-		meeting_point_longitude = meeting_point_longitude / requests.size
-		drop_off_point_latitude = drop_off_point_latitude / requests.size
-		drop_off_point_longitude = drop_off_point_longitude / requests.size
-		ride = self.create( nil, 
-								RGeo::Geographic.spherical_factory( :srid => 4326 ).point(meeting_point_longitude, meeting_point_latitude),
-								"unnamed location",
-								RGeo::Geographic.spherical_factory( :srid => 4326 ).point(drop_off_point_longitude, drop_off_point_latitude),
-								"unnamed location");
-		requests.each do |request|
-			ride.rides << request
-			ride.riders << request.rider
-		end
-		ride.save
-		ride
-
-	end
- 
 	def self.create ( pickup_time, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name )
 		fare = Fare.new
     fare.pickup_time = pickup_time
