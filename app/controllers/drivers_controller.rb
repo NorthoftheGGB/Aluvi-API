@@ -11,8 +11,8 @@ class DriversController < ApplicationController
 			item[:id] = u.id
 			unless u.location.nil?
 				Rails.logger.debug u.location
-				item[:latitude] = u.location.latitude
-				item[:longitude] = u.location.longitude
+				item[:latitude] = u.location.y
+				item[:longitude] = u.location.x
 			end
 			json.push item
 		end
