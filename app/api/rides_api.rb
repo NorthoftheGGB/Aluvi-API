@@ -18,8 +18,6 @@ class RidesAPI< Grape::API
 			optional :driving, type: Boolean
 		end
 		post :commute do
-			Rails.logger.debug "hello"
-			Rails.logger.debug params
 			authenticate!
 
 			outgoing_ride = TripController.request_commute_leg(
@@ -44,6 +42,7 @@ class RidesAPI< Grape::API
 				outgoing_ride.trip_id
 			)
 
+			status 201
 			rval = Hash.new
 			rval[:outgoing_ride_id] = outgoing_ride.id
 			rval[:return_ride_id] = return_ride.id
