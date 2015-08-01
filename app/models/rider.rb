@@ -5,6 +5,7 @@ class Rider < User
 	has_many :fares, through: :rides
 	has_many :cards
 	has_many :payments
+	has_one :route
 
 	attr_accessible :rider_state, :rider_state_event
 

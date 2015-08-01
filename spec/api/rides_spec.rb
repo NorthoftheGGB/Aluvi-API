@@ -123,4 +123,14 @@ describe RidesAPI do
 		end
 	end
 
+  describe "GET /api/rides/route" do
+    it "gets a rider's route" do
+      @driver = FactoryGirl.create(:rider)
+      get "/api/rides/route", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
+      expect(response.status).to eq(200)
+
+    end
+  end
+
+
 end
