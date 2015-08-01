@@ -87,35 +87,6 @@ class RidesAPI< Grape::API
 				raise "No request type set"
 			end
 
-
-			if params[:type] == 'commuter'
-				if false #current_user.demo
-					# demoing subsystem
-					demo_rides = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :rider ).where( :users => { demo: true  } )
-
-					threshold = Rails.application.config.voco_demo_commuter_assembly_trigger_threshold 
-					if threshold.nil?
-						threshold = 3
-					end
-					Rails.logger.debug threshold
-					if demo_rides.count > threshold
-						Rails.logger.debug 'scheduling DEMO commuter ride'
-						ActiveRecord::Base.transaction do
-							# need to DRY this with the commuter ride requests controller
-							fare = Fare.assemble_fare_from_rides demo_rides
-              fare.meeting_point_place_name = FaresHelper::reverse_geocode fare.meeting_point
-              fare.drop_off_point_place_name = FaresHelper::reverse_geocode  fare.drop_off_point
-							drivers = Driver.demo_drivers
-							unless drivers.count == 0
-                fare.pickup_time = DateTime.now
-                fare.driver = drivers[0]
-                fare.car = drivers[0].cars.first
-							end
-						end
-					end
-				end
-			end
-
 			status 201
 			rval = Hash.new
 			rval[:ride_id] = ride.id
