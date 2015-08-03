@@ -253,17 +253,7 @@ class RidesAPI< Grape::API
 			ActiveRecord::Base.transaction do
 				begin
 					fare = Fare.find(params[:fare_id])
-					ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
-					unless ride.nil?
-						unless ride.aborted?
-							ride.abort!
-						end
-						unless ride.fare.nil?
-							unless fare.is_cancelled
-								fare.ride_cancelled!(ride)
-							end
-						end
-					end
+					fare.cancel_ride_for_rider(current_user.as_rider)
 					ok
 				rescue AASM::InvalidTransition => e
 					if(fare.is_cancelled && ride.aborted?)

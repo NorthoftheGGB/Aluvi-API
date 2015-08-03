@@ -88,6 +88,24 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
+	def cancel_ride_for_rider rider
+		ride = rider.rides.where(fare_id: self.id).first
+		Rails.logger.debug 'Cancelling ride for rider'
+		Rails.logger.debug ride
+		unless ride.nil?
+			unless ride.fare.nil?
+				unless self.is_cancelled
+					self.ride_cancelled!(ride)
+				end
+			else
+				unless ride.aborted?
+					ride.aborte!
+				end
+			end
+		end
+
+	end
+
 	def ride_cancelled! ride
 		Rails.logger.info "RIDE_CANCELLED"
 		Rails.logger.info self.rides.scheduled.count
@@ -103,7 +121,7 @@ class Fare < ActiveRecord::Base
 					ride.abort!
 				end
 			end
-			notify_observers :fare_cancelled_by_driver
+			notify_fare_cancelled_by_driver
 
 		elsif( self.rides.scheduled.count == 2 )
       Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
@@ -118,7 +136,9 @@ class Fare < ActiveRecord::Base
 
 		else 
 			Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
-			ride.abort!
+			unless ride.aborted?
+				ride.abort!
+			end
 		end
 	end
 	
