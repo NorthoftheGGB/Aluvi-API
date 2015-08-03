@@ -85,7 +85,8 @@ class RideTest < ActiveSupport::TestCase
 
 	test "driver cancels scheduled fare" do
 		fare = FactoryGirl.create(:scheduled_fare)
-		fare.driver_cancelled!
+		Rails.logger.debug fare.rides
+		fare.ride_cancelled!(fare.rides.where(driving: true).first)
 		assert_equal("driver_cancelled", fare.state)
 		assert_not_nil(fare.finished)
 	end
