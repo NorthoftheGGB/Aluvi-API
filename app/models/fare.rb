@@ -44,7 +44,7 @@ class Fare < ActiveRecord::Base
 			transitions :from => :scheduled, :to => :rider_cancelled
 		end
 
-		event :driver_cancelled, :after => :driver_cancelled_ride do
+		event :driver_cancelled do
 			transitions :from => :scheduled, :to => :driver_cancelled
 			transitions :from => :started, :to => :driver_cancelled
 		end
@@ -60,10 +60,6 @@ class Fare < ActiveRecord::Base
 		
 	end
 
-	alias aasm_accepted accepted
-	alias aasm_accepted! accepted!
-	alias aasm_assign assign
-	alias aasm_assign! assign!
 	alias aasm_rider_cancelled rider_cancelled
 	alias aasm_rider_cancelled! rider_cancelled!
 	alias aasm_pickup pickup
@@ -91,55 +87,6 @@ class Fare < ActiveRecord::Base
 			false
 		end
 	end
-
-	def accepted( driver )
-		aasm_accepted
-		Rails.logger.debug 'driver accepted ride'
-		assign_driver(driver)
-	end
-
-	def accepted!( driver )
-		accepted(driver)
-		save
-	end
-
-	def assign(driver)
-		aasm_assign
-		assign_driver(driver)
-	end
-
-	def assign!(driver)
-		assign(driver)
-		save
-	end
-
-	def assign_driver(driver)
-		self.driver = driver	
-		self.car = driver.cars.first
-		# and mark all ride offers as closed 
-		offers.open_offers.each do |offer|
-			offer.closed!
-		end
-	end
-
-	def retracted_by_rider! rider
-		retracted_by_rider rider
-		save
-	end
-
-	def retracted_by_rider rider
-		if( riders.count == 1 )
-			aasm_retracted_by_rider rider
-			self.finished = Time.now
-			offers.open_offers.each do |offer|
-				offer.closed!
-			end
-			notify_observers :retracted
-		else
-			riders.delete(rider)
-		end
-	end
-
 
 	def ride_cancelled! ride
 		Rails.logger.info "RIDE_CANCELLED"
@@ -175,33 +122,6 @@ class Fare < ActiveRecord::Base
 		end
 	end
 	
-	def rider_cancelled rider
-		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
-		Rails.logger.info "RIDER_CANCELLED"
-		Rails.logger.info self.rides.scheduled.count
-		if( self.rides.scheduled.count == 1 )
-      Rails.logger.info "RIDER_CANCELLED: last rider cancelled"
-      # this is the only rider, cancel the whole ride
-			aasm_rider_cancelled
-			self.finished = Time.now
-      save
-			self.rides.first.abort!
-			notify_fare_cancelled_by_rider
-		else 
-			Rails.logger.info 'RIDER_CANCELLED: one rider cancelled'
-			Rails.logger.debug rider.id
-			Rails.logger.debug self.id
-			self.riders.delete(rider)
-			ride = self.rides.where( rider_id: rider.id).first
-			ride.abort!
-		end
-	end
-
-	def rider_cancelled! rider
-		rider_cancelled rider
-		save
-	end
-
 	def pickup(rider = nil) 
 		aasm_pickup
 		unless(rider.nil?)
@@ -250,16 +170,6 @@ class Fare < ActiveRecord::Base
     self.scheduled = Time.now
     save
 	end
-
-	def driver_cancelled_ride
-		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
-		self.finished = Time.now
-		save
-		self.driver.current_fare = nil
-		self.driver.save
-		notify_observers :fare_cancelled_by_driver
-	end
-
 
 	def started_ride
 		Rails.logger.debug 'started_ride callback'
