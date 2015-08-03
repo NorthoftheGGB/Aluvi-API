@@ -5,6 +5,53 @@ class RidesAPIV2< Grape::API
 
 	resources :rides do
 
+		desc "Request Commuter Trip "
+		params do
+			requires :departure_latitude, type: BigDecimal
+			requires :departure_longitude, type: BigDecimal
+			requires :departure_place_name, type: String
+			requires :destination_latitude, type: BigDecimal
+			requires :destination_longitude, type: BigDecimal
+			requires :destination_place_name, type: String
+			requires :departure_pickup_time, type: DateTime
+			requires :return_pickup_time, type: DateTime
+			optional :driving, type: Boolean
+		end
+		post :commute do
+			authenticate!
+
+			outgoing_ride = TripController.request_commute_leg(
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+				params[:departure_place_name],
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+				params[:destination_place_name],
+				params[:departure_pickup_time],
+				params[:driving],
+				current_rider,
+				nil
+			)
+
+			return_ride = TripController.request_commute_leg(
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+				params[:destination_place_name],
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+				params[:departure_place_name],
+				params[:return_pickup_time],
+				params[:driving],
+				current_rider,
+				outgoing_ride.trip_id
+			)
+
+			status 201
+			rval = Hash.new
+			rval[:outgoing_ride_id] = outgoing_ride.id
+			rval[:return_ride_id] = return_ride.id
+			rval[:trip_id] = outgoing_ride.trip_id
+			rval
+		end
+
+
+
 		desc "Get requested and underway ride requests"
 		get 'tickets', jbuilder: 'v2/tickets' do
 			authenticate!
@@ -13,43 +60,35 @@ class RidesAPIV2< Grape::API
 			@rides
 		end
 
-		desc "Rider cancelled fare"
+		desc "User cancelled a ride"
 		params do
 			requires :ride_id, type: Integer
 		end
-		post :rider_cancelled do
+		post :cancelled do
 			authenticate!
 
 			# TODO rider should only be able to cancel their own ride
-			begin
-				ride = current_user.as_rider.rides.where(ride_id: params[:ride_id]).first
-				fare = ride.fare
-				unless ride.nil?
-					unless ride.aborted?
-						ride.abort!
-					end
-					unless ride.fare.nil?
-						unless fare.is_cancelled
-							fare.ride_cancelled!(ride)
-						end
-					end
-				end
-				ok
-			rescue AASM::InvalidTransition => e
-				if(fare.is_cancelled && ride.aborted?)
+			# TODO move this logic to TripController in lib/
+			ActiveRecord::Base.transaction do
+				begin
+					fare = Fare.find(params[:fare_id])
+					fare.cancel_ride_for_user current_user
 					ok
-				else
-					raise e
-				end
-			rescue ActiveRecord::RecordNotFound => e
-				if fare.nil?
-					ok
-				else
-					raise e
+				rescue AASM::InvalidTransition => e
+					if(fare.is_cancelled && ride.aborted?)
+						ok
+					else
+						raise e
+					end
+				rescue ActiveRecord::RecordNotFound => e
+					if fare.nil?
+						ok
+					else
+						raise e
+					end
 				end
 			end
 		end
-
 
 		desc "Driver picked up rider"
 		params do
