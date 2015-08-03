@@ -88,8 +88,8 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
-	def cancel_ride_for_rider rider
-		ride = rider.rides.where(fare_id: self.id).first
+	def cancel_ride_for_user user
+		ride = user.as_rider.rides.where(fare_id: self.id).first
 		Rails.logger.debug 'Cancelling ride for rider'
 		Rails.logger.debug ride
 		unless ride.nil?
@@ -111,7 +111,7 @@ class Fare < ActiveRecord::Base
 		Rails.logger.info self.rides.scheduled.count
 		if( ride.driving? )
 			Rails.logger.debug "driving"
-			aasm_driver_cancelled
+			self.driver_cancelled
 			self.finished = Time.now
 			save
 			self.driver.current_fare = nil

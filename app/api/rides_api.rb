@@ -215,14 +215,7 @@ class RidesAPI< Grape::API
 					if fare.driver.id != current_user.id
 						raise ApiExceptions::RideNotAssignedToThisDriverException
 					end
-					if !fare.is_cancelled
-						fare.driver_cancelled!
-					end
-					fare.rides.each do |ride|
-						unless ride.aborted?
-							ride.abort!
-						end
-					end
+					fare.cancel_ride_for_user current_user
 					ok  
 				rescue AASM::InvalidTransition => e
 					if(fare.is_cancelled)
@@ -253,7 +246,7 @@ class RidesAPI< Grape::API
 			ActiveRecord::Base.transaction do
 				begin
 					fare = Fare.find(params[:fare_id])
-					fare.cancel_ride_for_rider(current_user.as_rider)
+					fare.cancel_ride_for_user current_user
 					ok
 				rescue AASM::InvalidTransition => e
 					if(fare.is_cancelled && ride.aborted?)
