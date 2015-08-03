@@ -94,6 +94,43 @@ class RidesAPI< Grape::API
 			rval
 
 		end
+		
+		desc "Cancel a ride request"
+		params do
+			requires :ride_id, type: Integer
+		end
+		post "request/cancel" do
+			authenticate!
+			begin
+				ride = Ride.find(params[:ride_id])
+				if(ride.rider.id != current_user.id )
+					raise ApiExceptions::WrongUserForEntityException
+				end
+				TripController.cancel_request ride
+				status 200
+				ok
+			rescue ActiveRecord::RecordNotFound
+				status 200
+				ok
+			rescue ApiExceptions::WrongUserForEntityException
+		    Rails.loger.debug "WrongUserForEntityException"
+				Rails.logger.debug $!
+				forbidden $!
+      rescue AASM::InvalidTransition => e
+				if(ride.state == 'cancelled')
+					status 200
+					ok
+				else
+					Rails.logger.error e
+					Rails.logger.debug ride.id
+					forbidden e
+				end
+      rescue
+        Rails.logger.error $!
+				Rails.logger.error $!.backtrace.join("\n")
+				error! $!.message, 403, 'X-Error-Detail' => $!.message
+			end
+		end
 
 		desc "Cancel an entire trip"
 		delete 'trips/:trip_id' do
