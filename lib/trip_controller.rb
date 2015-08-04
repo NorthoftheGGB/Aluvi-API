@@ -112,15 +112,10 @@ class TripController
         payment.save
       end
 
-     # PushHelper.send_notification rider do |notification|
-      #  if payment.paid == true
-      #    notification.alert = "Receipt For Your Ride"
-     #     notification.data = { type: :ride_receipt, fare_id: fare.id, amount: payment.amount_cents }
-     #   else
-     #     notification.alert = "Problem Processing Payment For Your Ride"
-     #     notification.data = { type: :ride_payment_problem, fare_id: fare.id, amount: payment.amount_cents }
-     #   end
-     # end
+			PushHelper.send_notification rider do |notification|
+				notification.alert = "Receipt For Your Ride"
+				notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 100 }
+      end
 
     end
 
