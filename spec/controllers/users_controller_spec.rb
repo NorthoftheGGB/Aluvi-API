@@ -55,26 +55,6 @@ describe UsersController do
     end
   end
 
-  describe 'PATCH #update' do
-    before(:each) {@user = FactoryGirl.create(:user)}
-
-    context 'with valid params' do
-      it 'locates the requested user' do
-        patch :update, id: @user, user: FactoryGirl.attributes_for(:user)
-        expect(assigns(:user)).to eq(@user)
-      end
-      it "updates @user's attributes" do
-        patch :update, id: @user, user: FactoryGirl.attributes_for(:user, zip_code: "94707")
-        @user.reload
-        expect(@user.zip_code).to eq('94707')
-      end
-      it 'redirects to user#show' do
-        patch :update, id: @user, user: FactoryGirl.attributes_for(:user)
-        expect(response).to redirect_to @user
-      end
-    end
-  end
-
   describe 'DELETE #destroy' do
     before(:each) do
       @user = FactoryGirl.create(:user)

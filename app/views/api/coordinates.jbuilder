@@ -1,2 +1,2 @@
-json.longitude @object.location.longitude
-json.latitude @object.location.latitude
+json.longitude @object.location.x
+json.latitude @object.location.y

@@ -2,14 +2,14 @@ json.array! @fares do |fare|
 	json.id fare.id
   json.started_at fare.started
   unless fare.meeting_point.nil?
-	  json.meeting_point_latitude fare.meeting_point.latitude
-	  json.meeting_point_longitude fare.meeting_point.longitude
+	  json.meeting_point_latitude fare.meeting_point.y
+	  json.meeting_point_longitude fare.meeting_point.x
   end
 	json.meeting_point_place_name fare.meeting_point_place_name
   json.finished_at fare.finished
   unless fare.drop_off_point.nil?
-	  json.drop_off_point_latitude fare.drop_off_point.latitude
-	  json.drop_off_point_longitude fare.drop_off_point.longitude
+	  json.drop_off_point_latitude fare.drop_off_point.y
+	  json.drop_off_point_longitude fare.drop_off_point.x
   end
 	json.drop_off_point_place_name fare.drop_off_point_place_name
 	json.distance 0

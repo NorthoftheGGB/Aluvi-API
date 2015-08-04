@@ -53,7 +53,7 @@ class DriversAPI < Grape::API
 					driver.register
 					driver.activate
 					driver.save
-					status 200
+					status 201
 					ok
 				end
 
@@ -74,28 +74,6 @@ class DriversAPI < Grape::API
 				client_error $!
 			end
 			 
-		end
-
-		desc "Clock On"
-		params do 
-		end
-		post "clock_on" do
-			authenticate!
-			unless current_driver.state == 'on_duty'
-				current_driver.clock_on!
-			end
-			ok
-		end
-
-		desc "Clock Off"
-		params do 
-		end
-		post "clock_off" do
-			authenticate!
-			if current_driver.state == 'on_duty'
-				current_driver.clock_off!
-			end
-			ok
 		end
 
 		desc "Load Fare Details for Driver"

@@ -2,9 +2,14 @@ FactoryGirl.define do
 	factory :driver do
 		first_name "John"
 		last_name "Doe"
-    token "a0293sdf"
     webtoken '2fff309u09sjdf0'
-    driver_state 'interested'
+		driver_state 'uninterested'
+		token "a0293sdfa"
+
+		factory :interested_driver do
+			driver_state 'interested'
+			token "a0293sdf"
+		end
 
     factory :approved_driver do
       driver_state 'approved'

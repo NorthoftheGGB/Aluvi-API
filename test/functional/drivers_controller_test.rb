@@ -2,7 +2,7 @@ require 'test_helper'
 
 class DriversControllerTest < ActionController::TestCase
   setup do
-    @driver = FactoryGirl.create(:driver)
+    @driver = FactoryGirl.create(:approved_driver)
   end
 
   test "should get index" do

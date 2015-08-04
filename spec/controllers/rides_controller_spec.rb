@@ -1,5 +1,5 @@
 describe RidesController do
-  let(:ride) {FactoryGirl.create(:on_demand_ride)}
+  let(:ride) {FactoryGirl.create(:commuter_ride)}
 
   describe 'GET #index' do
     it 'gets a successful response' do
@@ -23,11 +23,11 @@ describe RidesController do
     context 'with valid params' do
       it 'creates a new ride' do
         expect{
-          post :create, ride: FactoryGirl.attributes_for(:on_demand_ride)
+          post :create, ride: FactoryGirl.attributes_for(:commuter_ride)
         }.to change(Ride, :count).by(1)
       end
       it 'redirects to rides#show' do
-        post :create, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        post :create, ride: FactoryGirl.attributes_for(:commuter_ride)
         expect(response).to redirect_to ride_path(assigns(:ride))
       end
     end
@@ -48,20 +48,20 @@ describe RidesController do
   end
 
   describe 'PATCH #update' do
-    before(:each) {@ride = FactoryGirl.create(:on_demand_ride)}
+    before(:each) {@ride = FactoryGirl.create(:commuter_ride)}
     context 'with valid params' do
       it 'locates the requested @ride' do
-        patch :update, id: @ride, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        patch :update, id: @ride, ride: FactoryGirl.attributes_for(:commuter_ride)
         expect(assigns(:ride)).to eq(@ride)
       end
       it "changes the ride's attributes" do
         patch :update, id: @ride,
-              ride: FactoryGirl.attributes_for(:on_demand_ride, destination_place_name: "Empire State Building")
+              ride: FactoryGirl.attributes_for(:commuter_ride, destination_place_name: "Empire State Building")
         @ride.reload
         expect(@ride.destination_place_name).to eq("Empire State Building")
       end
       it 'redirects to ride#show' do
-        patch :update, id: @ride, ride: FactoryGirl.attributes_for(:on_demand_ride)
+        patch :update, id: @ride, ride: FactoryGirl.attributes_for(:commuter_ride)
         expect(response).to redirect_to @ride
       end
     end

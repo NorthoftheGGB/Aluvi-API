@@ -8,12 +8,8 @@ FactoryGirl.define do
     #destination_longitude -122.7
     destination_place_name 'My Work'
     state 'created'
+		driving false
 
-
-		factory :on_demand_ride do
-			request_type 'on_demand'
-      state 'requested'
-    end
 
 		factory :commuter_ride do
 
@@ -25,6 +21,11 @@ FactoryGirl.define do
 			end
 			factory :commuter_ride_outbound do
 				direction 'b'
+			end
+
+			factory :commuter_driver_ride do
+				association :rider, factory: :generated_rider, driver_state: "active"
+				driving true
 			end
     end
 	end

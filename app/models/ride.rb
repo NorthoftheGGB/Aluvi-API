@@ -8,8 +8,6 @@ class Ride < ActiveRecord::Base
 
 	before_create :before_create
 
-	self.rgeo_factory_generator = RGeo::Geographic.spherical_factory( :srid => 4326 )
-
 	include AASM
 	aasm.attribute_name :state
 
@@ -83,6 +81,14 @@ class Ride < ActiveRecord::Base
 			self.direction = 'a'
 		else
 			self.direction = 'b'
+		end
+	end
+
+	def cancel_ride
+		if self.fare != nil
+			self.fare.ride_cancelled! self
+		else
+			self.cancel!
 		end
 	end
 

@@ -6,23 +6,31 @@ describe RidesAPI do
 
 	before { RidesAPI.before { env["api.tilt.root"] = "app/views/api" } }
 
-  #before(:all) do
-  # @ride = FactoryGirl.create(:ride)
-  # @fare = FactoryGirl.create(:fare)
-  # @rider = FactoryGirl.create(:rider)
-  # @demo_rider = FactoryGirl.create(:demo_rider)
- # end
+	describe "POST /api/rides/commute" do
+		it "creates new commuter ride requests" do
+      @rider = FactoryGirl.create(:rider)
+      post "/api/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
+                                  :departure_longitude => -122.3, :departure_place_name => "My House",
+                                  :destination_latitude => 46.5, :destination_longitude => -122.4,
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      expect(response.status).to eq(201)
+		end
+	end
+
+	describe "POST /api/rides/commute" do
+		it "creates new commuter ride requests" do
+      @rider = FactoryGirl.create(:rider)
+      post "/api/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
+                                  :departure_longitude => -122.3, :departure_place_name => "My House",
+                                  :destination_latitude => 46.5, :destination_longitude => -122.4,
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -14:00', :driving => true }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      expect(response.status).to eq(201)
+		end
+	end
 
 	describe "POST /api/rides/request" do
-		it "processes on demand ride request" do
-      @rider = FactoryGirl.create(:rider)
-			post "/api/rides/request", {:type => 'on_demand',:departure_latitude => 45.5,
-           :departure_longitude => -122.3, :departure_place_name => "My House",
-           :destination_latitude => 46.5, :destination_longitude => -122.4,
-           :destination_place_name => 'My Work'}, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
-			expect(response.status).to eq(201)
-    end
-
     it "processes commuter ride request" do
       @rider = FactoryGirl.create(:rider)
       post "/api/rides/request", {:type => 'commuter',:departure_latitude => 45.5,
@@ -45,19 +53,9 @@ describe RidesAPI do
 
   describe "POST /api/rides/request/cancel" do
     it "cancels a ride" do
-      @ride = FactoryGirl.create(:on_demand_ride)
+      @ride = FactoryGirl.create(:commuter_ride)
       post "/api/rides/request/cancel", {:ride_id => @ride.id}, {'HTTP_AUTHORIZATION' => encode_credentials(@ride.rider.token)}
-      expect(response.status).to eq(201)
-    end
-  end
-
-  describe "GET /api/rides/offers" do
-    it "gets offers" do
-      @driver = FactoryGirl.create(:driver)
-      @offer = FactoryGirl.create(:offer)
-      get "/api/rides/offers", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
       expect(response.status).to eq(200)
-
     end
   end
 
@@ -97,7 +95,7 @@ describe RidesAPI do
 
   describe "GET /api/rides/earnings" do
     it "gets earnings" do
-      @driver = FactoryGirl.create(:driver)
+      @driver = FactoryGirl.create(:approved_driver)
       get "/api/rides/earnings", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
       expect(response.status).to eq(200)
 
@@ -117,12 +115,22 @@ describe RidesAPI do
     end
   end
 
-	describe "DELETE /api/rides/trips/cancel/:id" do
+	describe "DELETE /api/rides/trips/:id" do
 		it "cancels an entire trip" do
 			@trip = FactoryGirl.create(:trip)
 			delete "/api/rides/trips/" + @trip.id.to_s, {}, {'HTTP_AUTHORIZATION' => encode_credentials(@trip.rides[0].rider.token)}
 			expect(response.status).to eq(200)
 		end
 	end
+
+  describe "GET /api/rides/route" do
+    it "gets a rider's route" do
+      @driver = FactoryGirl.create(:rider)
+      get "/api/rides/route", {},  {'HTTP_AUTHORIZATION' => encode_credentials(@driver.token)}
+      expect(response.status).to eq(200)
+
+    end
+  end
+
 
 end

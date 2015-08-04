@@ -2,7 +2,7 @@
 
 class RidesControllerTest < ActionController::TestCase
   setup do
-    @ride = FactoryGirl.create(:on_demand_ride)
+    @ride = FactoryGirl.create(:commuter_ride)
   end
 
   test "should get index" do
@@ -17,9 +17,8 @@ class RidesControllerTest < ActionController::TestCase
   end
 
   test "should create ride" do
-    assert_difference('Ride.count') do
-      post :create, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, origin: @ride.origin, origin_place_name: @ride.origin_place_name, requested_datetime: @ride.requested_datetime,
-                            state: @ride.state, request_type: @ride.request_type, rider_id: @ride.rider.id, request_type: "on_demand" }
+		assert_difference('Ride.count') do
+			post :create, ride: { destination: @ride.destination, destination_place_name: @ride.destination_place_name, origin: @ride.origin, origin_place_name: @ride.origin_place_name, requested_datetime: @ride.requested_datetime, state: @ride.state, request_type: @ride.request_type, rider_id: @ride.rider.id }
     end
 
     assert_redirected_to ride_path(assigns(:ride))

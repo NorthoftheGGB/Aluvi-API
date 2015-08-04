@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1'
+gem 'rails', '4.2.2'
 
 # javascript runtime
 gem 'execjs'
@@ -78,11 +78,21 @@ gem 'table_cloth'
 gem 'resque'
 gem 'resque-scheduler'
 
+# QA
+gem 'multi_logger'
+
+# MemCache
+gem 'dalli'
+gem 'memcachier'
+
+# Deployment
+gem 'capistrano'
+
 # Testing
 group :test do
 	gem "factory_girl_rails", "~> 4.0"
 	gem 'rspec'
-	gem 'rspec-rails', '~> 3.0.0'
+	gem 'rspec-rails', '~> 3.1'
   gem 'database_cleaner'
 end
 
@@ -94,9 +104,3 @@ end
 gem "spring", group: :development
 gem "spring-commands-rspec", group: :development
 
-# QA
-gem 'multi_logger'
-
-# Deploymnet
-gem 'dalli'
-gem 'memcachier'

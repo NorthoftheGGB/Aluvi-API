@@ -13,7 +13,7 @@ class FareObserver < ActiveRecord::Observer
 				n.alert = "Fare Cancelled!"
 				n.data = { type: :fare_cancelled_by_rider, fare_id: fare.id }
 				n.save!
-				#Rails.logger.stack.debug "push sent " + n.data
+				Rails.logger.debug "sending cancel push"
 		end
 	end
 
@@ -27,6 +27,7 @@ class FareObserver < ActiveRecord::Observer
 				n.alert = "Ride Cancelled!"
 				n.data = { type: :fare_cancelled_by_driver, fare_id: fare.id }
 				n.save!
+				Rails.logger.debug "sending driver cancelled push"
 			end
 		end
 	end

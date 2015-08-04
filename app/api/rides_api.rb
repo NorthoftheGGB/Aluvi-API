@@ -18,8 +18,6 @@ class RidesAPI< Grape::API
 			optional :driving, type: Boolean
 		end
 		post :commute do
-			Rails.logger.debug "hello"
-			Rails.logger.debug params
 			authenticate!
 
 			outgoing_ride = TripController.request_commute_leg(
@@ -44,6 +42,7 @@ class RidesAPI< Grape::API
 				outgoing_ride.trip_id
 			)
 
+			status 201
 			rval = Hash.new
 			rval[:outgoing_ride_id] = outgoing_ride.id
 			rval[:return_ride_id] = return_ride.id
@@ -88,36 +87,7 @@ class RidesAPI< Grape::API
 				raise "No request type set"
 			end
 
-
-			if params[:type] == 'commuter'
-				if false #current_user.demo
-					# demoing subsystem
-					demo_rides = Ride.where( :request_type => 'commuter' ).where( :state => 'requested').includes( :rider ).where( :users => { demo: true  } )
-
-					threshold = Rails.application.config.voco_demo_commuter_assembly_trigger_threshold 
-					if threshold.nil?
-						threshold = 3
-					end
-					Rails.logger.debug threshold
-					if demo_rides.count > threshold
-						Rails.logger.debug 'scheduling DEMO commuter ride'
-						ActiveRecord::Base.transaction do
-							# need to DRY this with the commuter ride requests controller
-							fare = Fare.assemble_fare_from_rides demo_rides
-              fare.meeting_point_place_name = FaresHelper::reverse_geocode fare.meeting_point
-              fare.drop_off_point_place_name = FaresHelper::reverse_geocode  fare.drop_off_point
-							drivers = Driver.demo_drivers
-							unless drivers.count == 0
-                fare.pickup_time = DateTime.now
-                fare.driver = drivers[0]
-                fare.car = drivers[0].cars.first
-							end
-						end
-					end
-				end
-			end
-
-			status 200
+			status 201
 			rval = Hash.new
 			rval[:ride_id] = ride.id
 			rval[:trip_id] = ride.trip_id
@@ -133,10 +103,11 @@ class RidesAPI< Grape::API
 			authenticate!
 			begin
 				ride = Ride.find(params[:ride_id])
+				Rails.logger.debug ride
 				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
 				end
-				TripController.cancel_request ride
+				ride.cancel_ride
 				status 200
 				ok
 			rescue ActiveRecord::RecordNotFound
@@ -245,14 +216,7 @@ class RidesAPI< Grape::API
 					if fare.driver.id != current_user.id
 						raise ApiExceptions::RideNotAssignedToThisDriverException
 					end
-					if !fare.is_cancelled
-						fare.driver_cancelled!
-					end
-					fare.rides.each do |ride|
-						unless ride.aborted?
-							ride.abort!
-						end
-					end
+					fare.cancel_ride_for_user current_user
 					ok  
 				rescue AASM::InvalidTransition => e
 					if(fare.is_cancelled)
@@ -283,17 +247,7 @@ class RidesAPI< Grape::API
 			ActiveRecord::Base.transaction do
 				begin
 					fare = Fare.find(params[:fare_id])
-					ride = current_user.as_rider.rides.where(fare_id: params[:fare_id]).first
-					unless ride.nil?
-						unless ride.aborted?
-							ride.abort!
-						end
-						unless ride.fare.nil?
-							unless fare.is_cancelled
-								fare.rider_cancelled!(current_user.as_rider)
-							end
-						end
-					end
+					fare.cancel_ride_for_user current_user
 					ok
 				rescue AASM::InvalidTransition => e
 					if(fare.is_cancelled && ride.aborted?)

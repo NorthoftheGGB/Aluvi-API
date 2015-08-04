@@ -4,13 +4,13 @@ json.array! @rides do |ride|
 
   json.origin_place_name ride.origin_place_name
   unless ride.origin.nil?
-    json.origin_latitude ride.origin.latitude
-    json.origin_longitude ride.origin.longitude
+    json.origin_latitude ride.origin.y
+    json.origin_longitude ride.origin.x
   end
 	json.destination_place_name ride.destination_place_name
   unless ride.destination.nil?
-    json.destination_latitude ride.destination.latitude
-    json.destination_longitude ride.destination.longitude
+    json.destination_latitude ride.destination.y
+    json.destination_longitude ride.destination.x
   end
   json.fixed_price ride.fixed_price
   if !ride.fare.nil? && ride.fare.state == 'completed'
@@ -23,11 +23,11 @@ json.array! @rides do |ride|
     json.fare_id ride.fare.id
 		json.pickup_time ride.fare.pickup_time
     json.meeting_point_place_name ride.fare.meeting_point_place_name
-    json.meeting_point_latitude ride.fare.meeting_point.latitude
-    json.meeting_point_longitude ride.fare.meeting_point.longitude
+    json.meeting_point_latitude ride.fare.meeting_point.y
+    json.meeting_point_longitude ride.fare.meeting_point.x
     json.drop_off_point_place_name ride.fare.drop_off_point_place_name
-    json.drop_off_point_latitude ride.fare.drop_off_point.latitude
-    json.drop_off_point_longitude ride.fare.drop_off_point.longitude
+    json.drop_off_point_latitude ride.fare.drop_off_point.y
+    json.drop_off_point_longitude ride.fare.drop_off_point.x
 	else
 		json.pickup_time ride.pickup_time
 	end

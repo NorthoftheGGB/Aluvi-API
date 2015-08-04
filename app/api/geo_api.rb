@@ -41,7 +41,7 @@ class GeoAPI < Grape::API
 		end
 
 		desc "Get rider location"
-		get 'riders/:id',  jbuilder: :rider_geo do
+		get 'rider/:id',  jbuilder: :rider_geo do
 			authenticate!
         Rails.logger.info params[:id]
 				@rider = Rider.find(params[:id])

@@ -38,7 +38,6 @@ module Scheduler
 		driving_rides.each do |r|
       Rails.logger.info "Creating Fare with Driver"
       fare = Fare.new
-      fare.driver = r.rider.as_driver
 			fare.save
 			r.fare = fare	
 			r.save
@@ -153,7 +152,6 @@ module Scheduler
 			  return_ride = r.return_ride
         Rails.logger.info "Creating Fare"
 		  	fare = Fare.new
-			  fare.driver = r.rider.as_driver
 		  	fare.save
         Rails.logger.info "Saved Fare"
         Rails.logger.info "Scheduling Ride"
