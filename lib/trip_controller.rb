@@ -41,8 +41,7 @@ class TripController
         payment.stripe_customer_id = rider.stripe_customer_id
 
         case ride.request_type
-          when 'on_demand'
-          when 'commuter'
+          when 'no_longer_used'
 
             payment.initiation = 'Standard Payment'
 						if payment.amount_cents > 1200
