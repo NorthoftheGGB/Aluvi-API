@@ -31,6 +31,10 @@ module PushHelper
       end
       notification = PushHelper::push_message(d)
       yield notification
+			if notification.app.nil?
+				Rails.logger.error "App identifier for push is not supported on this server"
+				return
+			end
       notification.save!
     end
   end
