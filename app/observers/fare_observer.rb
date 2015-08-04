@@ -18,7 +18,8 @@ class FareObserver < ActiveRecord::Observer
 	end
 
 	def fare_cancelled_by_driver(fare)
-		fare.riders.where.not( id: fare.driver_id).each do |rider|
+		fare.rides.where.not( driving: true).each do |ride|
+			rider = ride.rider
 			rider.devices.each do |d|
 				if(d.push_token.nil? || d.push_token == '')
 					next	
