@@ -80,7 +80,12 @@ class Fare < ActiveRecord::Base
 	end
 
 	def driver
-		self.rides.where(driving:true).first.rider.as_driver
+		driving_ride = self.rides.where(driving:true).first
+		unless driving_ride.nil?
+			driving_ride.rider.as_driver
+		else
+			nil
+		end
 	end
 
 	def is_cancelled
@@ -202,11 +207,8 @@ class Fare < ActiveRecord::Base
 		if(@started.nil?)
 			self.started = Time.now
 		end
-		Rails.logger.debug self.driver_id
 		self.driver.current_fare_id = self.id
-		Rails.logger.debug 'after current fare thing'
 		self.driver.save
-		Rails.logger.debug 'ended started_ride callback'
 		save
 	end
 
