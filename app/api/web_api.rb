@@ -85,11 +85,11 @@ class WebAPI < Grape::API
 
 				@fares = Fare.order('fares.id')
 				if params['rider_id']
-					@fares = Fare.includes(:riders).where( :users => { id: params['rider_id'] } )
+					@fares = Fare.includes('rides').where( :rides => { rider_id: params['rider_id'] } )
 				end
 
 				if params['driver_id']
-					@fares = Fare.includes(:driver).where( :users => { id: params['driver_id'] } )
+					@fares = Fare.includes('rides').where( :rides => { rider_id: params['driver_id'] } )
 				end
 
 			else
@@ -111,6 +111,7 @@ class WebAPI < Grape::API
 			if params['fare_id']
 				@fares.where( :id => params['fare_id'])
       end
+			Rails.logger.debug @fares
 
       @fares
 

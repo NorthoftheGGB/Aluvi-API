@@ -138,7 +138,16 @@ class Fare < ActiveRecord::Base
 			end
 		end
 	end
-	
+
+	def driver_cancelled_ride
+		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
+		self.finished = Time.now
+		save
+		self.driver.current_fare = nil
+		self.driver.save
+		notify_observers :fare_cancelled_by_driver
+	end
+
 	def pickup(rider = nil) 
 		aasm_pickup
 		unless(rider.nil?)

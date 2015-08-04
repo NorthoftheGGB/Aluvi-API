@@ -138,7 +138,7 @@ class TripController
 			trip.aborted!
 			trip.rides.each do |r|
 				if r.state != 'cancelled'
-					r.cancel!
+					r.cancel_ride
 				end
 			end
 		end
