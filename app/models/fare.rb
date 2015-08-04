@@ -1,6 +1,5 @@
 class Fare < ActiveRecord::Base
 
-	belongs_to :driver, inverse_of: :fares
 	belongs_to :car, inverse_of: :fares
 	has_many :rides, inverse_of: :fare
 	has_many :riders, through: :rides
@@ -80,6 +79,10 @@ class Fare < ActiveRecord::Base
     fare
 	end
 
+	def driver
+		self.rides.where(driving:true).first.rider.as_driver
+	end
+
 	def is_cancelled
 		if(state == 'driver_cancelled' || state == 'rider_cancelled')
 			true
@@ -93,14 +96,8 @@ class Fare < ActiveRecord::Base
 		Rails.logger.debug 'Cancelling ride for rider'
 		Rails.logger.debug ride
 		unless ride.nil?
-			unless ride.fare.nil?
-				unless self.is_cancelled
-					self.ride_cancelled!(ride)
-				end
-			else
-				unless ride.aborted?
-					ride.aborte!
-				end
+			unless self.is_cancelled
+				self.ride_cancelled!(ride)
 			end
 		end
 

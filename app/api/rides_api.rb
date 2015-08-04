@@ -103,10 +103,11 @@ class RidesAPI< Grape::API
 			authenticate!
 			begin
 				ride = Ride.find(params[:ride_id])
+				Rails.logger.debug ride
 				if(ride.rider.id != current_user.id )
 					raise ApiExceptions::WrongUserForEntityException
 				end
-				TripController.cancel_request ride
+				ride.cancel_ride
 				status 200
 				ok
 			rescue ActiveRecord::RecordNotFound

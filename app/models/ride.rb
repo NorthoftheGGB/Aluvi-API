@@ -84,6 +84,14 @@ class Ride < ActiveRecord::Base
 		end
 	end
 
+	def cancel_ride
+		if self.fare != nil
+			self.fare.ride_cancelled! self
+		else
+			self.cancel!
+		end
+	end
+
 	def clear_fare
 		self.fare = nil
 		save

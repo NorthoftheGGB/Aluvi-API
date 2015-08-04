@@ -5,7 +5,7 @@ class RideTest < ActiveSupport::TestCase
 
 	test "driver cancels scheduled fare by driver" do
 		fare = FactoryGirl.create(:scheduled_fare)
-		fare.cancel_ride_for_user(fare.driver)
+		fare.cancel_ride_for_user(fare.rides.where(driving:true).first.rider)
 		assert_equal("driver_cancelled", fare.state)
 		assert_not_nil(fare.finished)
 	end

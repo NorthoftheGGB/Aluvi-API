@@ -64,18 +64,20 @@ class RidesAPIV2< Grape::API
 		params do
 			requires :ride_id, type: Integer
 		end
-		post :cancelled do
+		post :cancel do
 			authenticate!
 
 			# TODO rider should only be able to cancel their own ride
 			# TODO move this logic to TripController in lib/
 			ActiveRecord::Base.transaction do
 				begin
-					fare = Fare.find(params[:fare_id])
-					fare.cancel_ride_for_user current_user
+					ride = Ride.find(params[:ride_id])
+					ride.cancel_ride
 					ok
 				rescue AASM::InvalidTransition => e
-					if(fare.is_cancelled && ride.aborted?)
+					if(ride.cancelled?)
+						ok
+					elsif(ride.aborted? && !ride.fare.nil? && ride.fare.is_cancelled)
 						ok
 					else
 						raise e

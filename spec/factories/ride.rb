@@ -22,6 +22,11 @@ FactoryGirl.define do
 			factory :commuter_ride_outbound do
 				direction 'b'
 			end
+
+			factory :commuter_driver_ride do
+				association :rider, factory: :generated_rider, driver_state: "active"
+				driving true
+			end
     end
 	end
 end
