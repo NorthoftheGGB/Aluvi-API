@@ -20,34 +20,41 @@ class RidesAPIV2< Grape::API
 		post :commute do
 			authenticate!
 
-			outgoing_ride = TripController.request_commute_leg(
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-				params[:departure_place_name],
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-				params[:destination_place_name],
-				params[:departure_pickup_time],
-				params[:driving],
-				current_rider,
-				nil
-			)
+			# check for prexisting commuter ride on this date
+			rides_today = Ride.where(request_type: 'commuter').where('pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
+			if rides_today.length > 1
+				conflict 'Commute request already exists for this day'
+			else 
 
-			return_ride = TripController.request_commute_leg(
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-				params[:destination_place_name],
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-				params[:departure_place_name],
-				params[:return_pickup_time],
-				params[:driving],
-				current_rider,
-				outgoing_ride.trip_id
-			)
+				outgoing_ride = TripController.request_commute_leg(
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+					params[:departure_place_name],
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+					params[:destination_place_name],
+					params[:departure_pickup_time],
+					params[:driving],
+					current_rider,
+					nil
+				)
 
-			status 201
-			rval = Hash.new
-			rval[:outgoing_ride_id] = outgoing_ride.id
-			rval[:return_ride_id] = return_ride.id
-			rval[:trip_id] = outgoing_ride.trip_id
-			rval
+				return_ride = TripController.request_commute_leg(
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+					params[:destination_place_name],
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+					params[:departure_place_name],
+					params[:return_pickup_time],
+					params[:driving],
+					current_rider,
+					outgoing_ride.trip_id
+				)
+
+				status 201
+				rval = Hash.new
+				rval[:outgoing_ride_id] = outgoing_ride.id
+				rval[:return_ride_id] = return_ride.id
+				rval[:trip_id] = outgoing_ride.trip_id
+				rval
+			end
 		end
 
 
@@ -66,6 +73,7 @@ class RidesAPIV2< Grape::API
 		end
 		post :cancel do
 			authenticate!
+			Rails.logger.debug params
 
 			# TODO rider should only be able to cancel their own ride
 			# TODO move this logic to TripController in lib/
@@ -73,18 +81,18 @@ class RidesAPIV2< Grape::API
 				begin
 					ride = Ride.find(params[:ride_id])
 					ride.cancel_ride
-					ok
+					success
 				rescue AASM::InvalidTransition => e
-					if(ride.cancelled?)
-						ok
+					if(ride.cancelled? || ride.commute_scheduler_failed?)
+						success	
 					elsif(ride.aborted? && !ride.fare.nil? && ride.fare.is_cancelled)
-						ok
+						success	
 					else
 						raise e
 					end
 				rescue ActiveRecord::RecordNotFound => e
 					if fare.nil?
-						ok
+						success	
 					else
 						raise e
 					end

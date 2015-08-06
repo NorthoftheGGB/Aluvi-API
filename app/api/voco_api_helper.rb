@@ -38,6 +38,10 @@ module VocoApiHelper
 			end
 		[values.delete("token"), values.with_indifferent_access]
 	end
+	
+	def success
+		status 200
+	end
 
 	def ok
 		Hash.new()
@@ -63,6 +67,10 @@ module VocoApiHelper
 			payload['error'] = message
 			error! payload, 400
 		end
+	end
+
+	def conflict message
+		error! message 405
 	end
 end
 

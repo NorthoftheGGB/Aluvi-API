@@ -10,4 +10,5 @@ class APIV2 < Grape::API
 	end
 
 	mount RidesAPIV2
+	mount DevicesAPIV2
 end
