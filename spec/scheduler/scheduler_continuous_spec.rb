@@ -48,7 +48,7 @@ describe Scheduler do
       aside1 = TripController.request_commute_leg(home1, "Home1", work1, "Work1", home_pickup, true, driver1.as_rider, 0 )
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
 
-      Scheduler.build_forward_fares
+      SchedulerContinuous.build_forward_fares
 
       aside1.state = 'scheduled'
       aside2.state = 'pending_return'
@@ -64,9 +64,9 @@ describe Scheduler do
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
       bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, false, rider1, aside2.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
@@ -83,9 +83,9 @@ describe Scheduler do
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup + 15.minutes, false, rider1, 0 )
       bside2 = TripController.request_commute_leg(work2, "Work2", home2, "Home2", work_pickup, false, rider1, aside2.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
@@ -103,7 +103,7 @@ describe Scheduler do
       aside2 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider1, 0 )
       aside3 = TripController.request_commute_leg(home2, "Home2", work2, "Work2", home_pickup, false, rider2, 0 )
 
-      Scheduler.build_forward_fares
+      SchedulerContinuous.build_forward_fares
 
       expect(aside1.trip.state).to eq('requested')
       expect(aside2.trip.state).to eq('requested')
@@ -123,9 +123,9 @@ describe Scheduler do
       aside3 = TripController.request_commute_leg(home3, "Home3", work2, "Work3", home_pickup, true, rider2, 0 )
       bside3 = TripController.request_commute_leg(work2, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
@@ -152,9 +152,9 @@ describe Scheduler do
       aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup, true, rider2, 0 )
       bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
@@ -179,9 +179,9 @@ describe Scheduler do
       aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup + 15.minutes, true, rider2, 0 )
       bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
@@ -207,9 +207,9 @@ describe Scheduler do
       aside3 = TripController.request_commute_leg(home3, "Home3", work3, "Work3", home_pickup + 15.minutes, true, rider2, 0 )
       bside3 = TripController.request_commute_leg(work3, "Work3", home3, "Home3", work_pickup, true, rider2, aside3.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
@@ -244,9 +244,9 @@ describe Scheduler do
       aside4 = TripController.request_commute_leg(home4, "Home4", work4, "Work4", home_pickup, true, rider3, 0 )
       bside4 = TripController.request_commute_leg(work4, "Work4", home4, "Home4", work_pickup, true, rider3, aside4.trip_id)
 
-      Scheduler.build_forward_fares
-      Scheduler.build_return_fares
-      Scheduler.calculate_costs
+      SchedulerContinuous.build_forward_fares
+      SchedulerContinuous.build_return_fares
+      SchedulerContinuous.calculate_costs
 
       expect(aside1.trip.state).to eq('fulfilled')
       expect(bside1.trip.state).to eq('fulfilled')
