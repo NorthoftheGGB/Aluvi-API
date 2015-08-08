@@ -70,7 +70,7 @@ module VocoApiHelper
 	end
 
 	def conflict message
-		error! message 405
+		error! message, 405
 	end
 end
 

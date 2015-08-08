@@ -20,41 +20,34 @@ class RidesAPIV2< Grape::API
 		post :commute do
 			authenticate!
 
-			# check for prexisting commuter ride on this date
-			rides_today = Ride.where(request_type: 'commuter').where('pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
-			if rides_today.length > 1
-				conflict 'Commute request already exists for this day'
-			else 
+			outgoing_ride = TripController.request_commute_leg(
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+				params[:departure_place_name],
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+				params[:destination_place_name],
+				params[:departure_pickup_time],
+				params[:driving],
+				current_rider,
+				nil
+			)
 
-				outgoing_ride = TripController.request_commute_leg(
-					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-					params[:departure_place_name],
-					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-					params[:destination_place_name],
-					params[:departure_pickup_time],
-					params[:driving],
-					current_rider,
-					nil
-				)
+			return_ride = TripController.request_commute_leg(
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+				params[:destination_place_name],
+				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+				params[:departure_place_name],
+				params[:return_pickup_time],
+				params[:driving],
+				current_rider,
+				outgoing_ride.trip_id
+			)
 
-				return_ride = TripController.request_commute_leg(
-					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-					params[:destination_place_name],
-					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-					params[:departure_place_name],
-					params[:return_pickup_time],
-					params[:driving],
-					current_rider,
-					outgoing_ride.trip_id
-				)
-
-				status 201
-				rval = Hash.new
-				rval[:outgoing_ride_id] = outgoing_ride.id
-				rval[:return_ride_id] = return_ride.id
-				rval[:trip_id] = outgoing_ride.trip_id
-				rval
-			end
+			status 201
+			rval = Hash.new
+			rval[:outgoing_ride_id] = outgoing_ride.id
+			rval[:return_ride_id] = return_ride.id
+			rval[:trip_id] = outgoing_ride.trip_id
+			rval
 		end
 
 
@@ -73,7 +66,6 @@ class RidesAPIV2< Grape::API
 		end
 		post :cancel do
 			authenticate!
-			Rails.logger.debug params
 
 			# TODO rider should only be able to cancel their own ride
 			# TODO move this logic to TripController in lib/
@@ -81,18 +73,18 @@ class RidesAPIV2< Grape::API
 				begin
 					ride = Ride.find(params[:ride_id])
 					ride.cancel_ride
-					success
+					ok
 				rescue AASM::InvalidTransition => e
-					if(ride.cancelled? || ride.commute_scheduler_failed?)
-						success	
+					if(ride.cancelled?)
+						ok
 					elsif(ride.aborted? && !ride.fare.nil? && ride.fare.is_cancelled)
-						success	
+						ok
 					else
 						raise e
 					end
 				rescue ActiveRecord::RecordNotFound => e
 					if fare.nil?
-						success	
+						ok
 					else
 						raise e
 					end
@@ -110,7 +102,7 @@ class RidesAPIV2< Grape::API
 			authenticate!
 			# TODO validate driver and or rider is matched to ride
 			begin
-				ride = Ride.fine(params[:ride_id])
+				ride = Ride.find(params[:ride_id])
 				fare = ride.fare
 				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
@@ -122,7 +114,7 @@ class RidesAPIV2< Grape::API
 					rider = Rider.find(params[:rider_id])
 					fare.pickup! rider
 				end
-				ok
+				success	
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
@@ -136,7 +128,7 @@ class RidesAPIV2< Grape::API
 		post :arrived do
 			authenticate!
 			begin
-				ride = Ride.fine(params[:ride_id])
+				ride = Ride.find(params[:ride_id])
 				fare = ride.fare
 				if fare.driver.id != current_user.id
 					raise ApiExceptions::RideNotAssignedToThisDriverException
@@ -146,6 +138,7 @@ class RidesAPIV2< Grape::API
 				TripController.fare_completed fare
 
 				# either way notify the driver
+				status 200
 				response = Hash.new
 				response['amount'] = fare.cost
 				response['driver_earnings'] = fare.fixed_earnings
