@@ -602,8 +602,6 @@ ALTER SEQUENCE supports_id_seq OWNED BY supports.id;
 
 CREATE TABLE temp_fares (
     id integer NOT NULL,
-    driver_id integer,
-    car_id integer,
     state character varying(255),
     scheduled timestamp without time zone,
     started timestamp without time zone,
@@ -1272,4 +1270,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150804024319');
 INSERT INTO schema_migrations (version) VALUES ('20150808024329');
 
 INSERT INTO schema_migrations (version) VALUES ('20150808061823');
+
+INSERT INTO schema_migrations (version) VALUES ('20150808072432');
 

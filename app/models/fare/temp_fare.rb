@@ -1,5 +1,5 @@
 class TempFare < ActiveRecord::Base
-	has_many :temp_rides, inverse_of: :fare, foreign_key: "fare_id"
+	has_many :temp_rides, inverse_of: :temp_fare, foreign_key: "fare_id"
 
 	include AASM
 	aasm.attribute_name :state
@@ -11,9 +11,6 @@ class TempFare < ActiveRecord::Base
 
 		event :schedule do
 			transitions :from => :unscheduled, :to => :provisional
-		end
-
-		event :schedule do
 			transitions :from => :scheduled, :to => :provisional
 		end
 

@@ -10,7 +10,7 @@ json.array! @fares do |fare|
 	json.state fare.state
 	json.pickup_time fare.pickup_time
   json.estimated_earnings fare.fixed_earnings
-  json.riders fare.riders.where.not( id: fare.driver_id) do |rider|
+  json.riders fare.riders.where.not( id: fare.driver.id) do |rider|
       json.id rider.id
       json.first_name rider.first_name
       json.last_name rider.last_name
