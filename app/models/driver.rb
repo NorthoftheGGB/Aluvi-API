@@ -3,7 +3,6 @@ class Driver < User
 	
 	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver # Refactor: :associated_cars
 	belongs_to :car
-	has_many :fares
 	has_many :offers
 	belongs_to :current_fare, :class_name => 'Fare', :foreign_key => 'current_fare_id'
 	has_many :payouts
@@ -80,6 +79,10 @@ class Driver < User
   def self.states
     [ :interested, :approved, :denied, :registered, :active, :suspended, :on_duty ]
   end
+
+	def fares
+		Fare.joins(:rides).where('rider_id = ?', self.id).where('rides.driving = ?', true).all
+	end
 
 
   def notify_state_changed

@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -199,8 +200,6 @@ ALTER SEQUENCE driver_location_histories_id_seq OWNED BY driver_location_histori
 
 CREATE TABLE fares (
     id integer NOT NULL,
-    driver_id integer,
-    car_id integer,
     state character varying(255),
     scheduled timestamp without time zone,
     started timestamp without time zone,
@@ -598,6 +597,54 @@ ALTER SEQUENCE supports_id_seq OWNED BY supports.id;
 
 
 --
+-- Name: temp_fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE temp_fares (
+    id integer NOT NULL,
+    driver_id integer,
+    car_id integer,
+    state character varying(255),
+    scheduled timestamp without time zone,
+    started timestamp without time zone,
+    finished timestamp without time zone,
+    meeting_point geography(Point,4326),
+    meeting_point_place_name character varying(255),
+    drop_off_point geography(Point,4326),
+    drop_off_point_place_name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    pickup_time timestamp without time zone,
+    fixed_earnings integer
+);
+
+
+--
+-- Name: temp_rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE temp_rides (
+    id integer NOT NULL,
+    rider_id integer,
+    fare_id integer,
+    state character varying(255),
+    request_type character varying(255),
+    requested_datetime timestamp without time zone,
+    origin geography(Point,4326),
+    origin_place_name character varying(255),
+    destination geography(Point,4326),
+    destination_place_name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    pickup_time timestamp with time zone,
+    driving boolean,
+    trip_id integer,
+    direction character varying(255),
+    fixed_price integer
+);
+
+
+--
 -- Name: trips; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -949,6 +996,22 @@ ALTER TABLE ONLY trips
 
 
 --
+-- Name: temp_fares_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY temp_fares
+    ADD CONSTRAINT temp_fares_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: temp_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY temp_rides
+    ADD CONSTRAINT temp_rides_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1205,4 +1268,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150728022511');
 INSERT INTO schema_migrations (version) VALUES ('20150804020904');
 
 INSERT INTO schema_migrations (version) VALUES ('20150804024319');
+
+INSERT INTO schema_migrations (version) VALUES ('20150808024329');
+
+INSERT INTO schema_migrations (version) VALUES ('20150808061823');
 
