@@ -6,9 +6,10 @@ class APIV2 < Grape::API
 	content_type :json, "application/json"
 
 	helpers do
-		include VocoApiHelper
+		include VocoApiHelperV2
 	end
 
 	mount RidesAPIV2
 	mount DevicesAPIV2
+	mount UsersAPIV2
 end

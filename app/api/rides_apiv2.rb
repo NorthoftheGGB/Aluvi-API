@@ -42,7 +42,7 @@ class RidesAPIV2< Grape::API
 				outgoing_ride.trip_id
 			)
 
-			status 201
+			ok
 			rval = Hash.new
 			rval[:outgoing_ride_id] = outgoing_ride.id
 			rval[:return_ride_id] = return_ride.id
@@ -114,7 +114,7 @@ class RidesAPIV2< Grape::API
 					rider = Rider.find(params[:rider_id])
 					fare.pickup! rider
 				end
-				success	
+				ok
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
@@ -149,6 +149,59 @@ class RidesAPIV2< Grape::API
 			end
 		end
 
+		desc "Update Route"
+		params do
+			requires :origin, type: Hash do
+				requires :latitude
+				requires :longitude
+			end
+			requires :origin_place_name, type: String
+			requires :destination, type: Hash do
+				requires :latitude
+				requires :longitude
+			end
+			requires :destination_place_name, type: String
+			requires :pickup_time, type: String
+			requires :return_time, type: String
+			requires :driving, type: Boolean
+		end
+		post :route do
+			authenticate!
+			Rails.logger.debug params
+			# assume single route per user	
+			route = Route.where('rider_id' => current_user.id).first
+			if route.nil?
+				route = Route.new
+			end
+
+			origin = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:origin][:longitude], params[:origin][:latitude])
+			destination = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination][:longitude], params[:destination][:latitude])
+			Rails.logger.debug destination
+			route.rider = current_user.as_rider
+			route.origin = origin;
+			route.destination = destination;
+			route.origin_place_name = params[:origin_place_name];
+			route.destination_place_name = params[:destination_place_name];
+			route.pickup_time = params[:pickup_time];
+			route.return_time = params[:return_time];
+			route.driving = params[:driving];
+			route.save
+			ok
+			nil
+
+		end
+
+		desc "Get Route"
+		get :route, jbuilder: 'route' do
+			authenticate!
+			# assume single route per user	
+			@route = Route.where('rider_id' => current_user.id).first
+			if @route.nil?
+				not_found	
+			else
+				@route
+			end
+		end
 
 	end
 end

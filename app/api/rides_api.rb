@@ -356,9 +356,9 @@ class RidesAPI< Grape::API
 			route.pickup_time = params[:pickup_time];
 			route.return_time = params[:return_time];
 			route.driving = params[:driving];
-			Rails.logger.debug route
 			route.save
 			ok
+			nil
 
 		end
 

@@ -14,7 +14,7 @@ describe RidesAPI do
                                   :destination_latitude => 46.5, :destination_longitude => -122.4,
                                   :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
 																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
-      expect(response.status).to eq(201)
+      expect(response.status).to eq(200)
 		end
 	end
 
@@ -26,7 +26,7 @@ describe RidesAPI do
                                   :destination_latitude => 46.5, :destination_longitude => -122.4,
                                   :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
 																	:return_pickup_time => '2014-08-16 17:00:00 -14:00', :driving => true }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
-      expect(response.status).to eq(201)
+      expect(response.status).to eq(200)
 		end
 	end
 
