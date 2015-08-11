@@ -20,23 +20,30 @@ class RidesAPIV2< Grape::API
 		post :commute do
 			authenticate!
 
-			trip = TripController.request_commute(
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-				params[:departure_place_name],
-				params[:departure_pickup_time],
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-				params[:destination_place_name],
-				params[:return_pickup_time],
-				params[:driving],
-				current_rider
-			)
+			# check for prexisting commuter ride on this date
+			rides_today = Ride.where(rider_id: current_user.id).where(request_type: 'commuter').where('pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
+			if rides_today.length > 1
+				conflict 'Commute request already exists for this day'
+			else
 
-			ok
-			rval = Hash.new
-			rval[:outgoing_ride_id] = trip.rides[0].id
-			rval[:return_ride_id] = trip.rides[1].id
-			rval[:trip_id] = trip.id
-			rval
+				trip = TripController.request_commute(
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+					params[:departure_place_name],
+					params[:departure_pickup_time],
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+					params[:destination_place_name],
+					params[:return_pickup_time],
+					params[:driving],
+					current_rider
+				)
+
+				ok
+				rval = Hash.new
+				rval[:outgoing_ride_id] = trip.rides[0].id
+				rval[:return_ride_id] = trip.rides[1].id
+				rval[:trip_id] = trip.id
+				rval
+			end
 		end
 
 

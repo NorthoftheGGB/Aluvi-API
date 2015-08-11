@@ -16,6 +16,37 @@ describe RidesAPI do
 																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
       expect(response.status).to eq(200)
 		end
+
+		it "does not create new commuter ride requests when one exists in the future" do
+      @rider = FactoryGirl.create(:rider)
+      post "/api/v2/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
+                                  :departure_longitude => -122.3, :departure_place_name => "My House",
+                                  :destination_latitude => 46.5, :destination_longitude => -122.4,
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      post "/api/v2/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
+                                  :departure_longitude => -122.3, :departure_place_name => "My House",
+                                  :destination_latitude => 46.5, :destination_longitude => -122.4,
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 9:00:00 -14:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      expect(response.status).to eq(405)
+		end
+
+		it "does create new commuter ride requests when one exists in the future for a differentuser" do
+      @rider = FactoryGirl.create(:rider)
+      @rider2 = FactoryGirl.create(:generated_rider)
+      post "/api/v2/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
+                                  :departure_longitude => -122.3, :departure_place_name => "My House",
+                                  :destination_latitude => 46.5, :destination_longitude => -122.4,
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+      post "/api/v2/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
+                                  :departure_longitude => -122.3, :departure_place_name => "My House",
+                                  :destination_latitude => 46.5, :destination_longitude => -122.4,
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 9:00:00 -14:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider2.token)}
+      expect(response.status).to eq(200)
+		end
 	end
 
 	describe "POST /api/v2/rides/commute" do
