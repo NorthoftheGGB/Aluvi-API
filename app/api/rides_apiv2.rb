@@ -138,6 +138,24 @@ class RidesAPIV2< Grape::API
 			end
 		end
 
+		desc "Cancel an entire trip"
+		delete 'trips/:trip_id' do
+			authenticate!
+			begin
+				trip = Trip.find(params[:trip_id])
+				TripController.cancel_trip(trip)
+				ok
+			rescue
+        Rails.logger.error $!
+				#Rails.logger.error $!.backtrace.join("\n")
+				Rails.logger.debug params[:trip_id]
+				error! $!.message, 400, 'X-Error-Detail' => $!.message
+			end
+				
+		end
+
+		desc "Get list of fares assigned to driver"
+
 		desc "Update Route"
 		params do
 			requires :origin, type: Hash do
