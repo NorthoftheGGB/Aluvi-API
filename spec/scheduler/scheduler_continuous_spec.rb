@@ -314,42 +314,6 @@ describe Scheduler do
 		end
 
 
-		it "schedules commuter rides for riders with same work location and same pickup times on subsequent runs" do
-
-			r1trip = TripController.request_commute(home1, 'Home1', home_pickup ,  work1, 'Work1', work_pickup, false, rider1)
-			dtrip = TripController.request_commute(home1, 'Home1', home_pickup ,  work1, 'Work1', work_pickup, true, driver1.as_rider)
-
-			SchedulerContinuous.prepare
-			Rails.logger.debug 'ASSIGN RIDES'
-			SchedulerContinuous.assign_rides_to_unscheduled_drivers
-			Rails.logger.debug 'FILL OPEN'
-			SchedulerContinuous.fill_open_aggregates
-			SchedulerContinuous.remove_unsuccessful_rides
-			SchedulerContinuous.publish
-
-			r2trip = TripController.request_commute(home1, 'Home1', home_pickup ,  work1, 'Work1', work_pickup, false, rider2)
-
-			Rails.logger.debug "PREPARE 2"
-			SchedulerContinuous.prepare
-			SchedulerContinuous.assign_rides_to_unscheduled_drivers
-			Rails.logger.debug 'FILL OPEN 2'
-			SchedulerContinuous.fill_open_aggregates
-			SchedulerContinuous.remove_unsuccessful_rides
-			SchedulerContinuous.publish
-
-			r1ride = Ride.find(r1trip.rides[0].id)
-			r2ride = Ride.find(r2trip.rides[0].id)
-			dride = Ride.find(dtrip.rides[0].id)
-			expect(r1ride.state).to eq('scheduled')
-			expect(r2ride.state).to eq('scheduled')
-			expect(dride.state).to eq('scheduled')
-
-			expect(r1ride.fare).to eq(dride.fare)
-			expect(r2ride.fare).to eq(dride.fare)
-
-		end
-
-
 	end
 
 
