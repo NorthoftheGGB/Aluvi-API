@@ -99,19 +99,7 @@ class Ride < ActiveRecord::Base
 
 	private
 	def ride_requested
-		if( request_type == TransportType::ON_DEMAND )
-			# go ahead and create the associated ride if it's on demand
-			self.fare = Fare.create( Time.now, origin, origin_place_name, destination, destination_place_name )
-			self.fare.meeting_point = origin
-			self.fare.meeting_point_place_name = origin_place_name
-			self.fare.riders << self.rider
-			self.fare.save
-			save
-		elsif( request_type == TransportType::COMMUTER )
-
-		end		
 		notify_observers :requested # notifies scheduler
-
 	end
 
 end

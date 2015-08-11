@@ -1,7 +1,7 @@
 module SchedulerContinuous 
 
 	def self.run
-		self.cutoff
+		self.cutoff DateTime.now
 		self.prepare
 		self.assign_rides_to_unscheduled_drivers
 		self.fill_open_fares
@@ -10,13 +10,24 @@ module SchedulerContinuous
 		self.notify_commuters
 	end
 
-	def self.cutoff
+	def self.cutoff now
 
 		# check if we are past the cutoff time
 		cutoff = (DateTime.now.in_time_zone.beginning_of_day.to_time + 23.hours + 30.minutes).to_datetime.in_time_zone
-		if DateTime.now > cutoff
+		if now > cutoff
 			Rails.logger.debug "TODO: Process Cutoff"
 			# Get rides that are for tomorrow and mark as unfullfilled
+			tomorrow = DateTime.tomorrow.in_time_zone.beginning_of_day
+			day_after_tomorrow = DateTime.tomorrow.in_time_zone.beginning_of_day + 1.days
+			expired_trips = Trip.requested.where('start_time > ?', tomorrow).where('start_time < ?', day_after_tomorrow)
+			expired_trips.each do |trip|
+				Rails.logger.debug trip
+				trip.rides.each do |leg|
+					leg.commute_scheduler_failed!
+				end
+				trip.unfulfilled!
+				Rails.logger.debug trip
+			end
 		end
 
 	end
@@ -94,11 +105,12 @@ module SchedulerContinuous
 		# now calculate trip fulfillment for riders
 		# destory any rides that have an unfulfilled ride in their trip
 		ride_scheduling_failures = TempRide.requested.where(driving: false)
+		Rails.logger.debug ride_scheduling_failures
 		ride_scheduling_failures.each do |failed_ride|
-			failed_ride.trip.destroy
-			failed_ride.trip.temp_rides.each do |ride|
-				ride.destroy
+			failed_ride.trip.rides.where(state: 'scheduled').each do |ride|
+				TempRide.find(ride.id).destroy
 			end
+			failed_ride.destroy
 		end
 
 		# calculate trip fulfillment for drivers
@@ -136,7 +148,7 @@ module SchedulerContinuous
 				if ride.requested?
 					ride.fare = Fare.find(temp_ride.temp_fare.id)
 					ride.save
-					ride.schedule!
+					ride.scheduled!
 
 					# TODO TODO
 					# Deal with fare cancellation
@@ -171,13 +183,15 @@ module SchedulerContinuous
 		self.ride_assignment_iteration driving_rides
 	end
 
+	# actually about the fares, not the rides
+	# in the case of already scheduled fares, we don't really need the ride
   def self.ride_assignment_iteration(driving_rides)
 		driving_rides_with_new_assignment = Array.new
     driving_rides.each do |r|
 			if r.temp_fare.temp_rides.length < 2
 				meeting_point_vicinity = r.origin
 				drop_off_point_vicinity = r.destination
-				if r.direction = 'a'
+				if r.direction == 'a'
 					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_origin]
 					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
 				else # 'b'
@@ -186,23 +200,27 @@ module SchedulerContinuous
 				end
 			else
 				# there's already a meeting point assigned
-				meeting_point_vicinity = r.fare.meeting_point
-				drop_off_point_vicinity = r.fare.drop_off_point
+				meeting_point_vicinity = r.temp_fare.meeting_point
+				drop_off_point_vicinity = r.temp_fare.drop_off_point
 				if r.direction == 'a'
 					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point]
 					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
 				else # 'b'
 					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
-					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_meeting_point]
+					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point]
 				end
 			end
+			Rails.logger.debug r.temp_fare.temp_rides.length
+			Rails.logger.debug r.direction
+			Rails.logger.debug r.temp_fare.meeting_point
 
       rides = TempRide.where({state: 'requested'})
       rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes)
-      rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin) < ?", meeting_point_threshold)
-      rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), destination) < ?", drop_off_point_threshold)
-      rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin)")
+      rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + meeting_point_vicinity.x.to_s + ' ' + meeting_point_vicinity.y.to_s + ") '), origin) < ?", meeting_point_threshold)
+      rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + drop_off_point_vicinity.x.to_s + ' ' + drop_off_point_vicinity.y.to_s + ") '), destination) < ?", drop_off_point_threshold)
+      rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + meeting_point_vicinity.x.to_s + ' ' + meeting_point_vicinity.y.to_s + ") '), origin)")
       if rides[0].nil?
+				Rails.logger.debug 'FOUND NOTHING'
         next
       end
       Rails.logger.debug r.pickup_time

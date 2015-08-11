@@ -1,6 +1,14 @@
 class TripController
 
   # Commuter
+	def self.request_commute( departure_point, departure_place_name, departure_time, destination_point, destination_place_name, return_time, driving, rider )
+      aside1 = TripController.request_commute_leg(departure_point, departure_place_name, destination_point, destination_place_name, departure_time, driving, rider, nil )
+      bside1 = TripController.request_commute_leg(destination_point, destination_place_name, departure_point, departure_place_name, return_time, driving, rider, aside1.trip_id)
+			trip = aside1.trip
+			trip.start_time = departure_time
+			trip.save
+			trip
+	end
 
   def self.request_commute_leg( departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider, trip_id)
     ride = CommuterRide.create(

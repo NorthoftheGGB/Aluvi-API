@@ -116,8 +116,6 @@ class Fare < ActiveRecord::Base
 			self.driver_cancelled
 			self.finished = Time.now
 			save
-			self.driver.current_fare = nil
-			self.driver.save
 			self.rides.each do |ride|
 				unless ride.aborted?
 					ride.abort!
