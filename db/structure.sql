@@ -48,15 +48,35 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE aggregates (
-    id integer,
+    id integer NOT NULL,
+    permanent_id integer,
     state character varying,
-    meeting_point point,
+    meeting_point geography(Point,4326),
     meeting_point_place_name character varying,
-    drop_off_point point,
+    drop_off_point geography(Point,4326),
     drop_off_point_place_name character varying,
     pickup_time timestamp without time zone,
     driver_direction character varying
 );
+
+
+--
+-- Name: aggregates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE aggregates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: aggregates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE aggregates_id_seq OWNED BY aggregates.id;
 
 
 --
@@ -761,6 +781,13 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY aggregates ALTER COLUMN id SET DEFAULT nextval('aggregates_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY cards ALTER COLUMN id SET DEFAULT nextval('cards_id_seq'::regclass);
 
 
@@ -867,6 +894,14 @@ ALTER TABLE ONLY trips ALTER COLUMN id SET DEFAULT nextval('trips_id_seq'::regcl
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: aggregates_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY aggregates
+    ADD CONSTRAINT aggregates_pkey PRIMARY KEY (id);
 
 
 --
@@ -1268,4 +1303,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150811012212');
 INSERT INTO schema_migrations (version) VALUES ('20150811013117');
 
 INSERT INTO schema_migrations (version) VALUES ('20150811013631');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811034537');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811035145');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811042408');
 

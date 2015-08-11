@@ -42,7 +42,7 @@ module SchedulerContinuous
 		TempRide.connection.execute("TRUNCATE temp_rides")
 		Aggregate.connection.execute("TRUNCATE aggregates")
 		TempRide.connection.execute("INSERT INTO temp_rides SELECT * FROM rides WHERE (state = 'requested' OR state = 'scheduled') AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
-		Aggregate.connection.execute("INSERT INTO aggregates SELECT id, state, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name, pickup_time FROM fares WHERE state IN ('scheduled', 'unscheduled') AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
+		Aggregate.connection.execute("INSERT INTO aggregates (permanent_id, state, meeting_point,meeting_point_place_name, drop_off_point, drop_off_point_place_name, pickup_time)  SELECT id, state, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name, pickup_time FROM fares WHERE state IN ('scheduled', 'unscheduled') AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
 
 	end
 
@@ -57,17 +57,12 @@ module SchedulerContinuous
 			aggregate.drop_off_point = r.destination
 			aggregate.pickup_time = r.pickup_time
 			aggregate.driver_direction = r.direction
+			aggregate.temp_rides << r
 
 			empty_aggregates << aggregate
 		end
 
 		filled_aggregates = self.aggregate_assignment_iteration empty_aggregates
-		filled_aggregates.each do |a|
-			fare = Fare.new
-			fare.save
-			a.id = fare.id
-			a.save
-		end
 	end
 
 	def self.fill_open_aggregates
@@ -84,10 +79,7 @@ module SchedulerContinuous
 		rides = rides.where('temp_rides.driving = ?', true).where('temp_rides.state = ?', 'requested').where('scheduled_rides.state = ?', 'scheduled')
 		rides = rides.where('temp_rides.fare_id = 0')
 		rides.each do |driving_ride|
-			fare = Fare.new
-			fare.save
 			aggregate = Aggregate.new
-			aggregate.id = fare.id
 			driving_ride.aggregate = aggregate
 			driving_ride.save
 		end
@@ -117,7 +109,7 @@ module SchedulerContinuous
 
 		# calculate trip fulfillment for drivers
 		# destroy all driver rides and fares belonging to trips with zero riders
-		empty_trips = Trip.joins('JOIN temp_rides rides ON rides.trip_id = trips.id').joins('JOIN temp_fares fares on fares.id = rides.fare_id').joins('JOIN temp_rides rider_rides ON fares.id = rider_rides.fare_id')
+		empty_trips = Trip.joins('JOIN temp_rides rides ON rides.trip_id = trips.id').joins('JOIN aggregates fares on fares.id = rides.fare_id').joins('JOIN temp_rides rider_rides ON fares.id = rider_rides.fare_id')
 		empty_trips = empty_trips.where('rider_rides.driving = false')
 		empty_trips = empty_trips.group('trips.id').having('count(rider_rides.id) = 0')
 		empty_trips.each do |empty_trip|
@@ -146,7 +138,11 @@ module SchedulerContinuous
 
 			# check for fares that have been cancelled
 			Aggregate.provisional.each do |aggregate|
-				fare = Fare.find(aggregate.id)
+				if aggregate.permanent_id.nil?
+					next
+				end
+
+				fare = Fare.find(aggregate.permanent_id)
 				unless fare.scheduled? || fare.unscheduled?
 					# these fares have been cancelled
 					# so we remove their aggregates and affected riders
@@ -160,9 +156,9 @@ module SchedulerContinuous
 			end
 
 			# some new riders may have been orphaned by a cancelled fare
-			orphans = Trip.joins(:temp_ride)
+			orphans = Trip.joins("JOIN temp_rides ON temp_rides.trip_id = trips.id")
 			orphans = orphans.where('temp_rides.state = ?', 'provisional');
-			orphans = orphans.where('temp_rides.driving = ?', false).group('trip.id').having('count(temp_ride.id) < 2')
+			orphans = orphans.where('temp_rides.driving = ?', false).group('trips.id').having('count(temp_rides.id) < 2')
 			orphans.each do |trip|
 				trip.rides.each do |orphan|
 					orphan.destroy
@@ -191,7 +187,15 @@ module SchedulerContinuous
 
 			# copy updated rides and fares
 			Aggregate.provisional.each do |aggregate|
-				fare = Fare.find(aggregate.id)
+				if aggregate.permanent_id.nil? || aggregate.permanent_id == 0
+					fare = Fare.new
+					fare.save
+					aggregate.permanent_id = fare.id
+					aggregate.save
+				else
+					fare = Fare.find(aggregate.permanent_id)
+				end
+				
 				if fare.scheduled? || fare.unscheduled?
 					if fare.unscheduled?
 						fare.schedule!
@@ -203,34 +207,37 @@ module SchedulerContinuous
 					fare.pickup_time = aggregate.pickup_time
 					fare.save
 				end
-
-				# fare is still valid
-				# so we can add new rides that are still valid
-				TempRide.provisional.each do |temp_ride|
-					ride = Ride.find(temp_ride.id)
-					ride.fare = Fare.find(temp_ride.aggregate.id)
-					ride.save
-					ride.scheduled!
-				end
-
 			end
+
+			Rails.logger.debug(Aggregate.provisional)
+			Rails.logger.debug(TempRide.provisional)
+
+			# fare is still valid
+			# so we can add new rides that are still valid
+			TempRide.provisional.each do |temp_ride|
+				ride = Ride.find(temp_ride.id)
+				ride.fare = Fare.find(temp_ride.aggregate.permanent_id)
+				ride.save
+				ride.scheduled!
+			end
+
 
 		end
 
 	end
 
 	def self.assign_rides_to_open_aggregates
-		open_aggregates = Aggregates.joins(:temp_rides).group('aggregates.id').having("count(temp_rides.id) < ? ", 4)
+		open_aggregates = Aggregate.joins(:temp_rides).group('aggregates.id').having("count(temp_rides.id) < ? ", 4)
 		filled_aggregates = self.aggregate_assignment_iteration open_aggregates
 	end
 
 	def self.aggregate_assignment_iteration open_aggregates
-		aggregatess_with_new_assignment = Array.new
+		aggregates_with_new_assignment = Array.new
 		open_aggregates.each do |a|
 
 			if a.scheduled? || a.provisional?
 				# meeting point has already been assigned
-				if r.direction == 'a'
+				if a.driver_direction == 'a'
 					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point]
 					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
 				elsif a.driver_direction == 'b'
@@ -239,7 +246,7 @@ module SchedulerContinuous
 				else
 					raise "Direction not configured properly"
 				end
-			else if a.unscheduled?
+			elsif a.unscheduled?
 				# we'll be assigning the meeting point after finding a matching ride
 				if a.driver_direction == 'a'
 					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_origin]
@@ -256,6 +263,7 @@ module SchedulerContinuous
 			end
 
 			rides = TempRide.where({state: 'requested'})
+			rides = rides.where('driving = ?', false)
 			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', a.pickup_time - 15.minutes, a.pickup_time + 15.minutes)
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + a.meeting_point.x.to_s + ' ' + a.meeting_point.y.to_s + ") '), origin) < ?", meeting_point_threshold)
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + a.drop_off_point.x.to_s + ' ' + a.drop_off_point.y.to_s + ") '), destination) < ?", drop_off_point_threshold)
@@ -264,7 +272,7 @@ module SchedulerContinuous
 				Rails.logger.debug 'FOUND NOTHING'
 				next
 			end
-			Rails.logger.debug r.pickup_time
+			Rails.logger.debug a.pickup_time
 			Rails.logger.debug rides[0].pickup_time
 			Rails.logger.debug rides.size
 
@@ -275,11 +283,11 @@ module SchedulerContinuous
 				a.meeting_point = assign_ride.origin
 				a.drop_off_point = assign_ride.destination
 				a.meeting_point_place_name = assign_ride.origin_place_name
-				a.drop_off_point_place_name = assign_ride.drop_off_point_place_name
+				a.drop_off_point_place_name = assign_ride.destination_place_name
 
 				# schedule the driving ride
-				a.rides[0].save 
-				a.rides[0].schedule!
+				a.temp_rides[0].save 
+				a.temp_rides[0].schedule!
 			end
 
 			assign_ride.aggregate = a
@@ -287,7 +295,9 @@ module SchedulerContinuous
 			assign_ride.schedule!
 
 			a.save
-			a.schedule!
+			unless a.provisional?
+				a.schedule!
+			end
 
 			aggregates_with_new_assignment << a
 		end
