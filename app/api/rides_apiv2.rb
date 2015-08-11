@@ -20,33 +20,22 @@ class RidesAPIV2< Grape::API
 		post :commute do
 			authenticate!
 
-			outgoing_ride = TripController.request_commute_leg(
+			trip = TripController.request_commute(
 				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 				params[:departure_place_name],
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-				params[:destination_place_name],
 				params[:departure_pickup_time],
-				params[:driving],
-				current_rider,
-				nil
-			)
-
-			return_ride = TripController.request_commute_leg(
 				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
 				params[:destination_place_name],
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-				params[:departure_place_name],
 				params[:return_pickup_time],
 				params[:driving],
-				current_rider,
-				outgoing_ride.trip_id
+				current_rider
 			)
 
 			ok
 			rval = Hash.new
-			rval[:outgoing_ride_id] = outgoing_ride.id
-			rval[:return_ride_id] = return_ride.id
-			rval[:trip_id] = outgoing_ride.trip_id
+			rval[:outgoing_ride_id] = trip.rides[0].id
+			rval[:return_ride_id] = trip.rides[1].id
+			rval[:trip_id] = trip.id
 			rval
 		end
 

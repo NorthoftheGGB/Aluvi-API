@@ -2,9 +2,9 @@ class Fare < ActiveRecord::Base
 
 	belongs_to :car, inverse_of: :fares
 	has_many :rides, inverse_of: :fare
-	has_many :riders, through: :rides
-	has_many :offers, inverse_of: :fare
 	has_many :payments
+
+	has_many :riders, through: :rides
 
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name,
                   :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point, :fixed_earnings
@@ -116,8 +116,6 @@ class Fare < ActiveRecord::Base
 			self.driver_cancelled
 			self.finished = Time.now
 			save
-			self.driver.current_fare = nil
-			self.driver.save
 			self.rides.each do |ride|
 				unless ride.aborted?
 					ride.abort!
