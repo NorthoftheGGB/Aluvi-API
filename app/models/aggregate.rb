@@ -1,5 +1,8 @@
-class TempFare < ActiveRecord::Base
-	has_many :temp_rides, inverse_of: :temp_fare, foreign_key: "fare_id"
+class Aggregate < ActiveRecord::Base
+	has_many :temp_rides, inverse_of: :aggregates, foreign_key: "fare_id"
+
+  attr_accessible :drop_off_point, :drop_off_point_place_name, :meeting_point, :meeting_point_place_name,
+                  :pickup_time,:state, :driver_direction
 
 	include AASM
 	aasm.attribute_name :state

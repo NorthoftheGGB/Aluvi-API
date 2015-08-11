@@ -1,5 +1,5 @@
 class TempRide < ActiveRecord::Base
-	belongs_to :temp_fare, inverse_of: :temp_rides, foreign_key: "fare_id"
+	belongs_to :aggregate, inverse_of: :temp_rides, foreign_key: "fare_id"
   belongs_to :trip, inverse_of: :rides
 
 	include AASM

@@ -4,7 +4,7 @@ module SchedulerContinuous
 		self.cutoff DateTime.now
 		self.prepare
 		self.assign_rides_to_unscheduled_drivers
-		self.fill_open_fares
+		self.fill_open_aggregates
 		self.remove_unsuccessful_rides
 		self.publish
 		self.notify_commuters
@@ -41,13 +41,13 @@ module SchedulerContinuous
 		# only for rides happening tomorrow
 		TempRide.connection.execute("TRUNCATE temp_rides")
 		TempFare.connection.execute("TRUNCATE temp_fares")
-		TempRide.connection.execute("INSERT INTO temp_rides SELECT * FROM rides WHERE state = 'requested' AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
-		TempFare.connection.execute("INSERT INTO temp_fares SELECT * FROM fares WHERE state IN ('scheduled', 'unscheduled') AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
+		TempRide.connection.execute("INSERT INTO temp_rides SELECT * FROM rides WHERE (state = 'requested' OR state = 'scheduled') AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
+		TempFare.connection.execute("INSERT INTO aggregates SELECT id, state, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name, pickup_time FROM fares WHERE state IN ('scheduled', 'unscheduled') AND pickup_time >= #{ActiveRecord::Base.sanitize(tomorrow)}")
 
 	end
 
 
-	def self.assign_rides_to_unscheduled_drivers
+	def self.assign_rides_to_unscheduled_drivers_old
 		# assign all fares in on pool, matching by time and space
 	
 		# start with driving rides that don't have a rider yet
@@ -72,21 +72,49 @@ module SchedulerContinuous
 
 	end
 
-	def self.fill_open_fares
+	def self.assign_rides_to_unscheduled_drivers
+		empty_aggregates = Array.new
+		driving_rides = TempRide.where( {driving: true, state: 'requested'} )
+		driving_rides.each do |r|
+			aggregate = Aggregate.new
+			
+			# put driver origin/destination in fare object for search
+			aggregate.meeting_point = r.origin
+			aggregate.drop_off_point = r.destination
+			aggregae.pickup_time = r.pickup_time
+			aggregate.driver_direction = r.direction
 
-		# now assign empty fares to any requested driving ride that has a scheduled ride in its trip
+			empty_aggregates << aggregates
+		end
+
+		filled_aggregates = self.aggregate_assignment_iteration empty_aggregates
+		filled_aggregates.each do |a|
+			fare = Fare.new
+			fare.save
+			a.id = fare.id
+			a.save
+		end
+	end
+
+	def self.fill_open_aggregates
+
+		# now assign empty aggregates to any requested driving ride that has a scheduled ride in its trip
+		# basically: a driver could have a rider in one direction, but not in the other driection
+		# so we assign an empty aggregate in this situation, since they are both valid fares
+		# and can be filled by assigning to open aggregates
 		# select rides.id, trips.id, scheduled_rides.id from rides 
 		# join trips on trips.id = rides.trip_id 
 		# join rides scheduled_rides on scheduled_rides.trip_id = trips.id 
 		# where rides.driving = true and rides.state = 'requested' and scheduled_rides.state = 'scheduled';
 		rides = TempRide.joins(:trip).joins('JOIN temp_rides scheduled_rides ON scheduled_rides.trip_id = trips.id')
 		rides = rides.where('temp_rides.driving = ?', true).where('temp_rides.state = ?', 'requested').where('scheduled_rides.state = ?', 'scheduled')
+		rides = rides.where('temp_rides.fare_id = 0')
 		rides.each do |driving_ride|
 			fare = Fare.new
 			fare.save
-      temp_fare = TempFare.new
-			temp_fare.id = fare.id
-			driving_ride.temp_fare = temp_fare	
+      aggregate = Aggregate.new
+			aggregate.id = fare.id
+			driving_ride.aggregate = aggregate
 			driving_ride.save
 		end
 		
@@ -95,9 +123,9 @@ module SchedulerContinuous
 		#  and have a fare that is not yet full - can add 1 to 3 more
 		#  (some fares could be empty)
 		#  so do this 3 times
-		self.assign_rides_to_open_fares
-		self.assign_rides_to_open_fares
-		self.assign_rides_to_open_fares
+		self.assign_rides_to_open_aggregates
+		self.assign_rides_to_open_aggregates
+		self.assign_rides_to_open_aggregates
 	
 	end
 
@@ -120,67 +148,176 @@ module SchedulerContinuous
 		empty_trips = empty_trips.group('trips.id').having('count(rider_rides.id) = 0')
 		empty_trips.each do |empty_trip|
 			empty_trip.temp_rides.each do |invalid_ride|
-				invalid_ride.temp_fare.destroy
+				invalid_ride.aggregate.destroy
 				invalid_ride.destroy
 			end
 		end
 
-		# before copying back
-		# remove all rides that did not get updated via this script
-		# remove all fares that did not get updated via this script
-		# not totally sure how to do this
 	end
 
 	def self.publish
+
+		# safety:
+		# remove stuff we aren't going to merge
+		#  actually we need this stuff
+		#TempRide.scheduled.destroy_all
+		#TempRide.requested.destroy_all
+		#Aggregate.scheduled.destroy_all
+		#Aggregate.unscheduled.where('driving = ', false).destroy_all
+
+
 		# TODO: wait for semaphore
 
 		ActiveRecord::Base.transaction do
-			# copy updated rides and fares
-			TempFare.provisional.each do |temp_fare|
-				fare = Fare.find(temp_fare.id)
-				fare.meeting_point = temp_fare.meeting_point
-				fare.drop_off_point = temp_fare.drop_off_point
-				fare.save
-			end
-
-			TempRide.provisional.each do |temp_ride|
-				ride = Ride.find(temp_ride.id)
-				if ride.requested?
-					ride.fare = Fare.find(temp_ride.temp_fare.id)
-					ride.save
-					ride.scheduled!
-
-					# TODO TODO
-					# Deal with fare cancellation
-					# we have to check before - if a fare is no longer scheduled
-					# if can have cascading effects on the schedule
-					# riders ride must be removed from provisional 
-					# plus their OTHER ride must be removed from provisional
-					# and then there is the possibility that another fare with only 1 rider
-					# now must be removed from provisional as well
-					# BUT: all we actually have to do is check on the driv'es far
-					# it's totally OK to pull riders off the system
-					# just have to pull the fares from riders that not longer have drivers
-					unless ride.fare.scheduled?
-						ride.fare.schedule!
+			
+			# check for fares that have been cancelled
+			Aggregate.provisional.each do |aggregate|
+				fare = Fare.find(aggregate.id)
+				unless fare.scheduled? || fare.unscheduled?
+					# these fares have been cancelled
+					# so we remove their aggregates and affected riders
+					aggregate.rides.each do |temp_ride|
+						if temp_ride.driving = false
+							temp_ride.destroy
+						end
 					end
-					if ride.trip.unfulfilled?
-						ride.trip.fulfilled!
-					end
+					aggregate.destroy
 				end
 			end
 
-		end
+			# some new riders may have been orphaned by a cancelled fare
+			orphans = Trip.joins(:temp_ride)
+			orphans = orphans.where('temp_rides.state = ?', 'provisional');
+			orphans = orphans.where('temp_rides.driving = ?', false).group('trip.id').having('count(temp_ride.id) < 2')
+			orphans.each do |trip|
+				trip.rides.each do |orphan|
+					orphan.destroy
+				end
+			end
+
+			# AND we should take out any cancelled requests at this point
+			# so that checking for empty fares proceeds correctly
+			TempRide.provisional.each do |temp_ride|
+				ride = Ride.find(temp_ride.id)
+				unless ride.requested?
+					temp_ride.destroy
+				end
+			end
+
+			# and lastly it's possible that some aggregates are now empty
+			# this is only a problem if the driver has no riders either way
+			#
+			# Maybe there is an easier way to handle this case?
+			#
+			#potential_orphans = Aggregate.joins(:temp_ride).group('aggregate.id').having('count(temp_ride.id) < 2')
+			#potential_orphans.each do |o|
+			#		
+			#end
+
+
+			# copy updated rides and fares
+			Aggregate.provisional.each do |aggregate|
+				fare = Fare.find(aggregate.id)
+				if fare.scheduled? || fare.unscheduled?
+					if fare.unscheduled?
+						fare.schedule!
+					end
+					fare.meeting_point = aggregate.meeting_point
+					fare.meeting_point_place_name = aggregate.meeting_point_place_name
+					fare.drop_off_point = aggregate.drop_off_point
+					fare.drop_off_point_place_name = aggregate.drop_off_point_place_name
+					fare.pickup_time = aggregate.pickup_time
+					fare.save
+				end
+
+				# fare is still valid
+				# so we can add new rides that are still valid
+				TempRide.provisional.each do |temp_ride|
+					ride = Ride.find(temp_ride.id)
+					ride.fare = Fare.find(temp_ride.aggregate.id)
+					ride.save
+					ride.scheduled!
+				end
+
+			end
 
 	end
 
-	def self.assign_rides_to_open_fares
-		open_fares = TempFare.joins(:temp_rides).group('temp_fares.id').having("count(temp_rides.id) < ? ", 4)
-		driving_rides = Array.new
-		open_fares.each do |fare|
-			driving_rides << fare.temp_rides.where(driving: true).first
+	def self.assign_rides_to_open_aggregates
+		open_aggregates = Aggregates.joins(:temp_rides).group('aggregates.id').having("count(temp_rides.id) < ? ", 4)
+		filled_aggregates = self.aggregate_assignment_iteration open_aggregates
+	end
+
+	self.aggregate_assignment_iteration open_aggregates
+		aggregatess_with_new_assignment = Array.new
+		open_aggregates.each do |a|
+
+			if a.scheduled? || a.provisional?
+				# meeting point has already been assigned
+				if r.direction == 'a'
+					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point]
+					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
+				elsif a.driver_direction == 'b'
+					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
+					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point]
+				else
+					raise "Direction not configured properly"
+				end
+			else if a.unscheduled?
+				# we'll be assigning the meeting point after finding a matching ride
+				if a.driver_direction == 'a'
+					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_origin]
+					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
+				elsif a.driver_direction == 'b'
+					meeting_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_destination]
+					drop_off_point_threshold = Rails.configuration.commute_scheduler[:threshold_from_driver_origin]
+				else
+					raise "Direction not configured properly"
+				end
+				
+			else
+				raise "Invalid State for Fare"
+			end
+
+			rides = TempRide.where({state: 'requested'})
+			rides = rides.where('pickup_time >= ? AND pickup_time <= ? ', a.pickup_time - 15.minutes, a.pickup_time + 15.minutes)
+			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + a.meeting_point.x.to_s + ' ' + a.meeting_point.y.to_s + ") '), origin) < ?", meeting_point_threshold)
+			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + a.drop_off_point.x.to_s + ' ' + a.drop_off_point.y.to_s + ") '), destination) < ?", drop_off_point_threshold)
+			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + a.meeting_point.x.to_s + ' ' + a.meeting_point.y.to_s + ") '), origin)")
+			if rides[0].nil?
+				Rails.logger.debug 'FOUND NOTHING'
+				next
+			end
+			Rails.logger.debug r.pickup_time
+			Rails.logger.debug rides[0].pickup_time
+			Rails.logger.debug rides.size
+
+			assign_ride = rides[0]
+
+			# assign meeting and drop off if fare doesn't have riders yet
+			if a.unscheduled?
+				a.meeting_point = assign_ride.origin
+				a.drop_off_point = assign_ride.destination
+				a.meeting_point_place_name = assign_ride.origin_place_name
+				a.drop_off_point_place_name = assign_ride.drop_off_point_place_name
+
+				# schedule the driving ride
+				a.rides[0].save 
+				a.rides[0].schedule!
+			end
+
+			assign_ride.aggregate = a
+			assign_ride.save
+			assign_ride.schedule!
+	
+			a.save
+			a.schedule!
 		end
-		self.ride_assignment_iteration driving_rides
+
+			aggregates_with_new_assignment << a
+		end
+		aggregates_with_new_assignment
+
 	end
 
 	# actually about the fares, not the rides

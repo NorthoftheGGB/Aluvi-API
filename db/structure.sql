@@ -44,6 +44,22 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: aggregates; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE aggregates (
+    id integer,
+    state character varying,
+    meeting_point point,
+    meeting_point_place_name character varying,
+    drop_off_point point,
+    drop_off_point_place_name character varying,
+    pickup_time timestamp without time zone,
+    driver_direction character varying
+);
+
+
+--
 -- Name: cards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -597,27 +613,6 @@ ALTER SEQUENCE supports_id_seq OWNED BY supports.id;
 
 
 --
--- Name: temp_fares; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE temp_fares (
-    id integer NOT NULL,
-    state character varying(255),
-    scheduled timestamp without time zone,
-    started timestamp without time zone,
-    finished timestamp without time zone,
-    meeting_point geography(Point,4326),
-    meeting_point_place_name character varying(255),
-    drop_off_point geography(Point,4326),
-    drop_off_point_place_name character varying(255),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    pickup_time timestamp without time zone,
-    fixed_earnings integer
-);
-
-
---
 -- Name: temp_rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -995,14 +990,6 @@ ALTER TABLE ONLY trips
 
 
 --
--- Name: temp_fares_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY temp_fares
-    ADD CONSTRAINT temp_fares_pkey PRIMARY KEY (id);
-
-
---
 -- Name: temp_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1275,4 +1262,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150808061823');
 INSERT INTO schema_migrations (version) VALUES ('20150808072432');
 
 INSERT INTO schema_migrations (version) VALUES ('20150810205911');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811012212');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811013117');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811013631');
 
