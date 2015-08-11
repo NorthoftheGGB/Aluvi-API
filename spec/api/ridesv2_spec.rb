@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe RidesAPI do
+describe RidesAPIV2 do
 
 	include AuthHelper
 
-	before { RidesAPI.before { env["api.tilt.root"] = "app/views/api" } }
+	before { RidesAPIV2.before { env["api.tilt.root"] = "app/views/api" } }
 
 	describe "POST /api/v2/rides/commute" do
 		it "creates new commuter ride requests" do
@@ -74,6 +74,23 @@ describe RidesAPI do
       expect(response.status).to eq(200)
     end
   end
+
+	describe "POST /api/v2/rides/route" do
+		it "updates successfully" do
+			@rider = FactoryGirl.create(:rider)
+			route = @rider.route
+			post "/api/v2/rides/route", { :origin => { :longitude => route.origin.x, :latitude => route.origin.y }, \
+														:destination => { :longitude => route.destination.x, :latitude => route.destination.y }, \
+														:pickup_zone_center => { :longitude => route.pickup_zone_center.x, :latitude => route.pickup_zone_center.y }, \
+														:origin_place_name => route.origin_place_name, \
+														:destination_place_name => route.destination_place_name, \
+														:pickup_zone_center_place_name => route.pickup_zone_center_place_name, \
+														:pickup_time => route.pickup_time, \
+														:return_time => route.return_time, \
+														:driving => route.driving
+													}  , {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}	
+		end
+	end
 
 
 end
