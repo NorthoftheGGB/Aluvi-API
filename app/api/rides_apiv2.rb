@@ -166,7 +166,7 @@ class RidesAPIV2< Grape::API
 		end
 		get :pickup_points, jbuilder: 'v2/pickup_points' do
 			#authenticate!
-			pickup_points = Ride.select(:origin).select('count(rider_id) as number_of_riders').group(:origin)
+			pickup_points = Route.select(:origin).select('count(rider_id) as number_of_riders').group(:origin)
 			@points = pickup_points
 
 		end
