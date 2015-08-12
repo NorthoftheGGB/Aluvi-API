@@ -208,6 +208,7 @@ class UsersAPIV2 < Grape::API
 			optional :last_name, type: String
 			optional :email, type: String
 			optional :phone, type: String
+			optional :work_email, type: String
       optional :default_card_token, type: String
 			optional :default_recipient_debit_card_token, type: String
 			optional :image, type: Rack::Multipart::UploadedFile
@@ -249,7 +250,7 @@ class UsersAPIV2 < Grape::API
 				StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
       end
 
-      fields = ['first_name', 'last_name', 'email', 'phone', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
+      fields = ['first_name', 'last_name', 'email', 'phone', 'work_email', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|
         unless params[field].nil? || params[field] == ""
           current_rider.update_attribute(field, params[field])
