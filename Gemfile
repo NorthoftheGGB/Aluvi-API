@@ -66,7 +66,7 @@ gem 'gmail_sender'
 
 # File Storage
 gem "paperclip", "~> 4.1"
-gem 'aws-sdk', '~> 1.5.7'
+gem 'aws-sdk', '~> 1.6'
 
 # Documentation
 gem 'grape-swagger'
@@ -94,6 +94,7 @@ group :test do
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.1'
   gem 'database_cleaner'
+#	gem 'stripe-ruby-mock', '~> 2.1.1', :require => 'stripe_mock'
 end
 
 group :development do

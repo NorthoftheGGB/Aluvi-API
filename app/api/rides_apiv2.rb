@@ -20,23 +20,30 @@ class RidesAPIV2< Grape::API
 		post :commute do
 			authenticate!
 
-			trip = TripController.request_commute(
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
-				params[:departure_place_name],
-				params[:departure_pickup_time],
-				RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
-				params[:destination_place_name],
-				params[:return_pickup_time],
-				params[:driving],
-				current_rider
-			)
+			# check for prexisting commuter ride on this date
+			rides_today = Ride.where(rider_id: current_user.id).where(request_type: 'commuter').where('pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
+			if rides_today.length > 1
+				conflict 'Commute request already exists for this day'
+			else
 
-			ok
-			rval = Hash.new
-			rval[:outgoing_ride_id] = trip.rides[0].id
-			rval[:return_ride_id] = trip.rides[1].id
-			rval[:trip_id] = trip.id
-			rval
+				trip = TripController.request_commute(
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
+					params[:departure_place_name],
+					params[:departure_pickup_time],
+					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination_longitude], params[:destination_latitude]),
+					params[:destination_place_name],
+					params[:return_pickup_time],
+					params[:driving],
+					current_rider
+				)
+
+				ok
+				rval = Hash.new
+				rval[:outgoing_ride_id] = trip.rides[0].id
+				rval[:return_ride_id] = trip.rides[1].id
+				rval[:trip_id] = trip.id
+				rval
+			end
 		end
 
 
@@ -158,11 +165,16 @@ class RidesAPIV2< Grape::API
 
 		desc "Update Route"
 		params do
-			requires :origin, type: Hash do
+			optional :origin, type: Hash do
 				requires :latitude
 				requires :longitude
 			end
-			requires :origin_place_name, type: String
+			optional :origin_place_name, type: String
+			optional :pickup_zone_center, type: Hash do
+				requires :latitude
+				requires :longitude
+			end
+			optional :pickup_zone_center_place_name, type: String
 			requires :destination, type: Hash do
 				requires :latitude
 				requires :longitude
@@ -183,18 +195,21 @@ class RidesAPIV2< Grape::API
 
 			origin = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:origin][:longitude], params[:origin][:latitude])
 			destination = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:destination][:longitude], params[:destination][:latitude])
+			pickup_zone_center = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:pickup_zone_center][:longitude], params[:pickup_zone_center][:latitude])
 			Rails.logger.debug destination
 			route.rider = current_user.as_rider
 			route.origin = origin;
 			route.destination = destination;
+			route.pickup_zone_center = pickup_zone_center
 			route.origin_place_name = params[:origin_place_name];
 			route.destination_place_name = params[:destination_place_name];
+			route.pickup_zone_center_place_name = params[:pickup_zone_center_place_name];
 			route.pickup_time = params[:pickup_time];
 			route.return_time = params[:return_time];
 			route.driving = params[:driving];
 			route.save
 			ok
-			nil
+			route
 
 		end
 

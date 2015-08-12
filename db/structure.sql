@@ -438,7 +438,9 @@ CREATE TABLE routes (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     destination_place_name character varying(255),
-    origin_place_name character varying(255)
+    origin_place_name character varying(255),
+    pickup_zone_center geography(Point,4326),
+    pickup_zone_center_place_name character varying
 );
 
 
@@ -1309,4 +1311,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150811034537');
 INSERT INTO schema_migrations (version) VALUES ('20150811035145');
 
 INSERT INTO schema_migrations (version) VALUES ('20150811042408');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811224645');
 

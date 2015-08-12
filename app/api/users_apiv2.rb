@@ -177,6 +177,31 @@ class UsersAPIV2 < Grape::API
       response
     end
 
+		desc "TEST"
+		params do
+			requires :image, type: Rack::Multipart::UploadedFile
+		end
+		post "test" do
+
+			Rails.logger.debug params
+			rider = Rider.new
+			image = params[:image]
+
+			attachment = {
+				:filename => image[:filename],
+				:type => image[:type],
+				:headers => image[:head],
+				:tempfile => image[:tempfile]
+			}
+
+			Rails.logger.debug attachment
+			rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
+			Rails.logger.debug rider.image
+			rider.save
+
+
+		end
+
     desc "Update profile"
     params do
 			optional :first_name, type: String
@@ -185,6 +210,7 @@ class UsersAPIV2 < Grape::API
 			optional :phone, type: String
       optional :default_card_token, type: String
 			optional :default_recipient_debit_card_token, type: String
+			optional :image, type: Rack::Multipart::UploadedFile
     end
     post "profile", jbuilder: "rider_profile" do
       authenticate!
@@ -230,8 +256,12 @@ class UsersAPIV2 < Grape::API
         end
       end
 
+			Rails.logger.debug 'READY'
+			Rails.logger.debug params
+			Rails.logger.debug params[:image]
 			image = params[:image]
 			unless image.nil?
+				Rails.logger.debug 'Saving the attachement'
 
 				attachment = {
 					:filename => image[:filename],
@@ -240,12 +270,12 @@ class UsersAPIV2 < Grape::API
 					:tempfile => image[:tempfile]
 				}
 
-				current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
-
 				Rails.logger.debug attachment
+				current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
 
 			end
 
+			current_rider.first_name = 'asdfasdf'
       current_rider.save
 			ok
 			@user = current_rider
