@@ -9,11 +9,11 @@ module VocoApiHelperV2
 	end
 
 	def current_driver
-		Driver.find(current_user.id)
+		@current_driver ||= Driver.find(current_user.id)
 	end
 
 	def current_rider
-		Rider.find(current_user.id)
+		@current_rider ||= Rider.find(current_user.id)
 	end
 
 	def authenticate!

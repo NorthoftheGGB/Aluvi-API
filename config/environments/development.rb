@@ -37,7 +37,9 @@ Voco::Application.configure do
 
 	config.paperclip_defaults = {
 		:s3_credentials => {
-			:bucket => 'voco-development'
+			:bucket => 'aluvi-development',
+			:access_key_id => 'AKIAIZ6VCH3PVEUGHYVA',
+			:secret_access_key => '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'
 		}
 	}
 

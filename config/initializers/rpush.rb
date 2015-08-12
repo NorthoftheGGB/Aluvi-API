@@ -19,9 +19,10 @@ Rpush.configure do |config|
   config.pid_file = 'tmp/rpush.pid'
 
   # Path to log file. Relative to current directory unless absolute.
-  config.log_file = 'log/rpush.log'
+#  config.log_file = 'log/rpush.log'
 
-  config.log_level = (defined?(Rails) && Rails.logger) ? Rails.logger.level : ::Logger::Severity::DEBUG
+ # config.log_level = (defined?(Rails) && Rails.logger) ? Rails.logger.level : ::Logger::Severity::DEBUG
+	config.log_level = 0
 
   # Define a custom logger.
   # config.logger = MyLogger.new

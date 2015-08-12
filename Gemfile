@@ -66,7 +66,7 @@ gem 'gmail_sender'
 
 # File Storage
 gem "paperclip", "~> 4.1"
-gem 'aws-sdk', '~> 1.5.7'
+gem 'aws-sdk', '~> 1.6'
 
 # Documentation
 gem 'grape-swagger'
