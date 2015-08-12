@@ -358,7 +358,7 @@ class RidesAPI< Grape::API
 			route.driving = params[:driving];
 			route.save
 			ok
-			nil
+			route
 
 		end
 
