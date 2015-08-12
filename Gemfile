@@ -94,6 +94,7 @@ group :test do
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.1'
   gem 'database_cleaner'
+#	gem 'stripe-ruby-mock', '~> 2.1.1', :require => 'stripe_mock'
 end
 
 group :development do
