@@ -80,7 +80,7 @@ class DevicesAPIV2 < Grape::API
 					forbidden  "This user doesn't own this device"
 				end
 			else
-				success
+				ok
 			end
 		end
 
