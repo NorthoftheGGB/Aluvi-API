@@ -1,24 +1,19 @@
 module Harness
 
-	def self.schedule_driver
-		driver = Driver.where(email: 'v3@vocotransportation.com').first
+	def self.driver_request email
+		driver = Driver.where(email: email).first
 		self.schedule_default(driver.as_rider, true)
 	end
 
-	def self.schedule_rider
-		rider = Rider.where(email: 'v1@vocotransportation.com').first
+	def self.rider_request email
+		rider = Rider.where(email: email).first
 		self.schedule_default(rider, true)
 	end
 
-	def self.schedule_driver_and_rider
-		self.schedule_rider
-		self.schedule_driver
-	end
-
-	def self.cancel_trips
-		driver = Driver.all.first
-		driver.fares.each do |fare|
-			# TODO need a method in TripController with logic
+	def self.cancel_trips email
+		rider = Rider.where(email: email).first
+		rider.rides.active.each do |r|
+			r.cancel_ride
 		end
 	end
 

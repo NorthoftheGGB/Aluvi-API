@@ -6,6 +6,8 @@ class Ride < ActiveRecord::Base
   attr_accessible :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime,
                   :state, :request_type, :pickup_time, :trip_id, :direction, :driving, :fixed_price
 
+	scope :active, -> { where('state = ? OR state = ?', :requested, :scheduled) }
+
 	before_create :before_create
 
 	include AASM
