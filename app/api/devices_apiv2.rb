@@ -71,12 +71,16 @@ class DevicesAPIV2 < Grape::API
 		put 'disassociate_user/:uuid' do
 			authenticate!
 			device = Device.where( :uuid => params[:uuid] ).first
-			if device.user.id == current_user.id
-				device.user_id = 0
-				device.save
-				success
+			unless device.user.nil?
+				if device.user.id == current_user.id
+					device.user_id = 0
+					device.save
+					success
+				else
+					forbidden  "This user doesn't own this device"
+				end
 			else
-				forbidden  "This user doesn't own this device"
+				success
 			end
 		end
 
