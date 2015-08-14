@@ -41,7 +41,7 @@ module VocoApiHelperV2
 	
 	def ok
 		status 200
-		nil
+		{}
 	end
 
 	def forbidden exception

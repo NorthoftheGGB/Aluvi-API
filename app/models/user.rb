@@ -116,6 +116,10 @@ class User < ActiveRecord::Base
   end
 
   def as_driver
-    Driver.find(self.id)
+		begin
+			Driver.find(self.id)
+		rescue ActiveRecord::RecordNotFound
+			nil
+		end
   end
 end

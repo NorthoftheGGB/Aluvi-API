@@ -69,23 +69,25 @@ class RidesAPIV2< Grape::API
 				begin
 					ride = Ride.find(params[:ride_id])
 					ride.cancel_ride
+					ride.trip.abort_if_no_longer_active
 					ok
 				rescue AASM::InvalidTransition => e
 					if(ride.cancelled?)
-						ok
+						# we are ok
 					elsif(ride.aborted? && !ride.fare.nil? && ride.fare.is_cancelled)
-						ok
+						# we are still ok
 					else
 						raise e
 					end
 				rescue ActiveRecord::RecordNotFound => e
 					if fare.nil?
-						ok
+						# also OK
 					else
 						raise e
 					end
 				end
 			end
+
 		end
 
 		desc "Driver picked up rider"
@@ -132,6 +134,8 @@ class RidesAPIV2< Grape::API
 
 				fare = Fare.find(params[:fare_id])
 				TripController.fare_completed fare
+				ride.trip.complete_if_no_longer_active
+
 
 				# either way notify the driver
 				status 200
