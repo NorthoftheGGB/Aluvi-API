@@ -21,6 +21,7 @@ unless @user.as_driver.nil? ||  @user.as_driver.cars[0].nil?
 		json.model @user.as_driver.cars[0].model
 		json.year @user.as_driver.cars[0].year
 		json.state @user.as_driver.cars[0].state
+		json.color @user.as_driver.cars[0].color
 		json.car_photo @user.as_driver.cars[0].car_photo.url( :thumb )
 	end
 end
