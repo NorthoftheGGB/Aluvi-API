@@ -184,7 +184,7 @@ class UsersAPIV2 < Grape::API
     end
     post "profile", jbuilder: "rider_profile" do
       authenticate!
-      unless params[:default_card_token].nil?
+      unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 
         # delete cards because we only hold one
