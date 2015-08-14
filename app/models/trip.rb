@@ -49,7 +49,7 @@ class Trip < ActiveRecord::Base
 	end
 
 	def abort_if_no_longer_active
-		unless self.still_active?
+		unless self.still_active? || self.aborted?
 			self.aborted!
 		end
 	end

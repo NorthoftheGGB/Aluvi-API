@@ -63,14 +63,14 @@ class RidesAPIV2< Grape::API
 		post :cancel do
 			authenticate!
 
+			ride = nil
+
 			# TODO rider should only be able to cancel their own ride
 			# TODO move this logic to TripController in lib/
 			ActiveRecord::Base.transaction do
 				begin
 					ride = Ride.find(params[:ride_id])
 					ride.cancel_ride
-					ride.trip.abort_if_no_longer_active
-					ok
 				rescue AASM::InvalidTransition => e
 					if(ride.cancelled?)
 						# we are ok
@@ -87,6 +87,7 @@ class RidesAPIV2< Grape::API
 					end
 				end
 			end
+			ok
 
 		end
 

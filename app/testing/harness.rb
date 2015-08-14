@@ -7,7 +7,7 @@ module Harness
 
 	def self.rider_request email
 		rider = Rider.where(email: email).first
-		self.schedule_default(rider, true)
+		self.schedule_default(rider, false)
 	end
 
 	def self.cancel_trips email

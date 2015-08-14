@@ -92,6 +92,7 @@ class Ride < ActiveRecord::Base
 		else
 			self.cancel!
 		end
+		self.trip.abort_if_no_longer_active
 	end
 
 	def clear_fare
