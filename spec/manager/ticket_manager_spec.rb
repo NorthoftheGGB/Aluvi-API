@@ -5,7 +5,7 @@ describe TicketManager do
 	context 'for one driver and one rider' do
 		it 'cancels entire fare when rider cancels' do
 			fare = FactoryGirl.create(:scheduled_fare)
-			TicketManager.cancel_ride fare.rides.where(driving:false).first
+			TicketManage.cancel_ride fare.rides.where(driving:false).first
 			expect(fare.state).to eq("rider_cancelled")
 			expect(fare.finished).not_to be_nil
 		end

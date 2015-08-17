@@ -70,7 +70,7 @@ class RidesAPIV2< Grape::API
 			ActiveRecord::Base.transaction do
 				begin
 					ride = Ride.find(params[:ride_id])
-					ride.cancel_ride
+					TicketManager.cancel_ride ride
 				rescue AASM::InvalidTransition => e
 					if(ride.cancelled?)
 						# we are ok

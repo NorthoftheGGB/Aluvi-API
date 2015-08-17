@@ -92,5 +92,15 @@ describe RidesAPIV2 do
 		end
 	end
 
+	describe "POST /api/v2/rides/cancel" do
+		it "cancels the ride" do
+			fare = FactoryGirl.create(:scheduled_fare)
+			ride = fare.rides.where(driving:false).first
+			post "/api/v2/rides/cancel", { :ride_id => ride.id }, {'HTTP_AUTHORIZATION' => encode_credentials(ride.rider.token)}
+			ride = Ride.find(ride.id)
+      expect(ride.state).to eq('aborted')
+		end
+	end
+
 
 end
