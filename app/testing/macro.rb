@@ -13,10 +13,10 @@ module Macro
 		Harness.cancel_trips "a1@jones.com"
 		Harness.cancel_trips "a2@jones.com"
 		Harness.cancel_trips "joe@joe.com"
-		Harness.driver_request "joe@joe.com"	
+		Harness.driver_request "y@y.com"	
 		Harness.rider_request "a1@jones.com"	
 		Harness.rider_request "a2@jones.com"	
-		Harness.rider_request "y@y.com"	
+		Harness.rider_request "r@r.com"	
 		Scheduler.build_commuter_trips
 	end
 
