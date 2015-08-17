@@ -12,8 +12,7 @@ class Ride < ActiveRecord::Base
 	aasm.attribute_name :state
 
 	aasm do
-		state :created, :initial => true
-		state :requested
+		state :requested, :initial => true
 		state :pending_return
 		state :scheduled
 		state :cancelled

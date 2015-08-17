@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe UsersAPI do
+describe UsersAPIV2 do
 
 	include AuthHelper
 

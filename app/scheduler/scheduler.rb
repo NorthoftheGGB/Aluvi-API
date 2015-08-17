@@ -300,22 +300,22 @@ module Scheduler
 
   def self.calculate_costs
     Trip.fulfilled_pending_notification.each do |trip|
-      TripController.calculate_fixed_price_for_commute trip
+      TicketManager.calculate_fixed_price_for_commute trip
     end
 
     Fare.scheduled.each do |fare|
-      TripController.calculated_fixed_earnings_for_fare fare
+      TicketManager.calculated_fixed_earnings_for_fare fare
     end
   end
 
 	def self.notify_commuters
 
     Trip.fulfilled_pending_notification.each do |trip|
-      TripController.notify_fulfilled trip
+      TicketManager.notify_fulfilled trip
     end
 
     Trip.unfulfilled_pending_notification.each do |trip|
-      TripController.notify_unfulfilled trip
+      TicketManager.notify_unfulfilled trip
     end
 
   end

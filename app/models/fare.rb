@@ -143,6 +143,20 @@ class Fare < ActiveRecord::Base
 		self.meeting_point_place_name + " to " + self.drop_off_point_place_name
 	end
 
+	def notify_scheduled
+		Rails.logger.debug "in notify_scheduled"
+		notify_observers :scheduled
+	end
+
+	def notify_fare_cancelled_by_rider
+		notify_observers :fare_cancelled_by_rider
+	end
+
+	def notify_fare_cancelled_by_driver
+		notify_observers :fare_cancelled_by_driver
+	end
+
+
 	private
 	def ride_was_scheduled
     self.scheduled = Time.now
@@ -162,19 +176,6 @@ class Fare < ActiveRecord::Base
 	def completed_ride
 		self.finished = Time.now
 		save
-	end
-
-	def notify_scheduled
-		Rails.logger.debug "in notify_scheduled"
-		notify_observers :scheduled
-	end
-
-	def notify_fare_cancelled_by_rider
-		notify_observers :fare_cancelled_by_rider
-	end
-
-	def notify_fare_cancelled_by_driver
-		notify_observers :fare_cancelled_by_driver
 	end
 
 end

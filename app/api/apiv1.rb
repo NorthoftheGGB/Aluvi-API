@@ -18,7 +18,6 @@ class APIV1 < Grape::API
 
 	mount GeoAPI
 	mount DevicesAPI
-	mount UsersAPI
 	mount DriversAPI
 	mount WebAPI
 end
