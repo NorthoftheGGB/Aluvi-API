@@ -206,7 +206,7 @@ class TicketManager
 			trip.aborted!
 			trip.rides.each do |r|
 				if r.state != 'cancelled'
-					r.cancel_ride
+					TicketManager.cancel_ride r
 				end
 			end
 		end
