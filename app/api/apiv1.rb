@@ -16,7 +16,6 @@ class APIV1 < Grape::API
 		include VocoApiHelper
 	end
 
-	mount RidesAPI
 	mount GeoAPI
 	mount DevicesAPI
 	mount UsersAPI

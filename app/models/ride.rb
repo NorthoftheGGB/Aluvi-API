@@ -8,8 +8,6 @@ class Ride < ActiveRecord::Base
 
 	scope :active, -> { where('state = ? OR state = ?', :requested, :scheduled) }
 
-	before_create :before_create
-
 	include AASM
 	aasm.attribute_name :state
 
@@ -56,9 +54,7 @@ class Ride < ActiveRecord::Base
 			transitions :from => :pending_return, :to => :commute_scheduler_failed
       transitions :from => :scheduled, :to => :commute_scheduler_failed
 		end
-
 	end
-
 
 	def route_description
 		route = ''
@@ -73,26 +69,6 @@ class Ride < ActiveRecord::Base
 		else
 			route += 'unspecified'
 		end
-	end
-
-	def before_create
-		if self.trip_id.nil? || self.trip_id < 1
-			trip = Trip.new
-			trip.save
-			self.trip_id = trip.id
-			self.direction = 'a'
-		else
-			self.direction = 'b'
-		end
-	end
-
-	def cancel_ride
-		if self.fare != nil
-			self.fare.ride_cancelled! self
-		else
-			self.cancel!
-		end
-		self.trip.abort_if_no_longer_active
 	end
 
 	def clear_fare

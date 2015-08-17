@@ -1,5 +1,12 @@
 FactoryGirl.define do
 	factory :driver do
+		after(:create) do |rider|
+			customer = Stripe::Customer.create({
+				email: 'johnny@appleseed.com'
+			})
+			rider.stripe_customer_id = customer.id
+			rider.save
+		end
 		first_name "John"
 		last_name "Doe"
     webtoken '2fff309u09sjdf0'

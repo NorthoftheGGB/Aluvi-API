@@ -4,11 +4,15 @@ describe UsersAPI do
 
 	include AuthHelper
 
+#	let(:stripe_helper) { StripeMock.create_test_helper }
+#	before { StripeMock.start }
+#	after { StripeMock.stop }
+
 	describe "POST /api/v2/users" do
 		it "returns success" do
 			post "/api/v2/users", :first_name => 'Matty', :last_name => 'Tetson', :email => 'test@test.com', :phone => '1231231232', :password => 'asdfasdfs'
 			Rails.logger.info response.status.to_s + ':' + response.body
-			expect(response.status).to eq(201)
+			expect(response.status).to eq(200)
     end
 
 		it "returns failure" do
@@ -92,9 +96,38 @@ describe UsersAPI do
 			post "/api/v2/users/profile", { :first_name => 'a' + @rider.first_name, :last_name => 'a' + @rider.last_name, :email => @rider.email, :phone => @rider.phone },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
 			expect(response.status).to eq(200)
 		end
-		it "returns success with cards" do
+
+		it "returns success with payment cards" do
 			@rider = FactoryGirl.create(:rider)
-			post "/api/v2/users/profile", { :first_name => @rider.first_name, :last_name => @rider.last_name, :email => @rider.email, :phone => '1231231234', :default_card_token => 'asdfasdfasdfasdf', :default_recipient_debit_card_token => 'apsoidfjapwoeijfapwoiefja' },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+			token = Stripe::Token.create(
+				:card => {
+					:number => "4242424242424242",
+					:exp_month => 8,
+					:exp_year => 2016,
+					:cvc => "314"
+				},
+			)
+			Rails.logger.debug token
+			Rails.logger.debug token["id"]
+			Rails.logger.debug token.id
+			post "/api/v2/users/profile", { :first_name => @rider.first_name, :last_name => @rider.last_name, :email => @rider.email, :phone => '1231231234', :default_card_token => token["id"] },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+			expect(response.status).to eq(200)
+		end
+
+		it "returns success with cards" do
+			@rider = FactoryGirl.create(:generated_driver)
+			token = Stripe::Token.create(
+				:card => {
+					:number => "4000056655665556",
+					:exp_month => 8,
+					:exp_year => 2016,
+					:cvc => "314"
+				},
+			)
+			Rails.logger.debug token
+			Rails.logger.debug token["id"]
+			Rails.logger.debug token.id
+			post "/api/v2/users/profile", { :first_name => @rider.first_name, :last_name => @rider.last_name, :email => @rider.email, :phone => '1231231234', :default_recipient_debit_card_token => token["id"] },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
 			expect(response.status).to eq(200)
 		end
 	end

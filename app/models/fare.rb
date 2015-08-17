@@ -88,67 +88,16 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
+	def ride_for_user user
+		ride = user.as_rider.rides.where(fare_id: self.id).first
+	end
+
 	def is_cancelled
 		if(state == 'driver_cancelled' || state == 'rider_cancelled')
 			true
 		else
 			false
 		end
-	end
-
-	def cancel_ride_for_user user
-		ride = user.as_rider.rides.where(fare_id: self.id).first
-		Rails.logger.debug 'Cancelling ride for rider'
-		Rails.logger.debug ride
-		unless ride.nil?
-			unless self.is_cancelled
-				self.ride_cancelled!(ride)
-			end
-		end
-
-	end
-
-	def ride_cancelled! ride
-		Rails.logger.info "RIDE_CANCELLED"
-		Rails.logger.info self.rides.scheduled.count
-		if( ride.driving? )
-			Rails.logger.debug "driving"
-			self.driver_cancelled
-			self.finished = Time.now
-			save
-			self.rides.each do |ride|
-				unless ride.aborted?
-					ride.abort!
-				end
-			end
-			notify_fare_cancelled_by_driver
-
-		elsif( self.rides.scheduled.count == 2 )
-      Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
-      # this is the only rider, cancel the whole ride
-			aasm_rider_cancelled
-			self.finished = Time.now
-      save
-			self.rides.scheduled.each do |ride|
-				ride.abort!
-			end
-			notify_fare_cancelled_by_rider
-
-		else 
-			Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
-			unless ride.aborted?
-				ride.abort!
-			end
-		end
-	end
-
-	def driver_cancelled_ride
-		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
-		self.finished = Time.now
-		save
-		self.driver.current_fare = nil
-		self.driver.save
-		notify_observers :fare_cancelled_by_driver
 	end
 
 	def pickup(rider = nil) 

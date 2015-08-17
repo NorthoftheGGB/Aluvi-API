@@ -26,7 +26,7 @@ class RidesAPIV2< Grape::API
 				conflict 'Commute request already exists for this day'
 			else
 
-				trip = TripController.request_commute(
+				trip = TicketManager.request_commute(
 					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 					params[:departure_place_name],
 					params[:departure_pickup_time],
@@ -66,7 +66,7 @@ class RidesAPIV2< Grape::API
 			ride = nil
 
 			# TODO rider should only be able to cancel their own ride
-			# TODO move this logic to TripController in lib/
+			# TODO move this logic to TicketManager in lib/
 			ActiveRecord::Base.transaction do
 				begin
 					ride = Ride.find(params[:ride_id])
@@ -134,7 +134,7 @@ class RidesAPIV2< Grape::API
 				end
 
 				fare = Fare.find(params[:fare_id])
-				TripController.fare_completed fare
+				TicketManager.fare_completed fare
 				ride.trip.complete_if_no_longer_active
 
 
@@ -155,7 +155,7 @@ class RidesAPIV2< Grape::API
 			authenticate!
 			begin
 				trip = Trip.find(params[:trip_id])
-				TripController.cancel_trip(trip)
+				TicketManager.cancel_trip(trip)
 				ok
 			rescue
         Rails.logger.error $!

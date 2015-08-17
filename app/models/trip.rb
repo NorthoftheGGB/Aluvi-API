@@ -60,4 +60,8 @@ class Trip < ActiveRecord::Base
 		end
 	end
 
+	def ride_with_direction direction
+		self.rides.where('direction = ?', direction).first
+	end
+
 end

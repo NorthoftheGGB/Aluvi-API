@@ -49,7 +49,7 @@ class UsersAPIV2 < Grape::API
 				user.password = new_password.downcase
 				user.save
 
-        g = GmailSender.new("support@aluviapp.com", "ienow9jsladkflna;kdf")
+        g = GmailSender.new("support@aluviapp.com", "support4aluviapp")
         g.send(:to => user.email,
                :subject => "Password Reset",
                :content => "Here is a new password for Aluvi: " + user.password)
@@ -91,7 +91,7 @@ class UsersAPIV2 < Grape::API
         error! ApiExceptions::UserNotFoundException.message, 404, 'X-Error-Detail' => ApiExceptions::UserNotFoundException.message
       rescue ApiExceptions::BadPasswordException
         Rails.logger.info $!.message
-        error! ApiExceptions::BadPasswordException.message, 403, 'X-Error-Detail' => ApiExceptions::BadPasswordException.message
+        error! ApiExceptions::BadPasswordException.message, 401, 'X-Error-Detail' => ApiExceptions::BadPasswordException.message
       end
     end
 
@@ -188,15 +188,17 @@ class UsersAPIV2 < Grape::API
         # TODO handle in background, delayed job
 
         # delete cards because we only hold one
-        cards = Stripe::Customer.retrieve(current_user.stripe_customer_id).cards.all()
+        cards = Stripe::Customer.retrieve(current_user.stripe_customer_id).sources.data
         cards.each do |card|
           card.delete()
         end
 
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
-        customer.cards.create({:card => params[:default_card_token]})
+        default_card = customer.sources.create({:source => params[:default_card_token]})
+				customer.save
 
-        default_card = customer.cards.all().data[0]
+        customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+				default_card = customer.sources.retrieve(customer.default_source)
 
         current_rider.cards.each do |card|
           card.delete
@@ -214,6 +216,8 @@ class UsersAPIV2 < Grape::API
 
       end
 
+			Rails.logger.debug current_user
+			Rails.logger.debug current_user.as_driver
       unless params[:default_recipient_debit_card_token].nil?
         # TODO handle in background, delayed job
 				StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
