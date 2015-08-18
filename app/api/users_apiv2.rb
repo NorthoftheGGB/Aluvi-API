@@ -1,8 +1,8 @@
 require 'digest/sha2'
 require 'gmail_sender'
 
-class UsersAPI < Grape::API
-  version 'v1', using: :header, vendor: 'voco'
+class UsersAPIV2 < Grape::API
+  version 'v2', using: :path
   format :json
   formatter :json, Grape::Formatter::Jbuilder
 
@@ -26,38 +26,7 @@ class UsersAPI < Grape::API
 			end
 
       begin
-        ActiveRecord::Base.transaction do
-
-					user = User.new
-          user.first_name = params[:first_name]
-          user.last_name = params[:last_name]
-          user.phone = params[:phone]
-          user.email = params[:email]
-          user.password = params[:password]
-          user.referral_code = params[:referral_code]
-          user.setup
-          user.save
-
-          rider = Rider.find(user.id)
-          rider.activate!
-
-          # directly set up Stripe customer
-          # TODO: Refactor, this should be moved to it's own class and happen via a delayed job
-          customer = Stripe::Customer.create(
-              :email => user.email,
-              :metadata => {
-                  :voco_id => user.id,
-                  :phone => user.phone
-              }
-          )
-          if customer.nil?
-            raise "Stripe customer not created"
-          end
-          user.stripe_customer_id = customer.id
-          user.save
-
-        end
-
+				UserManager.create_user(params)
         ok
 
       rescue
@@ -80,7 +49,7 @@ class UsersAPI < Grape::API
 				user.password = new_password.downcase
 				user.save
 
-        g = GmailSender.new("support@aluviapp.com", "ienow9jsladkflna;kdf")
+        g = GmailSender.new("support@aluviapp.com", "support4aluviapp")
         g.send(:to => user.email,
                :subject => "Password Reset",
                :content => "Here is a new password for Aluvi: " + user.password)
@@ -111,6 +80,7 @@ class UsersAPI < Grape::API
           device.push_token = "" # other devices are logged out, dont push to them
           device.save
         end
+				ok
         response = Hash.new
         response["token"] = token
         response["rider_state"] = user.rider_state
@@ -121,7 +91,7 @@ class UsersAPI < Grape::API
         error! ApiExceptions::UserNotFoundException.message, 404, 'X-Error-Detail' => ApiExceptions::UserNotFoundException.message
       rescue ApiExceptions::BadPasswordException
         Rails.logger.info $!.message
-        error! ApiExceptions::BadPasswordException.message, 403, 'X-Error-Detail' => ApiExceptions::BadPasswordException.message
+        error! ApiExceptions::BadPasswordException.message, 401, 'X-Error-Detail' => ApiExceptions::BadPasswordException.message
       end
     end
 
@@ -161,6 +131,7 @@ class UsersAPI < Grape::API
       end
 
 			driver_state = driver.state
+			ok
       response = Hash.new
       response["driver_state"] = driver_state
       response
@@ -175,31 +146,59 @@ class UsersAPI < Grape::API
       response
     end
 
+		desc "TEST"
+		params do
+			requires :image, type: Rack::Multipart::UploadedFile
+		end
+		post "test" do
+
+			Rails.logger.debug params
+			rider = Rider.new
+			image = params[:image]
+
+			attachment = {
+				:filename => image[:filename],
+				:type => image[:type],
+				:headers => image[:head],
+				:tempfile => image[:tempfile]
+			}
+
+			Rails.logger.debug attachment
+			rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
+			Rails.logger.debug rider.image
+			rider.save
+
+
+		end
+
     desc "Update profile"
     params do
 			optional :first_name, type: String
 			optional :last_name, type: String
 			optional :email, type: String
 			optional :phone, type: String
+			optional :work_email, type: String
       optional :default_card_token, type: String
 			optional :default_recipient_debit_card_token, type: String
+			optional :image, type: Rack::Multipart::UploadedFile
     end
     post "profile", jbuilder: "rider_profile" do
-			Rails.logger.debug params
       authenticate!
-      unless params[:default_card_token].nil?
+      unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 
         # delete cards because we only hold one
-        cards = Stripe::Customer.retrieve(current_user.stripe_customer_id).cards.all()
+        cards = Stripe::Customer.retrieve(current_user.stripe_customer_id).sources.data
         cards.each do |card|
           card.delete()
         end
 
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
-        customer.cards.create({:card => params[:default_card_token]})
+        default_card = customer.sources.create({:source => params[:default_card_token]})
+				customer.save
 
-        default_card = customer.cards.all().data[0]
+        customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+				default_card = customer.sources.retrieve(customer.default_source)
 
         current_rider.cards.each do |card|
           card.delete
@@ -217,20 +216,26 @@ class UsersAPI < Grape::API
 
       end
 
+			Rails.logger.debug current_user
+			Rails.logger.debug current_user.as_driver
       unless params[:default_recipient_debit_card_token].nil?
         # TODO handle in background, delayed job
 				StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
       end
 
-      fields = ['first_name', 'last_name', 'email', 'phone', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
+      fields = ['first_name', 'last_name', 'email', 'phone', 'work_email', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
       fields.each do |field|
         unless params[field].nil? || params[field] == ""
           current_rider.update_attribute(field, params[field])
         end
       end
 
+			Rails.logger.debug 'READY'
+			Rails.logger.debug params
+			Rails.logger.debug params[:image]
 			image = params[:image]
 			unless image.nil?
+				Rails.logger.debug 'Saving the attachement'
 
 				attachment = {
 					:filename => image[:filename],
@@ -239,26 +244,22 @@ class UsersAPI < Grape::API
 					:tempfile => image[:tempfile]
 				}
 
-				current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
-
 				Rails.logger.debug attachment
+				current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
 
 			end
 
+			current_rider.first_name = 'asdfasdf'
       current_rider.save
+			ok
 			@user = current_rider
 
     end
 
     desc "Get Rider Profile"
-    get "profile", jbuilder: "rider_profile" do
+    get "profile", jbuilder: "v2/profile" do
       authenticate!
-      @user = current_rider
-    end
-
-    desc "Get Driver Profile"
-    get "driver_profile", jbuilder: "rider_profile" do
-      authenticate!
+			ok
       @user = current_rider
     end
 
@@ -273,6 +274,7 @@ class UsersAPI < Grape::API
       begin
         Rails.logger.debug "add funding to commputer pass " + params[:amount_cents]
         paid = PaymentsHelper.fill_commuter_pass(current_user, params[:amount_cents].to_i)
+				ok
         @user = current_user
       rescue
         Rails.logger.error $!.message

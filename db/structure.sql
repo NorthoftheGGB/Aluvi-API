@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -41,6 +42,42 @@ SET search_path = public, pg_catalog;
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: aggregates; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE aggregates (
+    id integer NOT NULL,
+    permanent_id integer,
+    state character varying,
+    meeting_point geography(Point,4326),
+    meeting_point_place_name character varying,
+    drop_off_point geography(Point,4326),
+    drop_off_point_place_name character varying,
+    pickup_time timestamp without time zone,
+    driver_direction character varying
+);
+
+
+--
+-- Name: aggregates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE aggregates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: aggregates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE aggregates_id_seq OWNED BY aggregates.id;
+
 
 --
 -- Name: cards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
@@ -199,8 +236,6 @@ ALTER SEQUENCE driver_location_histories_id_seq OWNED BY driver_location_histori
 
 CREATE TABLE fares (
     id integer NOT NULL,
-    driver_id integer,
-    car_id integer,
     state character varying(255),
     scheduled timestamp without time zone,
     started timestamp without time zone,
@@ -403,7 +438,9 @@ CREATE TABLE routes (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     destination_place_name character varying(255),
-    origin_place_name character varying(255)
+    origin_place_name character varying(255),
+    pickup_zone_center geography(Point,4326),
+    pickup_zone_center_place_name character varying
 );
 
 
@@ -598,6 +635,31 @@ ALTER SEQUENCE supports_id_seq OWNED BY supports.id;
 
 
 --
+-- Name: temp_rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE temp_rides (
+    id integer NOT NULL,
+    rider_id integer,
+    fare_id integer,
+    state character varying(255),
+    request_type character varying(255),
+    requested_datetime timestamp without time zone,
+    origin geography(Point,4326),
+    origin_place_name character varying(255),
+    destination geography(Point,4326),
+    destination_place_name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    pickup_time timestamp with time zone,
+    driving boolean,
+    trip_id integer,
+    direction character varying(255),
+    fixed_price integer
+);
+
+
+--
 -- Name: trips; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -606,7 +668,8 @@ CREATE TABLE trips (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     state character varying(255),
-    notified boolean DEFAULT false
+    notified boolean DEFAULT false,
+    start_time timestamp without time zone
 );
 
 
@@ -693,7 +756,8 @@ CREATE TABLE users (
     image_file_name character varying(255),
     image_content_type character varying(255),
     image_file_size integer,
-    image_updated_at timestamp without time zone
+    image_updated_at timestamp without time zone,
+    work_email character varying
 );
 
 
@@ -714,6 +778,13 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY aggregates ALTER COLUMN id SET DEFAULT nextval('aggregates_id_seq'::regclass);
 
 
 --
@@ -826,6 +897,14 @@ ALTER TABLE ONLY trips ALTER COLUMN id SET DEFAULT nextval('trips_id_seq'::regcl
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: aggregates_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY aggregates
+    ADD CONSTRAINT aggregates_pkey PRIMARY KEY (id);
 
 
 --
@@ -946,6 +1025,14 @@ ALTER TABLE ONLY supports
 
 ALTER TABLE ONLY trips
     ADD CONSTRAINT table_trips_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: temp_rides_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY temp_rides
+    ADD CONSTRAINT temp_rides_pkey PRIMARY KEY (id);
 
 
 --
@@ -1205,4 +1292,28 @@ INSERT INTO schema_migrations (version) VALUES ('20150728022511');
 INSERT INTO schema_migrations (version) VALUES ('20150804020904');
 
 INSERT INTO schema_migrations (version) VALUES ('20150804024319');
+
+INSERT INTO schema_migrations (version) VALUES ('20150808024329');
+
+INSERT INTO schema_migrations (version) VALUES ('20150808061823');
+
+INSERT INTO schema_migrations (version) VALUES ('20150808072432');
+
+INSERT INTO schema_migrations (version) VALUES ('20150810205911');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811012212');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811013117');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811013631');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811034537');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811035145');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811042408');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811224645');
+
+INSERT INTO schema_migrations (version) VALUES ('20150812022307');
 

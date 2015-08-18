@@ -1,4 +1,4 @@
-module VocoApiHelper
+module VocoApiHelperV2
 	def current_user
     if headers['Authorization'].nil?
       return nil
@@ -9,11 +9,11 @@ module VocoApiHelper
 	end
 
 	def current_driver
-		Driver.find(current_user.id)
+		@current_driver ||= Driver.find(current_user.id)
 	end
 
 	def current_rider
-		Rider.find(current_user.id)
+		@current_rider ||= Rider.find(current_user.id)
 	end
 
 	def authenticate!
@@ -39,12 +39,9 @@ module VocoApiHelper
 		[values.delete("token"), values.with_indifferent_access]
 	end
 	
-	def success
-		status 200
-	end
-
 	def ok
-		Hash.new()
+		status 200
+		{}
 	end
 
 	def forbidden exception
@@ -52,7 +49,11 @@ module VocoApiHelper
 	end
 
 	def not_found
-		error! 'Resource not found', 403, 'X-Error-Detail' => 'Resource not found'
+		error! 'Resource not found', 404, 'X-Error-Detail' => 'Resource not found'
+	end
+	
+	def conflict message
+		error! message, 405
 	end
 
 	def server_error entity
@@ -67,10 +68,6 @@ module VocoApiHelper
 			payload['error'] = message
 			error! payload, 400
 		end
-	end
-
-	def conflict message
-		error! message, 405
 	end
 end
 

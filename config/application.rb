@@ -62,7 +62,8 @@ module Voco
 		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', '**/')]
 		config.autoload_paths += Dir[Rails.root.join('app', 'models', '**/')]
 		config.autoload_paths += Dir[Rails.root.join('app', 'api', '**/')]
-		config.autoload_paths << Rails.root.join('lib')
+		config.autoload_paths += Dir[Rails.root.join('lib')]
+		config.autoload_paths += Dir[Rails.root.join('lib', 'testing')]
 
 		# AWS - Paperclip
 		config.paperclip_defaults = {
@@ -80,6 +81,7 @@ module Voco
 		# scheduler
 		config.commute_scheduler = {
 			:threshold_from_driver_origin => 8050, # pump it up to 5 miles
+			:threshold_from_first_meeting_point => 400, # 1/4 mile
 			:threshold_from_driver_destination => 400, # 1/4 mile
 			:morning_start_hour => 7,
 			:morning_stop_hour => 9,

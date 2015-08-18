@@ -1,24 +1,19 @@
 module Harness
 
-	def self.schedule_driver
-		driver = Driver.where(email: 'v3@vocotransportation.com').first
+	def self.driver_request email
+		driver = Driver.where(email: email).first
 		self.schedule_default(driver.as_rider, true)
 	end
 
-	def self.schedule_rider
-		rider = Rider.where(email: 'v1@vocotransportation.com').first
-		self.schedule_default(rider, true)
+	def self.rider_request email
+		rider = Rider.where(email: email).first
+		self.schedule_default(rider, false)
 	end
 
-	def self.schedule_driver_and_rider
-		self.schedule_rider
-		self.schedule_driver
-	end
-
-	def self.cancel_trips
-		driver = Driver.all.first
-		driver.fares.each do |fare|
-			# TODO need a method in TripController with logic
+	def self.cancel_trips email
+		rider = Rider.where(email: email).first
+		rider.rides.active.each do |r|
+			TicketManager.cancel_ride r
 		end
 	end
 
@@ -32,25 +27,15 @@ module Harness
 		home_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days
 		work_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5+12, min: 0, sec: 0) + 1.days
 
-		forward_ride = TripController.request_commute_leg(
+		trip = TicketManager.request_commute(
 			RGeo::Geographic.spherical_factory( :srid => 4326 ).point(departure_longitude, departure_latitude),
 			'Home',
-			RGeo::Geographic.spherical_factory( :srid => 4326 ).point(destination_longitude, destination_latitude),
-			'Work',
 			home_pickup,
-			is_driving,
-			rider,
-			nil
-		)
-		return_ride = TripController.request_commute_leg(
 			RGeo::Geographic.spherical_factory( :srid => 4326 ).point(destination_longitude, destination_latitude),
-			'Home',
-			RGeo::Geographic.spherical_factory( :srid => 4326 ).point(departure_longitude, departure_latitude),
 			'Work',
 			work_pickup,
 			is_driving,
-			rider,
-			forward_ride.trip_id	
+			rider
 		)
 	end
 

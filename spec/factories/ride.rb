@@ -7,7 +7,7 @@ FactoryGirl.define do
     #destination_latitude 45.6
     #destination_longitude -122.7
     destination_place_name 'My Work'
-    state 'created'
+    state 'requested'
 		driving false
 
 

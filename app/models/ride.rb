@@ -6,14 +6,13 @@ class Ride < ActiveRecord::Base
   attr_accessible :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime,
                   :state, :request_type, :pickup_time, :trip_id, :direction, :driving, :fixed_price
 
-	before_create :before_create
+	scope :active, -> { where('state = ? OR state = ?', :requested, :scheduled) }
 
 	include AASM
 	aasm.attribute_name :state
 
 	aasm do
-		state :created, :initial => true
-		state :requested
+		state :requested, :initial => true
 		state :pending_return
 		state :scheduled
 		state :cancelled
@@ -54,9 +53,7 @@ class Ride < ActiveRecord::Base
 			transitions :from => :pending_return, :to => :commute_scheduler_failed
       transitions :from => :scheduled, :to => :commute_scheduler_failed
 		end
-
 	end
-
 
 	def route_description
 		route = ''
@@ -73,25 +70,6 @@ class Ride < ActiveRecord::Base
 		end
 	end
 
-	def before_create
-		if self.trip_id.nil? || self.trip_id < 1
-			trip = Trip.new
-			trip.save
-			self.trip_id = trip.id
-			self.direction = 'a'
-		else
-			self.direction = 'b'
-		end
-	end
-
-	def cancel_ride
-		if self.fare != nil
-			self.fare.ride_cancelled! self
-		else
-			self.cancel!
-		end
-	end
-
 	def clear_fare
 		self.fare = nil
 		save
@@ -99,19 +77,7 @@ class Ride < ActiveRecord::Base
 
 	private
 	def ride_requested
-		if( request_type == TransportType::ON_DEMAND )
-			# go ahead and create the associated ride if it's on demand
-			self.fare = Fare.create( Time.now, origin, origin_place_name, destination, destination_place_name )
-			self.fare.meeting_point = origin
-			self.fare.meeting_point_place_name = origin_place_name
-			self.fare.riders << self.rider
-			self.fare.save
-			save
-		elsif( request_type == TransportType::COMMUTER )
-
-		end		
 		notify_observers :requested # notifies scheduler
-
 	end
 
 end

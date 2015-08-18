@@ -76,17 +76,26 @@ class DriversAPI < Grape::API
 			 
 		end
 
-		desc "Load Fare Details for Driver"
-		get "fares/:id", jbuilder: 'fare' do
-			authenticate!
-			@fare = Fare.find(params[:id])
-			unless @fare.nil?
-				@fare
-			else
-				not_found
-			end
+		desc "Update Car"
+		params do 
+			requires :make, type: String
+			requires :model, type: String
+			requires :color, type: String
+			requires :license_plate, type: String
 		end
-
+		post "car" do
+			authenticate!
+			driver = current_user.as_driver
+			if driver.car.nil?
+				driver.car = Car.new
+			end
+			driver.car.make = params[:make]
+			driver.car.model = params[:model]
+			driver.car.color = params[:color]
+			driver.car.license_plate = params[:license_plate]
+			driver.car.save
+			driver.save
+			ok
+		end
 	end
 end
-

@@ -2,9 +2,9 @@ class Fare < ActiveRecord::Base
 
 	belongs_to :car, inverse_of: :fares
 	has_many :rides, inverse_of: :fare
-	has_many :riders, through: :rides
-	has_many :offers, inverse_of: :fare
 	has_many :payments
+
+	has_many :riders, through: :rides
 
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name,
                   :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point, :fixed_earnings
@@ -88,69 +88,16 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
+	def ride_for_user user
+		ride = user.as_rider.rides.where(fare_id: self.id).first
+	end
+
 	def is_cancelled
 		if(state == 'driver_cancelled' || state == 'rider_cancelled')
 			true
 		else
 			false
 		end
-	end
-
-	def cancel_ride_for_user user
-		ride = user.as_rider.rides.where(fare_id: self.id).first
-		Rails.logger.debug 'Cancelling ride for rider'
-		Rails.logger.debug ride
-		unless ride.nil?
-			unless self.is_cancelled
-				self.ride_cancelled!(ride)
-			end
-		end
-
-	end
-
-	def ride_cancelled! ride
-		Rails.logger.info "RIDE_CANCELLED"
-		Rails.logger.info self.rides.scheduled.count
-		if( ride.driving? )
-			Rails.logger.debug "driving"
-			self.driver_cancelled
-			self.finished = Time.now
-			save
-			self.driver.current_fare = nil
-			self.driver.save
-			self.rides.each do |ride|
-				unless ride.aborted?
-					ride.abort!
-				end
-			end
-			notify_fare_cancelled_by_driver
-
-		elsif( self.rides.scheduled.count == 2 )
-      Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
-      # this is the only rider, cancel the whole ride
-			aasm_rider_cancelled
-			self.finished = Time.now
-      save
-			self.rides.scheduled.each do |ride|
-				ride.abort!
-			end
-			notify_fare_cancelled_by_rider
-
-		else 
-			Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
-			unless ride.aborted?
-				ride.abort!
-			end
-		end
-	end
-
-	def driver_cancelled_ride
-		warn Kernel.caller.first + "DEPRECATION WARNING: rides should be cancelled using ride_cancelled, not rider_cancelled"
-		self.finished = Time.now
-		save
-		self.driver.current_fare = nil
-		self.driver.save
-		notify_observers :fare_cancelled_by_driver
 	end
 
 	def pickup(rider = nil) 
@@ -196,6 +143,20 @@ class Fare < ActiveRecord::Base
 		self.meeting_point_place_name + " to " + self.drop_off_point_place_name
 	end
 
+	def notify_scheduled
+		Rails.logger.debug "in notify_scheduled"
+		notify_observers :scheduled
+	end
+
+	def notify_fare_cancelled_by_rider
+		notify_observers :fare_cancelled_by_rider
+	end
+
+	def notify_fare_cancelled_by_driver
+		notify_observers :fare_cancelled_by_driver
+	end
+
+
 	private
 	def ride_was_scheduled
     self.scheduled = Time.now
@@ -215,19 +176,6 @@ class Fare < ActiveRecord::Base
 	def completed_ride
 		self.finished = Time.now
 		save
-	end
-
-	def notify_scheduled
-		Rails.logger.debug "in notify_scheduled"
-		notify_observers :scheduled
-	end
-
-	def notify_fare_cancelled_by_rider
-		notify_observers :fare_cancelled_by_rider
-	end
-
-	def notify_fare_cancelled_by_driver
-		notify_observers :fare_cancelled_by_driver
 	end
 
 end
