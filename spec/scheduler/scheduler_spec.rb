@@ -1,4 +1,5 @@
 require 'rspec'
+require 'rails_helper'
 
 describe Scheduler do
   # set constants used by spherical factories
