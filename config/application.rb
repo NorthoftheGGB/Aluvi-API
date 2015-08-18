@@ -79,7 +79,7 @@ module Voco
 
 		# scheduler
 		config.commute_scheduler = {
-			:threshold_from_driver_origin => 3200, # 2 mile
+			:threshold_from_driver_origin => 8050, # pump it up to 5 miles
 			:threshold_from_driver_destination => 400, # 1/4 mile
 			:morning_start_hour => 7,
 			:morning_stop_hour => 9,
