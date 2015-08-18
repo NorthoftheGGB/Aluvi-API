@@ -51,6 +51,7 @@ class RidesAPIV2< Grape::API
 		desc "Get requested and underway ride requests"
 		get 'tickets', jbuilder: 'v2/tickets' do
 			authenticate!
+			ok
 			rider = Rider.find(current_user.id)
 			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
 			@rides
@@ -60,7 +61,7 @@ class RidesAPIV2< Grape::API
 		params do
 			requires :ride_id, type: Integer
 		end
-		post :cancel do
+		post :cancel, jbuilder: 'v2/tickets' do
 			authenticate!
 
 			ride = nil
@@ -88,6 +89,9 @@ class RidesAPIV2< Grape::API
 				end
 			end
 			ok
+			rider = Rider.find(current_user.id)
+			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
+			@rides
 
 		end
 
@@ -133,7 +137,6 @@ class RidesAPIV2< Grape::API
 					raise ApiExceptions::RideNotAssignedToThisDriverException
 				end
 
-				fare = Fare.find(params[:fare_id])
 				TicketManager.fare_completed fare
 				ride.trip.complete_if_no_longer_active
 

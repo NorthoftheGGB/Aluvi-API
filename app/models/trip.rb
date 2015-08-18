@@ -42,7 +42,9 @@ class Trip < ActiveRecord::Base
 		still_active = false
 		self.rides.each do |r|
 			if r.scheduled?
-				still_active = true
+				unless r.fare.completed? || r.fare.started?
+					still_active = true
+				end
 			end
 		end
 		still_active

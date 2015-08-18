@@ -1,22 +1,22 @@
 module Macro
 
 	def self.drive_with_one_rider_scheduled
-		Harness.cancel_trips "y@y.com"
-		Harness.cancel_trips "r@r.com"
-		Harness.driver_request "y@y.com"	
-		Harness.rider_request "r@r.com"	
+		Harness.cancel_trips "a@a.com"
+		Harness.cancel_trips "b@b.com"
+		Harness.driver_request "a@a.com"	
+		Harness.rider_request "b@b.com"	
 		Scheduler.build_commuter_trips
 	end
 
 	def self.drive_with_three_rider_scheduled
-		Harness.cancel_trips "y@y.com"
-		Harness.cancel_trips "a1@jones.com"
-		Harness.cancel_trips "a2@jones.com"
-		Harness.cancel_trips "joe@joe.com"
-		Harness.driver_request "y@y.com"	
-		Harness.rider_request "a1@jones.com"	
-		Harness.rider_request "a2@jones.com"	
-		Harness.rider_request "r@r.com"	
+		Harness.cancel_trips "a@a.com"
+		Harness.cancel_trips "b@b.com"
+		Harness.cancel_trips "c@c.com"
+		Harness.cancel_trips "d@d.com"
+		Harness.driver_request "a@a.com"	
+		Harness.rider_request "b@b.com"	
+		Harness.rider_request "c@c.com"	
+		Harness.rider_request "d@d.com"	
 		Scheduler.build_commuter_trips
 	end
 
@@ -27,7 +27,13 @@ module Macro
 		Rails.logger.debug user.image
 		user.save
 		user
+	end
 
+	def self.create_default_users
+		self.create_user "a@a.com"
+		self.create_user "b@b.com"
+		self.create_user "c@c.com"
+		self.create_user "d@d.com"
 	end
 
 end

@@ -8,6 +8,11 @@ json.destination do
 	json.latitude @route.destination.y
 	json.longitude @route.destination.x
 end
+json.pickup_zone_center_place_name @route.pickup_zone_center_place_name
+json.pickup_zone_center do
+	json.latitude @route.pickup_zone_center.y
+	json.longitude @route.pickup_zone_center.x
+end
 json.pickup_time @route.pickup_time
 json.return_time @route.return_time
 json.driving @route.driving
