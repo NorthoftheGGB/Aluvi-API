@@ -102,5 +102,14 @@ describe RidesAPIV2 do
 		end
 	end
 
+	describe "DELETE /api/v2/trips" do
+		it "cancels the ride" do
+			trip = FactoryGirl.create(:trip)
+			delete "/api/v2/rides/trips/"+trip.id.to_s, {}, {'HTTP_AUTHORIZATION' => encode_credentials(trip.rides[0].rider.token)}
+			trip = Trip.find(trip.id)
+      expect(trip.state).to eq('aborted')
+		end
+	end
+
 
 end
