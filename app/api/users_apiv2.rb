@@ -249,7 +249,6 @@ class UsersAPIV2 < Grape::API
 
 			end
 
-			current_rider.first_name = 'asdfasdf'
       current_rider.save
 			ok
 			@user = current_rider

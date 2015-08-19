@@ -21,6 +21,11 @@ module Macro
 	end
 
 	def self.create_user email
+		user = User.where(email: email).first
+		unless user.nil?
+			return
+		end
+
 		user = UserManager.create_user({first_name: "Mr", last_name:"jones", email:email, password:"jones", phone:"3132344322"})
 		user = user.as_rider
 		user.image = URI.parse("https://s3-us-west-2.amazonaws.com/aluvi-development/riders/images/000/000/016/small/tfss-07f1d501-afc7-42e3-aafd-1470a430dabe-image2.jpg")

@@ -5,7 +5,7 @@ describe TicketManager do
 	context 'for one driver and one rider' do
 		it 'cancels entire fare when rider cancels' do
 			fare = FactoryGirl.create(:scheduled_fare)
-			TicketManage.cancel_ride fare.rides.where(driving:false).first
+			TicketManager.cancel_ride fare.rides.where(driving:false).first
 			expect(fare.state).to eq("rider_cancelled")
 			expect(fare.finished).not_to be_nil
 		end
@@ -25,12 +25,21 @@ describe TicketManager do
 			expect(fare.finished).to be_nil
 		end
 
-		it 'arrival' do
+		it 'arrived' do
 			fare = FactoryGirl.create(:scheduled_fare)
 			fare.pickup!
 			fare.arrived!
 			expect(fare.state).to eq("completed")
 			expect(fare.finished).not_to be_nil
+		end
+
+		it 'cancelled entire trip' do
+			trip = FactoryGirl.create(:trip)
+			TicketManager.cancel_trip trip
+			trip = Trip.find(trip.id)
+			expect(trip.state).to eq("aborted")
+			expect(trip.rides[0].state).to eq("cancelled")
+			expect(trip.rides[1].state).to eq("cancelled")
 		end
 
 	end
