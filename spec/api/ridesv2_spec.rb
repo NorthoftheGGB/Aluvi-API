@@ -103,7 +103,7 @@ describe RidesAPIV2 do
 	end
 
 	describe "DELETE /api/v2/trips" do
-		it "cancels the ride" do
+		it "cancels the entire trip" do
 			trip = FactoryGirl.create(:trip)
 			delete "/api/v2/rides/trips/"+trip.id.to_s, {}, {'HTTP_AUTHORIZATION' => encode_credentials(trip.rides[0].rider.token)}
 			trip = Trip.find(trip.id)
