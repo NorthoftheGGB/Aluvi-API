@@ -196,8 +196,8 @@ class RidesAPIV2< Grape::API
 				requires :longitude
 			end
 			requires :destination_place_name, type: String
-			requires :pickup_time, type: String
-			requires :return_time, type: String
+			optional :pickup_time, type: String
+			optional :return_time, type: String
 			requires :driving, type: Boolean
 		end
 		post :route do
