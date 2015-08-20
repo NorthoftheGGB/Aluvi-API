@@ -75,7 +75,7 @@ class DevicesAPIV2 < Grape::API
 				if device.user.id == current_user.id
 					device.user_id = 0
 					device.save
-					success
+          ok
 				else
 					forbidden  "This user doesn't own this device"
 				end
