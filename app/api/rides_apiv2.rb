@@ -239,7 +239,20 @@ class RidesAPIV2< Grape::API
 			else
 				@route
 			end
-		end
+    end
 
+    desc "Payment Details"
+    get :receipts, jbuilder: "v2/receipts" do
+      # authenticate!
+      @receipts = Array.new
+      @receipts << { "amount" => 100, "type" => :fare }
+      @receipts << { "amount" => 100, "type" => :fare }
+      @receipts << { "amount" => 100, "type" => :fare }
+      @receipts << { "amount" => 300, "type" => :payment }
+      @receipts << { "amount" => 100, "type" => :earning }
+      @receipts << { "amount" => 100, "type" => :earning }
+      @receipts << { "amount" => 100, "type" => :earning }
+      @receipts << { "amount" => 300, "type" => :payout }
+    end
 	end
 end
