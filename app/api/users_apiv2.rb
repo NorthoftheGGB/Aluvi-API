@@ -16,6 +16,7 @@ class UsersAPIV2 < Grape::API
       requires :password, type: String
       requires :email, type: String
       optional :referral_code, type: String
+      optional :driver, type: Boolean
     end
     post do
 
@@ -26,8 +27,23 @@ class UsersAPIV2 < Grape::API
 			end
 
       begin
-				UserManager.create_user(params)
-        ok
+				user = UserManager.create_user(params)
+
+        if driver
+          driver = Driver.unscoped.find(user.id)
+					driver.interested
+					driver.approve
+					driver.register
+					driver.activate
+					driver.save
+        end
+
+        token = user.generate_token!
+        response = Hash.new
+        response["token"] = token
+        response["rider_state"] = user.rider_state
+        response["driver_state"] = user.driver_state
+        response
 
       rescue
         Rails.logger.error $!
