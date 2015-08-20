@@ -29,7 +29,7 @@ class UsersAPIV2 < Grape::API
       begin
 				user = UserManager.create_user(params)
 
-        if driver
+        if params[:driver]
           driver = Driver.unscoped.find(user.id)
 					driver.interested
 					driver.approve
@@ -38,6 +38,7 @@ class UsersAPIV2 < Grape::API
 					driver.save
         end
 
+        ok
         token = user.generate_token!
         response = Hash.new
         response["token"] = token
