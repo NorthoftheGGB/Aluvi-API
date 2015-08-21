@@ -12,9 +12,14 @@ module Harness
 
 	def self.cancel_trips email
 		rider = Rider.where(email: email).first
-		rider.rides.active.each do |r|
+		rider.rides.requested.each do |r|
 			TicketManager.cancel_ride r
 		end
+    rider.rides.scheduled.each do |r|
+      if r.fare.active
+        TicketManager.cancel_ride r
+      end
+    end
 	end
 
 	def self.schedule_default( rider, is_driving)

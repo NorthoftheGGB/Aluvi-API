@@ -100,6 +100,14 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
+  def active
+    if(state == 'started' || state == 'scheduled')
+      true
+    else
+      false
+    end
+  end
+
 	def pickup(rider = nil) 
 		aasm_pickup
 		unless(rider.nil?)

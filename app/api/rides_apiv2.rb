@@ -100,7 +100,7 @@ class RidesAPIV2< Grape::API
 			requires :ride_id, type: Integer # ride_id of the driver's ride
 			optional :rider_id, type: Integer
 		end
-		post :pickup do
+		post :pickup, jbuilder: 'v2/tickets' do
 			Rails.logger.debug params
 			authenticate!
 			# TODO validate driver and or rider is matched to ride
@@ -117,7 +117,10 @@ class RidesAPIV2< Grape::API
 					rider = Rider.find(params[:rider_id])
 					fare.pickup! rider
 				end
-				ok
+        ok
+        rider = Rider.find(current_user.id)
+        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
+        @rides
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
@@ -128,7 +131,7 @@ class RidesAPIV2< Grape::API
 		params do
 			requires :ride_id, type: Integer
 		end
-		post :arrived do
+		post :arrived, jbuilder: 'v2/tickets' do
 			authenticate!
 			begin
 				ride = Ride.find(params[:ride_id])
@@ -140,13 +143,10 @@ class RidesAPIV2< Grape::API
 				TicketManager.fare_completed fare
 				ride.trip.complete_if_no_longer_active
 
-
-				# either way notify the driver
-				status 200
-				response = Hash.new
-				response['amount'] = fare.cost
-				response['driver_earnings'] = fare.fixed_earnings
-				response
+        ok
+        rider = Rider.find(current_user.id)
+        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
+        @rides
 
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
