@@ -199,7 +199,7 @@ class UsersAPIV2 < Grape::API
 			optional :default_recipient_debit_card_token, type: String
 			optional :image, type: Rack::Multipart::UploadedFile
     end
-    post "profile", jbuilder: "rider_profile" do
+    post "profile", jbuilder: "v2/profile" do
       authenticate!
       unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job

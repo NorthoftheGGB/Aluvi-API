@@ -200,7 +200,7 @@ class RidesAPIV2< Grape::API
 			optional :return_time, type: String
 			requires :driving, type: Boolean
 		end
-		post :route do
+		post :route, jbuilder: 'route' do
 			authenticate!
 			Rails.logger.debug params
 			# assume single route per user	
@@ -225,7 +225,7 @@ class RidesAPIV2< Grape::API
 			route.driving = params[:driving];
 			route.save
 			ok
-			route
+			@route = route
 
 		end
 
