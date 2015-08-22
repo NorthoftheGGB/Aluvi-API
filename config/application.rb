@@ -83,10 +83,10 @@ module Voco
 			:threshold_from_driver_origin => 8050, # pump it up to 5 miles
 			:threshold_from_first_meeting_point => 400, # 1/4 mile
 			:threshold_from_driver_destination => 400, # 1/4 mile
-			:morning_start_hour => 7,
-			:morning_stop_hour => 9,
-			:evening_start_hour => 4 + 12,
-			:evening_stop_hour => 7 + 12
+			:morning_start_hour => 4,
+			:morning_stop_hour => 12,
+			:evening_start_hour => 3 + 12,
+			:evening_stop_hour => 10 + 12
 		}
   end
 end
