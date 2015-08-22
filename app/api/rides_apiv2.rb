@@ -160,6 +160,9 @@ class RidesAPIV2< Grape::API
 				trip = Trip.find(params[:trip_id])
 				TicketManager.cancel_trip(trip)
 				ok
+        rider = Rider.find(current_user.id)
+        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
+        @rides
 			rescue
         Rails.logger.error $!
 				#Rails.logger.error $!.backtrace.join("\n")
