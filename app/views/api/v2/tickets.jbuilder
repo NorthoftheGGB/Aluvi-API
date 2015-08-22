@@ -22,7 +22,7 @@ json.array! @rides do |ride|
   json.driving ride.driving
 	unless ride.fare.nil?
 		json.pickup_time ride.fare.pickup_time
-		json.id ride.fare.id
+		json.fare_id ride.fare.id
 		json.state ride.fare.state
 		json.meeting_point_place_name ride.fare.meeting_point_place_name
 		json.meeting_point_latitude ride.fare.meeting_point.y
