@@ -19,6 +19,7 @@ class RidesAPIV2< Grape::API
 		end
 		post :commute do
 			authenticate!
+      Rails.logger.debug params
 
 			# check for prexisting commuter ride on this date
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
