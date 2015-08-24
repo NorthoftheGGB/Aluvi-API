@@ -4,7 +4,10 @@ class ApiErrorHandler < Grape::Middleware::Base
     @env = env
     begin
       @app.call(@env)
+    rescue Grape::Exceptions::ValidationErrors => e
+      throw :error, :message => e.message || options[:default_message], :status => 400
     rescue Exception => e
+      Rails.logger.debug e
       throw :error, :message => e.message || options[:default_message], :status => 500
     end
   end

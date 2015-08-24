@@ -22,13 +22,13 @@ describe RidesAPIV2 do
       post "/api/v2/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
                                   :departure_longitude => -122.3, :departure_place_name => "My House",
                                   :destination_latitude => 46.5, :destination_longitude => -122.4,
-                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -14:00',
-																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 7:00:00 -7:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -7:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
       post "/api/v2/rides/commute", {:type => 'commuter',:departure_latitude => 45.5,
                                   :departure_longitude => -122.3, :departure_place_name => "My House",
                                   :destination_latitude => 46.5, :destination_longitude => -122.4,
-                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 9:00:00 -14:00',
-																	:return_pickup_time => '2014-08-16 17:00:00 -14:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+                                  :destination_place_name => 'My Work', 'departure_pickup_time' => '2014-08-16 9:00:00 -4:00',
+																	:return_pickup_time => '2014-08-16 17:00:00 -7:00' }, {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
       expect(response.status).to eq(405)
 		end
 

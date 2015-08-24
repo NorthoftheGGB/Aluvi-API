@@ -6,7 +6,7 @@ class Ride < ActiveRecord::Base
   attr_accessible :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime,
                   :state, :request_type, :pickup_time, :trip_id, :direction, :driving, :fixed_price
 
-	scope :active, -> { joins(:fare).where('rides.state = ? OR fares.state = ? OR fares.state = ?', :requested, :scheduled, :started) }
+	scope :active, -> { joins("LEFT JOIN fares ON rides.fare_id = fares.id").where('rides.state = ? OR fares.state = ? OR fares.state = ?', :requested, :scheduled, :started) }
 
 	include AASM
 	aasm.attribute_name :state
