@@ -268,6 +268,7 @@ class UsersAPIV2 < Grape::API
 
       current_rider.save
 			ok
+			current_rider.reload
 			@user = current_rider
 
     end

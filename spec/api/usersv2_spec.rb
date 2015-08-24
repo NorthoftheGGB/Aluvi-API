@@ -112,6 +112,9 @@ describe UsersAPIV2 do
 			Rails.logger.debug token.id
 			post "/api/v2/users/profile", { :first_name => @rider.first_name, :last_name => @rider.last_name, :email => @rider.email, :phone => '1231231234', :default_card_token => token["id"] },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
 			expect(response.status).to eq(200)
+      json = JSON.parse(response.body)
+      expect(json['card_last_four']).to_not be_nil
+      expect(json['card_brand']).to_not be_nil
 		end
 
 		it "returns success with cards" do
@@ -129,6 +132,9 @@ describe UsersAPIV2 do
 			Rails.logger.debug token.id
 			post "/api/v2/users/profile", { :first_name => @rider.first_name, :last_name => @rider.last_name, :email => @rider.email, :phone => '1231231234', :default_recipient_debit_card_token => token["id"] },  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
 			expect(response.status).to eq(200)
+      json = JSON.parse(response.body)
+      expect(json['recipient_card_last_four']).to_not be_nil
+      expect(json['recipient_card_brand']).to_not be_nil
 		end
 	end
 
