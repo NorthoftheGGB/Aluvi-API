@@ -22,7 +22,7 @@ class RidesAPIV2< Grape::API
       Rails.logger.debug params
 
 			# check for prexisting commuter ride on this date
-			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
+			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
 				conflict 'Commute request already exists for this day'
 			else

@@ -88,7 +88,7 @@ class TicketManager
 
       ride.fare.rides.each do |r|
         unless r.trip.nil?
-          ride.trip.abort_if_no_longer_active
+          r.trip.abort_if_no_longer_active
         end
       end
 		else
