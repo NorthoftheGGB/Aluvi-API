@@ -6,7 +6,7 @@ class APIV2 < Grape::API
 	format :json
 	content_type :json, "application/json"
 
-  user ApiErrorHandler
+  use ApiErrorHandler
 
 	helpers do
 		include VocoApiHelperV2
