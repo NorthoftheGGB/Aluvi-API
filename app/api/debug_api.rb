@@ -14,6 +14,7 @@ class DebugAPI < Grape::API
 			ok
 		end
 
+    desc "Doesnt do anything yet"
 		post :purge_all do
 			authenticate!
 			#not yet
@@ -21,7 +22,10 @@ class DebugAPI < Grape::API
 
 		desc "Schedule Commutes"
 		post :schedule_commute do
+			authenticate!
+      Rails.logger.debug 'ok'
 			Scheduler.build_commuter_trips
+      Rails.logger.debug 'ko'
 		end
 	end
 end
