@@ -1,7 +1,7 @@
 module Harness
 
 	def self.driver_request email
-		driver = Driver.where(email: email).first
+		driver = Driver.unscoped.where(email: email).first
 		self.schedule_default(driver.as_rider, true)
 	end
 
@@ -25,10 +25,10 @@ module Harness
 	def self.schedule_default( rider, is_driving)
 
 		# POINT(-72.9097027777592 41.3174593275947) | POINT(-72.9115782772616 41.3191412382067)
-		departure_longitude = -72.9097027777592
-		departure_latitude = 41.3174593275947
-		destination_longitude = -72.9115782772616
-		destination_latitude = 41.3191412382067
+		departure_longitude = -72.9097027777592 + rand(0..9)/1000
+		departure_latitude = 41.3174593275947 + rand(0..9)/1000
+		destination_longitude = -72.9115782772616 + rand(0..9)/1000
+		destination_latitude = 41.3191412382067 + rand(0..9)/1000
 		home_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 7, min: 0, sec: 0) + 1.days
 		work_pickup = DateTime.now.in_time_zone("Pacific Time (US & Canada)").change(hour: 5+12, min: 0, sec: 0) + 1.days
 
