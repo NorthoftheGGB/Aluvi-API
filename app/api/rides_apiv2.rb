@@ -142,7 +142,6 @@ class RidesAPIV2< Grape::API
 				end
 
 				TicketManager.fare_completed fare
-				ride.trip.complete_if_no_longer_active
 
         ok
         rider = Rider.find(current_user.id)

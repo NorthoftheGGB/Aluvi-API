@@ -310,7 +310,12 @@ class UsersAPIV2 < Grape::API
 			support.messsage = params.message
 			support.save
 
-			ok
+      g = GmailSender.new("support@aluviapp.com", "support4aluviapp")
+      g.send(:to => "support@aluviapp.com",
+             :subject => "Support Request",
+             :content => current_user.email + ":\n" + params.message )
+      Rails.logger.debug 'ko'
+      ok
 
 		end
 

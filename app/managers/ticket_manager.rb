@@ -199,9 +199,11 @@ class TicketManager
     end
 
     fare.arrived!
-
-    fare.driver.current_fare = nil
-    fare.driver.save
+    fare.rides.each do |r|
+      unless r.trip.nil?
+        r.trip.complete_if_no_longer_active
+      end
+    end
 
   end
 
