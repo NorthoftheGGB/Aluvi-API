@@ -69,5 +69,10 @@ module VocoApiHelperV2
 			error! payload, 400
 		end
 	end
+
+	def payment_method_required
+		error! "Payment method required", 402
+	end
+
 end
 

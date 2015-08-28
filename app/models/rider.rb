@@ -65,4 +65,13 @@ class Rider < User
 			self.method(state_change).call
 		end
 	end
+
+  def funding_available_for_trip
+    if self.cards.count < 1
+      false
+    else
+      true
+    end
+  end
+
 end

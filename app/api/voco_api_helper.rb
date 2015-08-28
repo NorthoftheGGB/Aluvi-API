@@ -72,5 +72,10 @@ module VocoApiHelper
 	def conflict message
 		error! message, 405
 	end
+
+	def payment_method_required message
+		error! "Payment method required", 402
+	end
+
 end
 

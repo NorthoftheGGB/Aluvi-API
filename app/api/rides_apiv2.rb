@@ -25,6 +25,8 @@ class RidesAPIV2< Grape::API
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
 				conflict 'Commute request already exists for this day'
+      elsif !current_user.as_rider.funding_available_for_trip
+        payment_method_required 
 			else
 
 				trip = TicketManager.request_commute(
