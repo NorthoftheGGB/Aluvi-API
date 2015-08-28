@@ -21,6 +21,11 @@ class RidesAPIV2< Grape::API
 			authenticate!
       Rails.logger.debug params
 
+      # pickup time must be in the future
+      if params['departure_pickup_time'].past?
+        error! "departure_pickup_time must be in the future", 406 
+      end
+
 			# check for prexisting commuter ride on this date
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
@@ -250,14 +255,14 @@ class RidesAPIV2< Grape::API
     get :receipts, jbuilder: "v2/receipts" do
       # authenticate!
       @receipts = Array.new
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 300, "type" => :payment }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 300, "type" => :payout }
+      @receipts << {  "receipt_id" => 1,  "amount" => 100, "type" => :fare }
+      @receipts << {  "receipt_id" => 2,  "amount" => 100, "type" => :fare }
+      @receipts << {  "receipt_id" => 3,  "amount" => 100, "type" => :fare }
+      @receipts << {  "receipt_id" => 4,  "amount" => 300, "type" => :payment }
+      @receipts << {  "receipt_id" => 5,  "amount" => 100, "type" => :earning }
+      @receipts << {  "receipt_id" => 6,  "amount" => 100, "type" => :earning }
+      @receipts << {  "receipt_id" => 7,  "amount" => 100, "type" => :earning }
+      @receipts << {  "receipt_id" => 8,  "amount" => 300, "type" => :payout }
     end
 	end
 end

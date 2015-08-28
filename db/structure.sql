@@ -380,6 +380,38 @@ ALTER SEQUENCE payouts_id_seq OWNED BY payouts.id;
 
 
 --
+-- Name: receipts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE receipts (
+    id integer NOT NULL,
+    type character varying,
+    amount integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: receipts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE receipts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: receipts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE receipts_id_seq OWNED BY receipts.id;
+
+
+--
 -- Name: rides; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -847,6 +879,13 @@ ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY receipts ALTER COLUMN id SET DEFAULT nextval('receipts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY rides ALTER COLUMN id SET DEFAULT nextval('rides_id_seq'::regclass);
 
 
@@ -985,6 +1024,14 @@ ALTER TABLE ONLY rpush_feedback
 
 ALTER TABLE ONLY rpush_notifications
     ADD CONSTRAINT rapns_notifications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: receipts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY receipts
+    ADD CONSTRAINT receipts_pkey PRIMARY KEY (id);
 
 
 --
@@ -1297,6 +1344,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150808024329');
 
 INSERT INTO schema_migrations (version) VALUES ('20150808061823');
 
+INSERT INTO schema_migrations (version) VALUES ('20150808072432');
+
 INSERT INTO schema_migrations (version) VALUES ('20150810205911');
 
 INSERT INTO schema_migrations (version) VALUES ('20150811012212');
@@ -1314,4 +1363,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150811042408');
 INSERT INTO schema_migrations (version) VALUES ('20150811224645');
 
 INSERT INTO schema_migrations (version) VALUES ('20150812022307');
+
+INSERT INTO schema_migrations (version) VALUES ('20150828030857');
 
