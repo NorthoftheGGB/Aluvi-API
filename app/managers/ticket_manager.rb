@@ -119,6 +119,12 @@ class TicketManager
       begin
         ride = rider.rides.where( :fare_id => fare.id ).first
 
+        receipt = Receipt.new
+        receipt.amount = - ride.fixed_price
+        receipt.type = "ride"
+        receipt.date = DateTime.now
+        receipt.save
+
         payment = Payment.new
         payment.driver = fare.driver
         payment.fare = fare
