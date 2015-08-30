@@ -106,7 +106,7 @@ class TicketManager
 
     # process the payment
     # TODO Refactor into delayed job
-    fare.riders.where.not(id: fare.driver.id).each do |rider|
+    fare.riders.each do |rider|
       begin
         ride = rider.rides.where( :fare_id => fare.id ).first
 
