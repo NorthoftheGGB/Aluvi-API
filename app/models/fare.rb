@@ -4,8 +4,6 @@ class Fare < ActiveRecord::Base
 	has_many :rides, inverse_of: :fare
 	has_many :payments
 
-	has_many :riders, through: :rides
-
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name,
                   :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point, :fixed_earnings
 
@@ -86,6 +84,14 @@ class Fare < ActiveRecord::Base
 		else
 			nil
 		end
+	end
+
+	def riders
+		array = Array.new
+		self.rides.scheduled.where(driving:false).each do |ride|
+			array << ride.rider
+		end
+		array
 	end
 
 	def ride_for_user user
