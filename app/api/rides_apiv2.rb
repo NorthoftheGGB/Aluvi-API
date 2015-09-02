@@ -33,7 +33,7 @@ class RidesAPIV2< Grape::API
       elsif !current_user.as_rider.funding_available_for_trip
         payment_method_required 
 			else
-
+        Rails.logger.debug current_rider
 				trip = TicketManager.request_commute(
 					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 					params[:departure_place_name],

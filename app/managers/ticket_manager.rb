@@ -2,7 +2,7 @@ class TicketManager
 
   # Commuter
 	def self.request_commute( departure_point, departure_place_name, departure_time, destination_point, destination_place_name, return_time, driving, rider )
-      self.rider_not_nil
+      self.rider_not_nil rider
 			trip = Trip.new
       aside = TicketManager.request_commute_leg(departure_point, departure_place_name, destination_point, destination_place_name, departure_time, driving, rider, trip.id )
 			aside.direction = 'a'
@@ -18,7 +18,7 @@ class TicketManager
 	end
 
 	def self.request_ride( departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider )
-    self.rider_not_nil
+    self.rider_not_nil rider
 		trip = Trip.new
 		aside = TicketManager.request_commute_leg(departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider, trip.id )
 		aside.direction = 'a'
@@ -29,7 +29,7 @@ class TicketManager
 	end
 
   def self.request_commute_leg( departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider, trip_id)
-    self.rider_not_nil
+    self.rider_not_nil rider
     ride = CommuterRide.create(
         departure_point,
         departure_place_name,
@@ -44,7 +44,7 @@ class TicketManager
 
 	end
 
-  def self.rider_not_nil
+  def self.rider_not_nil rider
       if rider.nil?
         raise "Rider is Nil"
       end

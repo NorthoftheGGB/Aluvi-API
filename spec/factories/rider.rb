@@ -7,6 +7,17 @@ FactoryGirl.define do
 			})
 			rider.stripe_customer_id = customer.id
 			rider.save
+
+      card = Card.new
+      card.rider = rider
+      card.stripe_card_id = "asdfasdfa"
+      card.last4 = "2344"
+      card.brand = "MasterCard"
+      card.funding = "100"
+      card.exp_month = "04"
+      card.exp_year = "2050"
+      card.save
+
 		end
 		first_name "Mark"
 		last_name "Truttle"
