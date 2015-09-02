@@ -261,17 +261,9 @@ class RidesAPIV2< Grape::API
 
     desc "Payment Details"
     get :receipts, jbuilder: "v2/receipts" do
-      # authenticate!
+      authenticate!
       Rails.logger.debug "ok"
-      @receipts = Array.new
-      @receipts << {  "receipt_id" => 1,  "amount" => 100, "type" => :fare }
-      @receipts << {  "receipt_id" => 2,  "amount" => 100, "type" => :fare }
-      @receipts << {  "receipt_id" => 3,  "amount" => 100, "type" => :fare }
-      @receipts << {  "receipt_id" => 4,  "amount" => 300, "type" => :payment }
-      @receipts << {  "receipt_id" => 5,  "amount" => 100, "type" => :earning }
-      @receipts << {  "receipt_id" => 6,  "amount" => 100, "type" => :earning }
-      @receipts << {  "receipt_id" => 7,  "amount" => 100, "type" => :earning }
-      @receipts << {  "receipt_id" => 8,  "amount" => 300, "type" => :payout }
+      @receipts = current_user.receipts
       Rails.logger.debug "ko"
     end
 	end
