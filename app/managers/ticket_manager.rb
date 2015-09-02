@@ -98,12 +98,20 @@ class TicketManager
       ride.fare.rides.each do |r|
         unless r.trip.nil?
           r.trip.abort_if_no_longer_active
+
+          if trip.aborted?
+            self.debit_for_trip r.rider, trip
+          end
         end
       end
 		else
 			ride.cancel!
       unless ride.trip.nil?
         ride.trip.abort_if_no_longer_active
+
+        if trip.aborted?
+          self.debit_for_trip r.rider, trip
+        end
       end
 		end
 	end
