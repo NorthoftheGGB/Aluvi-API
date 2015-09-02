@@ -151,9 +151,17 @@ class RidesAPIV2< Grape::API
 				TicketManager.fare_completed fare
 
         ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
+
+      rescue AASM::InvalidTransition => e
+        Rails.logger.error "ERROR: Invalid Transition"
+        Rails.logger.error e
+        if fare.completed?
+          ok
+          tickets
+        else
+          raise e
+        end
 
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!

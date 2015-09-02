@@ -388,7 +388,10 @@ CREATE TABLE receipts (
     type character varying,
     amount integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    date timestamp without time zone,
+    trip_id integer,
+    user_id integer
 );
 
 
@@ -737,7 +740,7 @@ CREATE TABLE users (
     last_name character varying(255),
     is_driver boolean,
     is_rider boolean,
-    commuter_balance_cents integer,
+    commuter_balance_cents integer DEFAULT 0,
     commuter_refill_amount_cents integer,
     location geography(Point,4326),
     created_at timestamp without time zone,
@@ -1119,6 +1122,22 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: receipts_trip_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY receipts
+    ADD CONSTRAINT receipts_trip_id_fk FOREIGN KEY (trip_id) REFERENCES trips(id);
+
+
+--
+-- Name: receipts_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY receipts
+    ADD CONSTRAINT receipts_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- Name: rides_rider_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1365,4 +1384,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150811224645');
 INSERT INTO schema_migrations (version) VALUES ('20150812022307');
 
 INSERT INTO schema_migrations (version) VALUES ('20150828030857');
+
+INSERT INTO schema_migrations (version) VALUES ('20150902040526');
+
+INSERT INTO schema_migrations (version) VALUES ('20150902040829');
+
+INSERT INTO schema_migrations (version) VALUES ('20150902044830');
 
