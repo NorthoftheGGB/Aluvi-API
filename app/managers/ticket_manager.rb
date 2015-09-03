@@ -99,8 +99,8 @@ class TicketManager
         unless r.trip.nil?
           r.trip.abort_if_no_longer_active
 
-          if trip.aborted?
-            self.debit_for_trip r.rider, trip
+          if r.trip.aborted?
+            self.assign_payment_for_trip r.rider, r.trip
           end
         end
       end
@@ -110,7 +110,7 @@ class TicketManager
         ride.trip.abort_if_no_longer_active
 
         if ride.trip.aborted?
-          self.debit_for_trip ride.rider, ride.trip
+          self.assign_payment_for_trip ride.rider, ride.trip
         end
       end
 		end
@@ -138,7 +138,7 @@ class TicketManager
           trip.complete_if_no_longer_active
 
           if trip.completed?
-            self.debit_for_trip r.rider, trip
+            self.assign_payment_for_trip r.rider, trip
           end
         end
       end
@@ -147,25 +147,36 @@ class TicketManager
 
   end
 
-  def self.debit_for_trip user, trip
+  def self.assign_payment_for_trip user, trip
+    Rails.logger.debug "assign payment"
 
     amount = 0
+    type = 'not specified'
     trip.rides.each do |ride|
-      if ride.fare.completed?
-        amount = amount + ride.fixed_price
+      unless ride.fare.nil?
+        if ride.fare.completed?
+          if trip.rides[0].driving
+            amount = amount + ride.fare.fixed_earnings
+            type = 'earning'
+          else
+            amount = amount - ride.fixed_price
+            type = 'trip'
+          end
+        end
       end
     end
 
     receipt = Receipt.new
-    receipt.amount = -amount
-    receipt.type = "trip"
+    receipt.amount = amount
+    receipt.type = type
     receipt.date = DateTime.now
     receipt.trip = trip
     receipt.user = user
     receipt.save
+    Rails.logger.debug receipt
 
     Rails.logger.debug user.commuter_balance_cents
-    user.commuter_balance_cents = user.commuter_balance_cents - amount
+    user.commuter_balance_cents = user.commuter_balance_cents + amount
     user.save
 
   end

@@ -34,12 +34,32 @@ describe TicketManager do
 		end
 
 		it 'cancelled entire trip' do
-			trip = FactoryGirl.create(:trip)
+			trip = FactoryGirl.create(:trip_with_two_rides)
 			TicketManager.cancel_trip trip
 			trip = Trip.find(trip.id)
 			expect(trip.state).to eq("aborted")
 			expect(trip.rides[0].state).to eq("cancelled")
 			expect(trip.rides[1].state).to eq("cancelled")
+		end
+
+		it 'paid the driver' do
+			fare = FactoryGirl.create(:scheduled_fare)
+			fare.pickup!
+			TicketManager.fare_completed fare
+      receipt = Receipt.where(user: fare.driver).order(:date).first
+			expect(receipt.type).to eq("earning")
+			expect(receipt.amount).to eq(fare.fixed_earnings)
+		end
+
+		it 'charged all riders' do
+			fare = FactoryGirl.create(:scheduled_multirider_fare)
+			fare.pickup!
+			TicketManager.fare_completed fare
+      fare.riders.each do |rider|
+        receipt = Receipt.where(user: rider).order(:date).first
+        expect(receipt.type).to eq("trip")
+        expect(receipt.amount).to eq(-fare.rides.where(driving: false).first.fixed_price)
+      end
 		end
 
 	end
