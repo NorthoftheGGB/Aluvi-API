@@ -109,8 +109,8 @@ class TicketManager
       unless ride.trip.nil?
         ride.trip.abort_if_no_longer_active
 
-        if trip.aborted?
-          self.debit_for_trip r.rider, trip
+        if ride.trip.aborted?
+          self.debit_for_trip ride.rider, ride.trip
         end
       end
 		end
