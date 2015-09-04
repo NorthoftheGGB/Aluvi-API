@@ -403,7 +403,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   stripe (>= 1.21)!
-  stripe-ruby-mock (~> 2.1)!
+  stripe-ruby-mock (~> 2.1.1)!
   table_cloth
   therubyracer
   thin
