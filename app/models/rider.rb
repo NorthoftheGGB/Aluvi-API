@@ -7,7 +7,7 @@ class Rider < User
 	has_many :payments
 	has_one :route
 
-	attr_accessible :rider_state, :rider_state_event
+	attr_accessible :rider_state, :rider_state_event, :free_rides
 
 	has_attached_file :image, :styles => { :small => "212x249>" }, :default_url => "/images/missing.png", :storage => :s3
 	validates_attachment_content_type :image, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
@@ -67,7 +67,7 @@ class Rider < User
 	end
 
   def funding_available_for_trip
-    if self.cards.count < 1
+    if self.free_rides < 1 && self.cards.count < 1
       false
     else
       true

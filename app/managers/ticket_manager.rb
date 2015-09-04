@@ -51,10 +51,12 @@ class TicketManager
   end
 
 	def self.driver_cancelled_fare fare
-		ride = fare.driver.as_rider.rides.where(fare_id: fare.id).first
-		unless ride.nil?
-			self.cancel_ride ride
-		end
+    ActiveRecord::Base.transaction do
+      ride = fare.driver.as_rider.rides.where(fare_id: fare.id).first
+      unless ride.nil?
+        self.cancel_ride ride
+      end
+    end
 	end
 
 
@@ -165,6 +167,19 @@ class TicketManager
         end
       end
     end
+
+    # check for free ride for rider
+    rider = user.as_rider
+    if trip.rides[0].driving
+      if rider.free_rides > 0
+        rider.free_rides = rider.free_rides - 1 
+        rider.save
+        amount = 0
+        type = 'free trip'
+      end
+    end
+
+
 
     receipt = Receipt.new
     receipt.amount = amount
