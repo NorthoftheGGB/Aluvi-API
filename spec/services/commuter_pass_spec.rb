@@ -26,4 +26,18 @@ describe CommuterPass do
       expect(final).to eq(initial - 1000)
     end
   end
+
+  context 'payments' do
+    it 'gets processed' do
+
+      rider = FactoryGirl.create(:generated_rider)
+      initial = rider.commuter_balance_cents
+
+      CommuterPass.process_payment rider, 1000
+
+      rider = Rider.find(rider.id)
+      final = rider.commuter_balance_cents
+      expect(final).to eq(initial + 1000)
+    end
+  end
 end

@@ -10,7 +10,7 @@ FactoryGirl.define do
 
       card = Card.new
       card.rider = rider
-      card.stripe_card_id = "asdfasdfa"
+      card.stripe_card_id = StripeMock.create_test_helper.generate_card_token 
       card.last4 = "2344"
       card.brand = "MasterCard"
       card.funding = "100"
