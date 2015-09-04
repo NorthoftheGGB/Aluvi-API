@@ -322,7 +322,9 @@ CREATE TABLE payments (
     updated_at timestamp without time zone,
     driver_earnings_cents integer,
     ride_id integer,
-    paid boolean
+    paid boolean,
+    notified boolean DEFAULT false,
+    card_last4 character varying
 );
 
 
@@ -357,7 +359,10 @@ CREATE TABLE payouts (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     stripe_transfer_id character varying(255),
-    stripe_transfer_status character varying
+    stripe_transfer_status character varying,
+    notified boolean DEFAULT false,
+    card_last4 character varying,
+    success boolean DEFAULT false
 );
 
 
@@ -1396,4 +1401,14 @@ INSERT INTO schema_migrations (version) VALUES ('20150902044830');
 INSERT INTO schema_migrations (version) VALUES ('20150904035254');
 
 INSERT INTO schema_migrations (version) VALUES ('20150904193646');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904205539');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904205549');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904210606');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904210613');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904214401');
 

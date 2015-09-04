@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.2'
+gem 'actionview'
 
 # javascript runtime
 gem 'execjs'
@@ -34,8 +35,6 @@ gem 'thin'
 gem 'aasm'
 
 # Handle Money, Currencies, and Stripe API
-gem 'money-rails'
-gem 'monetize'
 gem 'stripe', ">= 1.21", :source => 'https://code.stripe.com'
 # Geolocation
 gem 'rgeo'
