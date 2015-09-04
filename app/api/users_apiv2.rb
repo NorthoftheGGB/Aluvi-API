@@ -325,7 +325,7 @@ class UsersAPIV2 < Grape::API
       receipts = current_rider.receipts.order("date")
       email_body = ""
       receipts.each do |receipt|
-        email_body = email_body + "\n" + receipt.date + " " + receipt.type + " " + receipt.amount
+        email_body = email_body + "\n" + receipt.date.strftime("%-m/%y") + " " + receipt.type + " " + (receipt.amount / 100.0).to_s
       end
 
       g = GmailSender.new(Rails.configuration.aluvi[:support_email], Rails.configuration.aluvi[:support_email_password])
