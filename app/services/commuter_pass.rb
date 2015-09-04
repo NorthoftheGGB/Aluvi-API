@@ -73,11 +73,12 @@ module CommuterPass
        :recipient => user.stripe_recipient_id,
        :destination => recipient.default_card, 
        :description => "Transfer for " + user.email,
-       :statement_descriptor => "Aluvi Driver Payout",
-       :expand => ['destination']
+       :statement_descriptor => "Aluvi Driver Payout"
      )
+     card = recipient.cards.retrieve(transfer.destination)
+
      payout.stripe_transfer_id = transfer.id
-     payout.card_last4 = transfer.destination.last4
+     payout.card_last4 = card.last4
      payout.success = true
 
      user.commuter_balance_cents = user.commuter_balance_cents - amount_cents
