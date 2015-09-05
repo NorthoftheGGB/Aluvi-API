@@ -299,13 +299,65 @@ module Scheduler
   end
 
   def self.calculate_costs
-    Trip.fulfilled_pending_notification.each do |trip|
-      TicketManager.calculate_fixed_price_for_commute trip
+
+    mapquest = MapQuest.new 'BZWnaZwEAPHiKE3bTU6DFNEqcOM9H3nP'
+     
+    Fare.scheduled.each do |fare|
+      
+      begin
+        tries ||=3
+        response = mapquest.directions.route( "#{fare.meeting_point.y},#{fare.meeting_point.x}", "#{fare.drop_off_point.y},#{fare.drop_off_point.x}")
+        if response.nil? || response.route.nil?
+          raise 'MapQuest Nil Response!'
+        end
+        unless response.route[:routeError].nil?
+          errorCode = response.route[:routeError][:errorCode]
+          if errorCode > 0
+            raise response.route[:routeError]
+          end
+        end
+        Rails.logger.debug response
+        Rails.logger.debug response.route
+        Rails.logger.debug response.route[:distance]
+        distance = response.route[:distance]
+      rescue
+        Rails.logger.debug 'retrying'
+        unless (tries -= 1).zero?
+          retry
+        else
+          raise
+        end
+      end
+
+      Rails.logger.debug fare.riders.count
+      case fare.riders.count
+      when 3
+        variable_rate = 32
+      when 2
+        variable_rate = 37
+      when 1
+        variable_rate = 42
+      end
+      Rails.logger.debug variable_rate
+      driver_earnings_per_ride = distance * variable_rate
+      Rails.logger.debug driver_earnings_per_ride
+      fare.fixed_earnings = driver_earnings_per_ride * fare.riders.count
+      fare.save
+
+      fare.rides.where('driving = false').each do |ride|
+        ride.fixed_price = driver_earnings_per_ride + 98
+        ride.save
+      end
+
     end
 
-    Fare.scheduled.each do |fare|
-      TicketManager.calculated_fixed_earnings_for_fare fare
-    end
+   # Trip.fulfilled_pending_notification.each do |trip|
+   #  TicketManager.calculate_fixed_price_for_commute trip
+   # end
+
+  #  Fare.scheduled.each do |fare|
+  #    TicketManager.calculated_fixed_earnings_for_fare fare
+  #  end
   end
 
 	def self.notify_commuters
