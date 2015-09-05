@@ -336,6 +336,16 @@ class UsersAPIV2 < Grape::API
 
     end
 
+
+    desc "Request Payout"
+    post "request_payout" do
+      authenticate!
+      current_user.payout_requested = true
+      current_user.save
+      ok
+    end
+
+
   end
 
 end

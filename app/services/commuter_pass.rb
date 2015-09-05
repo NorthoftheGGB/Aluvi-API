@@ -102,6 +102,12 @@ module CommuterPass
 
   end
 
+  def self.process_payouts
+    User.where('payout_requested = true').each do |user|
+      self.process_payout user, user.commuter_balance_cents
+    end
+  end
+
   def self.send_notifications
 
     Payment.where("paid = true").where("notified = false").each do |payment|
