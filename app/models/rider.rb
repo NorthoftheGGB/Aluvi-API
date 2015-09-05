@@ -8,7 +8,6 @@ class Rider < User
 	has_one :route
 
 	attr_accessible :rider_state, :rider_state_event
-
 	has_attached_file :image, :styles => { :small => "212x249>" }, :default_url => "/images/missing.png", :storage => :s3
 	validates_attachment_content_type :image, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
@@ -65,4 +64,13 @@ class Rider < User
 			self.method(state_change).call
 		end
 	end
+
+  def funding_available_for_trip
+    if self.free_rides < 1 && self.cards.count < 1
+      false
+    else
+      true
+    end
+  end
+
 end

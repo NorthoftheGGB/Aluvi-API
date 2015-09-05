@@ -322,7 +322,9 @@ CREATE TABLE payments (
     updated_at timestamp without time zone,
     driver_earnings_cents integer,
     ride_id integer,
-    paid boolean
+    paid boolean,
+    notified boolean DEFAULT false,
+    card_last4 character varying
 );
 
 
@@ -356,7 +358,11 @@ CREATE TABLE payouts (
     amount_cents integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    stripe_transfer_id character varying(255)
+    stripe_transfer_id character varying(255),
+    stripe_transfer_status character varying,
+    notified boolean DEFAULT false,
+    card_last4 character varying,
+    success boolean DEFAULT false
 );
 
 
@@ -377,6 +383,41 @@ CREATE SEQUENCE payouts_id_seq
 --
 
 ALTER SEQUENCE payouts_id_seq OWNED BY payouts.id;
+
+
+--
+-- Name: receipts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE receipts (
+    id integer NOT NULL,
+    type character varying,
+    amount integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    date timestamp without time zone,
+    trip_id integer,
+    user_id integer
+);
+
+
+--
+-- Name: receipts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE receipts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: receipts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE receipts_id_seq OWNED BY receipts.id;
 
 
 --
@@ -705,7 +746,7 @@ CREATE TABLE users (
     last_name character varying(255),
     is_driver boolean,
     is_rider boolean,
-    commuter_balance_cents integer,
+    commuter_balance_cents integer DEFAULT 0,
     commuter_refill_amount_cents integer,
     location geography(Point,4326),
     created_at timestamp without time zone,
@@ -757,7 +798,9 @@ CREATE TABLE users (
     image_content_type character varying(255),
     image_file_size integer,
     image_updated_at timestamp without time zone,
-    work_email character varying
+    work_email character varying,
+    free_rides integer DEFAULT 0,
+    payout_requested boolean DEFAULT false
 );
 
 
@@ -841,6 +884,13 @@ ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq':
 --
 
 ALTER TABLE ONLY payouts ALTER COLUMN id SET DEFAULT nextval('payouts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY receipts ALTER COLUMN id SET DEFAULT nextval('receipts_id_seq'::regclass);
 
 
 --
@@ -988,6 +1038,14 @@ ALTER TABLE ONLY rpush_notifications
 
 
 --
+-- Name: receipts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY receipts
+    ADD CONSTRAINT receipts_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: ride_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1069,6 +1127,22 @@ CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: receipts_trip_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY receipts
+    ADD CONSTRAINT receipts_trip_id_fk FOREIGN KEY (trip_id) REFERENCES trips(id);
+
+
+--
+-- Name: receipts_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY receipts
+    ADD CONSTRAINT receipts_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
@@ -1297,6 +1371,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150808024329');
 
 INSERT INTO schema_migrations (version) VALUES ('20150808061823');
 
+INSERT INTO schema_migrations (version) VALUES ('20150808072432');
+
 INSERT INTO schema_migrations (version) VALUES ('20150810205911');
 
 INSERT INTO schema_migrations (version) VALUES ('20150811012212');
@@ -1314,4 +1390,30 @@ INSERT INTO schema_migrations (version) VALUES ('20150811042408');
 INSERT INTO schema_migrations (version) VALUES ('20150811224645');
 
 INSERT INTO schema_migrations (version) VALUES ('20150812022307');
+
+INSERT INTO schema_migrations (version) VALUES ('20150828030857');
+
+INSERT INTO schema_migrations (version) VALUES ('20150902040526');
+
+INSERT INTO schema_migrations (version) VALUES ('20150902040829');
+
+INSERT INTO schema_migrations (version) VALUES ('20150902044830');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904035254');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904193646');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904205539');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904205549');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904210606');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904210613');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904214401');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904220317');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905002520');
 

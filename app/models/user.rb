@@ -1,8 +1,10 @@
 class User < ActiveRecord::Base
 	has_many :devices
+  has_many :receipts
 	# has_one :company, :foreign_key => :user_id
   attr_accessible :driver_state, :rider_state
-  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :zip_code, :stripe_customer_id, :stripe_recipient_id, :bank_account_name, :salt, :token, :phone, :password, :email, :driver_state, :rider_state, :webtoken, :demo, :recipient_card_last_four, :recipient_card_brand, :recipient_card_exp_year, :recipient_card_exp_month
+  attr_accessible :commuter_balance_cents, :commuter_refill_amount_cents, :company_id, :first_name, :location, :last_name, :zip_code, :stripe_customer_id, :stripe_recipient_id, :bank_account_name, :salt, :token, :phone, :password, :email, :driver_state, :rider_state, :webtoken, :demo, :recipient_card_last_four, :recipient_card_brand, :recipient_card_exp_year, :recipient_card_exp_month, :free_rides
+
 
 	has_attached_file :image, 
 		:styles => { :small => "212x249>" }, 
@@ -122,4 +124,5 @@ class User < ActiveRecord::Base
 			nil
 		end
   end
+
 end

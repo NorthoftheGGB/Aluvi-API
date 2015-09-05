@@ -6,6 +6,7 @@ json.work_email @user.work_email
 json.commuter_refill_amount_cents @user.commuter_refill_amount_cents
 json.commuter_balance_cents @user.commuter_balance_cents
 json.commuter_refill_enabled @user.commuter_refill_enabled
+json.free_rides @user.free_rides
 unless @user.cards[0].nil?
 	json.card_last_four @user.cards[0].last4
 	json.card_brand @user.cards[0].brand

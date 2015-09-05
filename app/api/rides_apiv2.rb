@@ -21,12 +21,19 @@ class RidesAPIV2< Grape::API
 			authenticate!
       Rails.logger.debug params
 
+      # pickup time must be in the future
+      if params['departure_pickup_time'].past?
+        error! "departure_pickup_time must be in the future", 406 
+      end
+
 			# check for prexisting commuter ride on this date
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
 				conflict 'Commute request already exists for this day'
+      elsif !current_user.as_rider.funding_available_for_trip
+        payment_method_required 
 			else
-
+        Rails.logger.debug current_rider
 				trip = TicketManager.request_commute(
 					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 					params[:departure_place_name],
@@ -144,9 +151,17 @@ class RidesAPIV2< Grape::API
 				TicketManager.fare_completed fare
 
         ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
+
+      rescue AASM::InvalidTransition => e
+        Rails.logger.error "ERROR: Invalid Transition"
+        Rails.logger.error e
+        if fare.completed?
+          ok
+          tickets
+        else
+          raise e
+        end
 
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
@@ -246,16 +261,10 @@ class RidesAPIV2< Grape::API
 
     desc "Payment Details"
     get :receipts, jbuilder: "v2/receipts" do
-      # authenticate!
-      @receipts = Array.new
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 300, "type" => :payment }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 300, "type" => :payout }
+      authenticate!
+      Rails.logger.debug "ok"
+      @receipts = current_user.receipts
+      Rails.logger.debug "ko"
     end
 	end
 end

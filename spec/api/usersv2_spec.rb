@@ -138,4 +138,13 @@ describe UsersAPIV2 do
 		end
 	end
 
+	describe "POST /api/v2/users/receipts" do
+		it "returns success" do
+      @rider = FactoryGirl.create(:rider)
+			post "/api/v2/users/receipts", nil,  {'HTTP_AUTHORIZATION' => encode_credentials(@rider.token)}
+			expect(response.status).to eq(200)
+		end
+	end
+
+
 end

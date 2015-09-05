@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.2'
+gem 'actionview'
 
 # javascript runtime
 gem 'execjs'
@@ -34,8 +35,6 @@ gem 'thin'
 gem 'aasm'
 
 # Handle Money, Currencies, and Stripe API
-gem 'money-rails'
-gem 'monetize'
 gem 'stripe', ">= 1.21", :source => 'https://code.stripe.com'
 # Geolocation
 gem 'rgeo'
@@ -93,7 +92,7 @@ group :test do
 	gem 'rspec'
 	gem 'rspec-rails', '~> 3.1'
   gem 'database_cleaner'
-	gem 'stripe-ruby-mock', '~> 2.1', :require => 'stripe_mock', :git => 'https://github.com/kathyonu/stripe-ruby-mock.git', :branch => 'stripe-1.24.0'
+	gem 'stripe-ruby-mock', '~> 2.1.1', :require => 'stripe_mock', :git => 'https://github.com/kathyonu/stripe-ruby-mock.git', :branch => 'stripe-1.24.0'
 end
 
 group :development do
