@@ -1,9 +1,11 @@
 module Scheduler
 
 	def self.build_commuter_trips
-		self.build_forward_fares
-		self.build_return_fares
-		self.calculate_costs
+    ActiveRecord::Base.transaction do
+      self.build_forward_fares
+      self.build_return_fares
+      self.calculate_costs
+    end
     self.notify_commuters
 	end
 
