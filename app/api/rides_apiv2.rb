@@ -17,7 +17,7 @@ class RidesAPIV2< Grape::API
 			requires :return_pickup_time, type: DateTime
 			optional :driving, type: Boolean
 		end
-		post :commute do
+		post :commute, jbuilder: 'v2/tickets' do
 			authenticate!
       Rails.logger.debug params
 
@@ -54,12 +54,10 @@ class RidesAPIV2< Grape::API
 					current_rider
 				)
 
-				ok
-				rval = Hash.new
-				rval[:outgoing_ride_id] = trip.rides[0].id
-				rval[:return_ride_id] = trip.rides[1].id
-				rval[:trip_id] = trip.id
-				rval
+        ok
+        rider = Rider.find(current_user.id)
+        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
+        @rides
 			end
 		end
 
