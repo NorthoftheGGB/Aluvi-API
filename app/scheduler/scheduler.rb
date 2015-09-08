@@ -67,40 +67,10 @@ module Scheduler
     forward_ride_assignment_iteration(driving_rides)
 
 
-    # triangulation
-		# - average the origins and create a meeting point
-    Rails.logger.info "Triangulation"
 		driving_rides.each do |driving_ride|
 			f = driving_ride.fare
-
-			lat_sum = 0
-			lon_sum = 0
-			f.rides.each do |r|
-				lat_sum += r.origin.y
-				lon_sum += r.origin.x
-			end
-			avg_lon = lon_sum / f.rides.count
-			avg_lat = lat_sum / f.rides.count
-			f.meeting_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
-
-			lat_sum = 0
-			lon_sum = 0
-			f.rides.each do |r|
-				lat_sum += r.destination.y
-				lon_sum += r.destination.x
-			end
-			avg_lon = lon_sum / f.rides.count
-			avg_lat = lat_sum / f.rides.count
-			f.drop_off_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
-
-
-			#f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
-			#	f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]
-			#end
-
 			f.pickup_time = driving_ride.pickup_time
 			f.save
-      Rails.logger.info "saving pickup time and triangulation " + f.id.to_s
       f.schedule!
 		end
 
@@ -135,6 +105,14 @@ module Scheduler
       assign_ride.fare = r.fare
       assign_ride.save
       assign_ride.promote_to_pending_return!
+
+      if r.fare.meeting_point.nil?
+        r.fare.meeting_point = assign_ride.origin
+        r.fare.meeting_point_place_name = assign_ride.origin_place_name
+        r.fare.drop_off_point = r.destination
+        r.fare.drop_off_point_place_name = r.destination_place_name
+        r.fare.save
+      end
     end
   end
 
@@ -189,6 +167,14 @@ module Scheduler
       if !r.trip.fulfilled?
         r.trip.fulfilled!
       end
+
+      if r.fare.drop_off_point.nil?
+        r.fare.meeting_point = r.origin
+        r.fare.meeting_point_place_name = r.origin_place_name
+        r.fare.drop_off_point = assign_return_ride.destination
+        r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
+        r.fare.save
+      end
     end
 
 
@@ -238,35 +224,9 @@ module Scheduler
       end
     end
 
-		# triangulation
 		# - average the origins and create a meeting point
 		return_driving_rides.each do |driving_ride|
 			f = driving_ride.fare
-
-			lat_sum = 0
-			lon_sum = 0
-			f.rides.each do |r|
-				lat_sum += r.origin.y
-				lon_sum += r.origin.x
-			end
-			avg_lon = lon_sum / f.rides.count
-			avg_lat = lat_sum / f.rides.count
-			f.meeting_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
-
-			lat_sum = 0
-			lon_sum = 0
-			f.rides.each do |r|
-				lat_sum += r.destination.y
-				lon_sum += r.destination.x
-			end
-			avg_lon = lon_sum / f.rides.count
-			avg_lat = lat_sum / f.rides.count
-			f.drop_off_point = RGeo::Geographic.spherical_factory( :srid => 4326 ).point(avg_lon, avg_lat)	
-
-			#f.rides.select("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + f.meeting_point.x.to_s + ' ' + f.meeting_point.y.to_s + ") '), origin) as max_distance_to_meeting_point").each do |r|
-			#	f.max_distance_to_meeting_point = r[:max_distance_to_meeting_point]
-			#end
-
 			f.pickup_time = driving_ride.pickup_time
 			f.save
 			f.schedule!
