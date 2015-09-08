@@ -249,20 +249,20 @@ class TicketManager
     trip.save!
   end
 
-	def self.fare_cancelled_by_rider(fare)
+	def self.notify_fare_cancelled_by_rider(fare)
 		fare.driver.devices.each do |d|
 				if(d.push_token.nil? || d.push_token == '')
 					next	
 				end
 				n = PushHelper::push_message(d)
-				n.alert = "Ride Cancelled!"
+				n.alert = "Your ride share from #{fare.meeting_point_place_name} to #{fare.drop_off_point_place_name} was cancelled because all riders cancelled"
 				n.data = { type: :fare_cancelled_by_rider, fare_id: fare.id }
 				n.save!
 				Rails.logger.debug "sending cancel push"
 		end
 	end
 
-	def self.fare_cancelled_by_driver(fare)
+	def self.notify_fare_cancelled_by_driver(fare)
 		fare.rides.where.not( driving: true).each do |ride|
 			rider = ride.rider
 			rider.devices.each do |d|
@@ -270,7 +270,7 @@ class TicketManager
 					next	
 				end
 				n = PushHelper::push_message(d)
-				n.alert = "Ride Cancelled!"
+				n.alert = "Your ride from #{fare.meeting_point_place_name} to #{fare.drop_off_point_place_name} was cancelled by the driver"
 				n.data = { type: :fare_cancelled_by_driver, fare_id: fare.id }
 				n.save!
 				Rails.logger.debug "sending driver cancelled push"
