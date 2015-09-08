@@ -14,7 +14,7 @@ json.array! @rides do |ride|
     json.destination_longitude ride.destination.x
   end
   json.fixed_price ride.fixed_price
-  if ride.state == 'scheduled' && !ride.fare.nil? 
+  unless ride.fare.nil? || ride.aborted?
     json.state ride.fare.state
   else
     json.state ride.state
