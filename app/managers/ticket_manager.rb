@@ -61,9 +61,9 @@ class TicketManager
 
 
 	def self.cancel_ride ride
-			Rails.logger.info "RIDE_CANCELLED"
-			Rails.logger.debug ride.fare
-		if ride.fare != nil
+    Rails.logger.info "RIDE_CANCELLED"
+    Rails.logger.debug ride.fare
+    if ride.fare != nil
 			Rails.logger.info "RIDE_CANCELLED"
 			Rails.logger.info ride.fare.rides.scheduled.count
 			fare = ride.fare
@@ -72,12 +72,13 @@ class TicketManager
 				fare.driver_cancelled!
 				fare.finished = Time.now
 				fare.save
-				fare.rides.each do |ride|
+        rides = fare.rides.scheduled
+				rides.each do |ride|
 					unless ride.aborted?
 						ride.abort!
 					end
 				end
-				self.notify_fare_cancelled_by_driver fare
+				self.notify_fare_cancelled_by_driver rides.where('driving = false')
 
 			elsif( fare.rides.scheduled.count == 2 )
 				Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
@@ -85,7 +86,8 @@ class TicketManager
 				fare.rider_cancelled!
 				fare.finished = Time.now
 				fare.save
-				fare.rides.scheduled.each do |ride|
+        rides = fare.rides.scheduled
+				rides.each do |ride|
 					ride.abort!
 				end
 				self.notify_fare_cancelled_by_rider fare
@@ -262,8 +264,8 @@ class TicketManager
 		end
 	end
 
-	def self.notify_fare_cancelled_by_driver(fare)
-		fare.rides.where.not( driving: true).each do |ride|
+	def self.notify_fare_cancelled_by_driver rides
+		rides.each do |ride|
 			rider = ride.rider
 			rider.devices.each do |d|
 				if(d.push_token.nil? || d.push_token == '')
