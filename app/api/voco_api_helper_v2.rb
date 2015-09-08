@@ -80,6 +80,22 @@ module VocoApiHelperV2
     @rides
   end
 
+  def invalid_latitude_range latitude
+    if latitude >= 23 && latitude <= 50
+      false
+    else
+      true
+    end
+  end
+
+  def invalid_longitude_range longitude
+    if longitude >= -130 && longitude <= -60
+      false
+    else
+      true
+    end
+  end
+
 
 end
 
