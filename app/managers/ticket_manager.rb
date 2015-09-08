@@ -77,7 +77,7 @@ class TicketManager
 						ride.abort!
 					end
 				end
-				fare.notify_fare_cancelled_by_driver
+				self.notify_fare_cancelled_by_driver fare
 
 			elsif( fare.rides.scheduled.count == 2 )
 				Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
@@ -88,7 +88,7 @@ class TicketManager
 				fare.rides.scheduled.each do |ride|
 					ride.abort!
 				end
-				fare.notify_fare_cancelled_by_rider
+				self.notify_fare_cancelled_by_rider fare
 
 			else 
 				Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
@@ -248,5 +248,36 @@ class TicketManager
     trip.notified = true
     trip.save!
   end
+
+	def self.fare_cancelled_by_rider(fare)
+		fare.driver.devices.each do |d|
+				if(d.push_token.nil? || d.push_token == '')
+					next	
+				end
+				n = PushHelper::push_message(d)
+				n.alert = "Ride Cancelled!"
+				n.data = { type: :fare_cancelled_by_rider, fare_id: fare.id }
+				n.save!
+				Rails.logger.debug "sending cancel push"
+		end
+	end
+
+	def self.fare_cancelled_by_driver(fare)
+		fare.rides.where.not( driving: true).each do |ride|
+			rider = ride.rider
+			rider.devices.each do |d|
+				if(d.push_token.nil? || d.push_token == '')
+					next	
+				end
+				n = PushHelper::push_message(d)
+				n.alert = "Ride Cancelled!"
+				n.data = { type: :fare_cancelled_by_driver, fare_id: fare.id }
+				n.save!
+				Rails.logger.debug "sending driver cancelled push"
+			end
+		end
+	end
+
+
 
  end

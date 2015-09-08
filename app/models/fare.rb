@@ -162,14 +162,6 @@ class Fare < ActiveRecord::Base
 		notify_observers :scheduled
 	end
 
-	def notify_fare_cancelled_by_rider
-		notify_observers :fare_cancelled_by_rider
-	end
-
-	def notify_fare_cancelled_by_driver
-		notify_observers :fare_cancelled_by_driver
-	end
-
 
 	private
 	def ride_was_scheduled
