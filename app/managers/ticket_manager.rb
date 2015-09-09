@@ -284,8 +284,8 @@ class TicketManager
   def self.notify_driver_one_rider_cancelled ride
     driver = ride.fare.driver
     PushHelper.send_notification driver do |notification|
-      notification.alert = "#{ride.user.full_name} withdrew from tomorrows ride share.  The other riders are still making it though!"
-      notification.date = { type: :rider_withdrew_from_fare, fare_id: ride.fare.id }
+      notification.alert = "#{ride.rider.full_name} withdrew from tomorrows ride share.  The other riders are still making it though!"
+      notification.data = { type: :rider_withdrew_from_fare, fare_id: ride.fare.id }
     end
   end
 
