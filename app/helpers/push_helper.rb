@@ -25,11 +25,15 @@ module PushHelper
 	end
 
   def self.send_notification user
-    self.send_push_notification user, false
+    self.send_push_notification user, false do |notification|
+      yield notification
+    end
   end
 
   def self.send_silent_notification user
-    self.send_push_notification user, true
+    self.send_push_notification user, true do |notification|
+      yield notification
+    end
   end
 
   def self.send_push_notification user, silent
