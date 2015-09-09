@@ -8,9 +8,14 @@ class DebugAPI < Grape::API
 		post :purge do
 			Rails.logger.debug "HELLO"
 			authenticate!
-			rides = current_user.as_rider.rides
+			current_user.as_rider.rides.requested.each do |ride|
+        Rails.logger.debug 'hi'
+        TicketManager.cancel_ride ride
+      end
+      current_user.as_rider.rides.scheduled.each do |ride|
+        TicketManager.cancel_ride ride
+      end
 			Rails.logger.debug "rides"
-			rides.destroy_all
 			ok
 		end
 
