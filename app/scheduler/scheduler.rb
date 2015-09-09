@@ -278,10 +278,11 @@ module Scheduler
             raise response.route[:routeError]
           end
         end
-        Rails.logger.debug response
         Rails.logger.debug response.route
         Rails.logger.debug response.route[:distance]
         distance = response.route[:distance]
+        fare.distance = distance
+        fare.save
       rescue
         Rails.logger.debug 'retrying'
         unless (tries -= 1).zero?
@@ -291,35 +292,8 @@ module Scheduler
         end
       end
 
-      Rails.logger.debug fare.riders.count
-      case fare.riders.count
-      when 3
-        variable_rate = 32
-      when 2
-        variable_rate = 37
-      when 1
-        variable_rate = 42
-      end
-      Rails.logger.debug variable_rate
-      driver_earnings_per_ride = distance * variable_rate
-      Rails.logger.debug driver_earnings_per_ride
-      fare.fixed_earnings = driver_earnings_per_ride * fare.riders.count
-      fare.save
-
-      fare.rides.where('driving = false').each do |ride|
-        ride.fixed_price = driver_earnings_per_ride + 98
-        ride.save
-      end
-
+      TicketManager.calculate_costs fare
     end
-
-   # Trip.fulfilled_pending_notification.each do |trip|
-   #  TicketManager.calculate_fixed_price_for_commute trip
-   # end
-
-  #  Fare.scheduled.each do |fare|
-  #    TicketManager.calculated_fixed_earnings_for_fare fare
-  #  end
   end
 
 	def self.notify_commuters

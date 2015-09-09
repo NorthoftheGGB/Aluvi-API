@@ -97,6 +97,7 @@ class TicketManager
 				unless ride.aborted?
 					ride.abort!
 				end
+        self.calculate_costs ride.fare
         self.notify_driver_one_rider_cancelled ride
 			end
 
@@ -129,10 +130,9 @@ class TicketManager
 
       fare.riders.each do |rider|
         ride = rider.rides.where( :fare_id => fare.id ).first
-        PushHelper.send_notification rider do |notification|
+        PushHelper.send_silent_notification rider do |notification|
           # this just clears the current ticket at this point
           notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 0 }
-          notification.content_available = true # send siliently
         end
       end
 
@@ -211,22 +211,44 @@ class TicketManager
 		end
 	end
 
-  # Commuter
 
-  def self.calculate_fixed_price_for_commute trip
-    # TODO use GIS shapes to calculate fixed price
-    trip.rides.where.not(driving: true).each do |ride|
-      ride.fixed_price = 500
+  # Commuter
+  def self.calculate_costs fare
+    Rails.logger.debug fare.riders.count
+    case fare.riders.count
+    when 3
+      variable_rate = 32
+    when 2
+      variable_rate = 37
+    when 1
+      variable_rate = 42
+    end
+    Rails.logger.debug variable_rate
+    driver_earnings_per_ride = fare.distance * variable_rate
+    Rails.logger.debug driver_earnings_per_ride
+    fare.fixed_earnings = driver_earnings_per_ride * fare.riders.count
+    fare.save
+
+    fare.rides.scheduled.where('driving = false').each do |ride|
+      if ride.rider.free_rides > 0
+        ride.fixed_price = driver_earnings_per_ride + 98
+      else
+        ride.fixed_price = 0
+      end
       ride.save
     end
   end
 
-  def self.calculated_fixed_earnings_for_fare fare
-    fare.fixed_earnings = 0
-    fare.rides.where.not(driving: true).each do |ride|
-      fare.fixed_earnings += ride.fixed_price * 82.25 / 100.0
-      fare.save
+  def self.notify_commuters
+
+    Trip.fulfilled_pending_notification.each do |trip|
+      TicketManager.notify_fulfilled trip
     end
+
+    Trip.unfulfilled_pending_notification.each do |trip|
+      TicketManager.notify_unfulfilled trip
+    end
+
   end
 
   def self.notify_fulfilled trip

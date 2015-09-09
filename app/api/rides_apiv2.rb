@@ -38,7 +38,7 @@ class RidesAPIV2< Grape::API
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
 				conflict 'Commute request already exists for this day'
-      elsif !current_user.as_rider.funding_available_for_trip
+      elsif params[:driving] == false && !current_user.as_rider.funding_available_for_trip
         payment_method_required 
 			else
         Rails.logger.debug current_rider
@@ -54,9 +54,7 @@ class RidesAPIV2< Grape::API
 				)
 
         ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
 			end
 		end
 
@@ -66,9 +64,7 @@ class RidesAPIV2< Grape::API
 		get 'tickets', jbuilder: 'v2/tickets' do
 			authenticate!
 			ok
-			rider = Rider.find(current_user.id)
-			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-			@rides
+      tickets
 		end
 
 		desc "User cancelled a ride"
@@ -103,9 +99,7 @@ class RidesAPIV2< Grape::API
 				end
 			end
 			ok
-			rider = Rider.find(current_user.id)
-			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-			@rides
+      tickets
 
 		end
 
@@ -132,9 +126,7 @@ class RidesAPIV2< Grape::API
 					fare.pickup! rider
 				end
         ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
@@ -181,9 +173,7 @@ class RidesAPIV2< Grape::API
 				trip = Trip.find(params[:trip_id])
 				TicketManager.cancel_trip(trip)
 				ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
 			rescue
         Rails.logger.error $!
 				#Rails.logger.error $!.backtrace.join("\n")

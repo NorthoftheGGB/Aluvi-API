@@ -6,6 +6,7 @@ FactoryGirl.define do
     factory :scheduled_fare do
 			state "scheduled"
       fixed_earnings 10
+      distance 30
       after(:create) do |fare|
 				fare.rides << FactoryGirl.create(:commuter_driver_ride, state: 'scheduled', driving: true, trip: FactoryGirl.create(:fulfilled_trip) )
 				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled', fixed_price: 3, trip: FactoryGirl.create(:fulfilled_trip) )
@@ -15,6 +16,7 @@ FactoryGirl.define do
 		factory :scheduled_multirider_fare do
 			state "scheduled"
       fixed_earnings 10
+      distance 30
 			after(:create) do |fare|
 				fare.rides << FactoryGirl.create(:commuter_driver_ride, state: 'scheduled', driving: true, trip: FactoryGirl.create(:fulfilled_trip) )
 				fare.rides << FactoryGirl.create(:commuter_ride, state: 'scheduled', fixed_price:3, trip: FactoryGirl.create(:fulfilled_trip) )
