@@ -137,7 +137,7 @@ class TicketManager
       end
 
       fare.arrived!
-      fare.rides.each do |r|
+      fare.rides.scheduled.each do |r|
         trip = r.trip
         unless trip.nil?
           trip.complete_if_no_longer_active
