@@ -40,11 +40,11 @@ module Scheduler
 		driving_rides.each do |r|
       Rails.logger.info "Creating Fare with Driver"
       fare = Fare.new
+			fare.pickup_time = r.pickup_time
 			fare.save
 			r.fare = fare	
 			r.save
-      Rails.logger.info "Scheduling Fare"
-			r.scheduled!
+			r.pending_passengers!
     end
 
 
@@ -69,19 +69,11 @@ module Scheduler
     forward_ride_assignment_iteration(driving_rides)
 
 
-		driving_rides.each do |driving_ride|
-			f = driving_ride.fare
-			f.pickup_time = driving_ride.pickup_time
-			f.save
-      f.schedule!
-		end
-
 		ride_scheduling_failures = CommuterRide.requested.where( direction: 'a' )
 		ride_scheduling_failures.each do |r|
-			r.commute_scheduler_failed!
-			unless r.return_ride.nil?
-				r.return_ride.commute_scheduler_failed!
-      end
+			r.trip.rides.each do |r|
+				r.commute_scheduler_failed!
+			end
       r.trip.unfulfilled!
     end
 
@@ -132,13 +124,11 @@ module Scheduler
 			  return_ride = r.return_ride
         Rails.logger.info "Creating Fare"
 		  	fare = Fare.new
+				fare.pickup_time = r.pickup_time
 		  	fare.save
-        Rails.logger.info "Saved Fare"
-        Rails.logger.info "Scheduling Ride"
         return_ride.fare = fare
         return_ride.save
-        return_ride.scheduled!
-        Rails.logger.info "Scheduled Ride"
+        return_ride.pending_passengers
 
 			  return_driving_rides << return_ride
       rescue
@@ -149,7 +139,7 @@ module Scheduler
 
 		# 2nd pass
 		# - attempt to assign to drivers from return rides of pending_return rides
-    Rails.logger.info "Seconrd Pass - Riders"
+    Rails.logger.info "Second Pass - Riders"
 		return_driving_rides.each do |r|
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
 			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )
@@ -166,17 +156,12 @@ module Scheduler
       assign_return_ride.scheduled!
       assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
-      if !r.trip.fulfilled?
-        r.trip.fulfilled!
-      end
 
-      if r.fare.drop_off_point.nil?
-        r.fare.meeting_point = r.origin
-        r.fare.meeting_point_place_name = r.origin_place_name
-        r.fare.drop_off_point = assign_return_ride.destination
-        r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
-        r.fare.save
-      end
+			r.fare.meeting_point = r.origin
+			r.fare.meeting_point_place_name = r.origin_place_name
+			r.fare.drop_off_point = assign_return_ride.destination
+			r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
+			r.fare.save
     end
 
 
@@ -226,23 +211,28 @@ module Scheduler
       end
     end
 
-		# - average the origins and create a meeting point
-		return_driving_rides.each do |driving_ride|
-			f = driving_ride.fare
-			f.pickup_time = driving_ride.pickup_time
-			f.save
-			f.schedule!
+		# schedule fares or mark driving rides based on successly plan
+		# this is for both forward and return rides
+		# driver trips can be fulfilled by passangers on either direction or both
+		Ride.pending_passengers.each do |driving_ride|
+			if driving_ride.fare.riders.count > 0 || driving_ride.return_ride.fare.riders.count > 0
+				driving_ride.fare.schedule!
+				driving_ride.scheduled!
+				unless driving_ride.trip.fulfilled?
+					driving_ride.trip.fulfilled
+				end
+			else
+				driving_ride.commute_scheduler_failed
+			end
 		end
-
 
 		# mark failures
 		ride_scheduling_failures = CommuterRide.pending_return
 		ride_scheduling_failures.each do |r|
-			r.commute_scheduler_failed!
-			unless r.return_ride.nil?
-				r.return_ride.commute_scheduler_failed!
-        r.trip.unfulfilled!
+			r.trip.rides do |ride|
+				ride.commute_scheduler_failed!
 			end
+			r.trip.unfulfilled!
     end
 
     # TODO: Check this logic, and ALSO for drivers the trip is fulfilled if there is a single rider EITHER WAY
@@ -253,7 +243,7 @@ module Scheduler
       if !r.trip.unfulfilled?
         r.trip.unfulfilled!
 				r.trip.rides.each do |r| 
-					r.commute_scheduler_failed! # make sure all lets of this trip for the driver are marked as failed
+					r.commute_scheduler_failed! # make sure all legs of this trip for the driver are marked as failed
 				end
       end
     end
@@ -264,8 +254,10 @@ module Scheduler
 
     mapquest = MapQuest.new 'BZWnaZwEAPHiKE3bTU6DFNEqcOM9H3nP'
      
-    Fare.scheduled.each do |fare|
+    Fare.where("state = 'scheduled'").each do |fare|
       
+			Rails.logger.debug 'fare'
+			Rails.logger.debug fare
       begin
         tries ||=3
         response = mapquest.directions.route( "#{fare.meeting_point.y},#{fare.meeting_point.x}", "#{fare.drop_off_point.y},#{fare.drop_off_point.x}")
@@ -283,6 +275,7 @@ module Scheduler
         distance = response.route[:distance]
         fare.distance = distance
         fare.save
+				TicketManager.calculate_costs fare
       rescue
         Rails.logger.debug 'retrying'
         unless (tries -= 1).zero?
@@ -292,7 +285,6 @@ module Scheduler
         end
       end
 
-      TicketManager.calculate_costs fare
     end
   end
 

@@ -5,7 +5,7 @@ class Fare < ActiveRecord::Base
 	has_many :payments
 
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name,
-                  :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point, :fixed_earnings,
+                  :pickup_time, :started, :state, :max_distance_to_meeting_point, :fixed_earnings,
                   :distance
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
@@ -166,7 +166,7 @@ class Fare < ActiveRecord::Base
 
 	private
 	def ride_was_scheduled
-    self.scheduled = Time.now
+    #self.scheduled = Time.now
     save
 	end
 
