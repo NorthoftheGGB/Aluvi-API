@@ -86,6 +86,7 @@ describe Scheduler do
       expect(trip2.state).to eq('fulfilled')
       expect(trip1.ride_with_direction('a').fare).to eq(trip2.ride_with_direction('a').fare)
       expect(trip1.ride_with_direction('b').fare).to eq(trip2.ride_with_direction('b').fare)
+      expect(trip2.ride_with_direction('a').fare.pickup_time).to eq(home_pickup)
     end
   end
   context 'for one driver and two riders' do

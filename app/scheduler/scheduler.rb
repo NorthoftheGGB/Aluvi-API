@@ -76,9 +76,6 @@ module Scheduler
       if rides[0].nil?
         next
       end
-      Rails.logger.debug r.pickup_time
-      Rails.logger.debug  rides[0].pickup_time
-      Rails.logger.debug rides.size
 
       assign_ride = rides[0]
       assign_ride.fare = r.fare
@@ -109,7 +106,7 @@ module Scheduler
 			  return_ride = r.return_ride
         Rails.logger.info "Creating Fare"
 		  	fare = Fare.new
-				fare.pickup_time = r.pickup_time
+				fare.pickup_time = return_ride.pickup_time 
 		  	fare.save
         return_ride.fare = fare
         return_ride.save
@@ -209,6 +206,9 @@ module Scheduler
 				end
 			else
 				driving_ride.commute_scheduler_failed!
+				unless driving_ride.trip.unfulfilled?
+					driving_ride.trip.unfulfilled!
+				end
 			end
 		end
 
