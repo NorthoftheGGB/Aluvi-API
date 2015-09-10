@@ -11,21 +11,6 @@ module Scheduler
 
 	def self.build_forward_fares
 
-    Rails.logger.info "Clean bad data"
-    # clean bad data
-    driving_rides = CommuterRide.where( {driving: true, state: 'requested'} )
-    driving_rides.each do |r|
-      begin
-        driver = r.rider.as_driver
-      rescue ActiveRecord::RecordNotFound
-        Rails.logger.error $!
-        Rails.logger.error "Rider is not a driver, modifying ride to not driving"
-        r.driving = false
-        r.save
-        next
-      end
-    end
-
     tomorrow = DateTime.tomorrow.in_time_zone("Pacific Time (US & Canada)")
     Rails.logger.info tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours
     tomorrow_morning_start = tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours
@@ -119,7 +104,7 @@ module Scheduler
 		# - all drivers get assigned to a fare
 		return_driving_rides = Array.new
     Rails.logger.info "First Pass - Drivers"
-		CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
+		CommuterRide.pending_passengers.each do |r|
       begin
 			  return_ride = r.return_ride
         Rails.logger.info "Creating Fare"
@@ -129,6 +114,7 @@ module Scheduler
         return_ride.fare = fare
         return_ride.save
         return_ride.pending_passengers
+        return_ride.save
 
 			  return_driving_rides << return_ride
       rescue
@@ -214,15 +200,15 @@ module Scheduler
 		# schedule fares or mark driving rides based on successly plan
 		# this is for both forward and return rides
 		# driver trips can be fulfilled by passangers on either direction or both
-		Ride.pending_passengers.each do |driving_ride|
-			if driving_ride.fare.riders.count > 0 || driving_ride.return_ride.fare.riders.count > 0
+		CommuterRide.pending_passengers.each do |driving_ride|
+			if driving_ride.fare.riders.count > 0  || driving_ride.return_ride.fare.riders.count > 0
 				driving_ride.fare.schedule!
-				driving_ride.scheduled!
+				driving_ride.passengers_filled!
 				unless driving_ride.trip.fulfilled?
-					driving_ride.trip.fulfilled
+					driving_ride.trip.fulfilled!
 				end
 			else
-				driving_ride.commute_scheduler_failed
+				driving_ride.commute_scheduler_failed!
 			end
 		end
 
@@ -233,19 +219,6 @@ module Scheduler
 				ride.commute_scheduler_failed!
 			end
 			r.trip.unfulfilled!
-    end
-
-    # TODO: Check this logic, and ALSO for drivers the trip is fulfilled if there is a single rider EITHER WAY
-    # so they can switch to fulfilled in the forward fares calculation as well
-    # this will beak the current logic used to find b side rides
-    # driving rides that still have a trip in the requested state are not fulfilled
-    CommuterRide.scheduled.where( driving: true).joins("JOIN trips ON trips.id = rides.trip_id").where("trips.state" => 'requested').each do |r|
-      if !r.trip.unfulfilled?
-        r.trip.unfulfilled!
-				r.trip.rides.each do |r| 
-					r.commute_scheduler_failed! # make sure all legs of this trip for the driver are marked as failed
-				end
-      end
     end
 
   end
@@ -267,7 +240,7 @@ module Scheduler
         unless response.route[:routeError].nil?
           errorCode = response.route[:routeError][:errorCode]
           if errorCode > 0
-            raise response.route[:routeError]
+            raise response.route[:routeError].to_s
           end
         end
         Rails.logger.debug response.route
