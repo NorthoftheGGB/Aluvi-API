@@ -160,7 +160,7 @@ class TicketManager
     trip.rides.each do |ride|
       unless ride.fare.nil?
         if ride.fare.completed?
-          if trip.rides[0].driving
+          if ride.driving
             amount = amount + ride.fare.fixed_earnings
             type = 'earning'
           else
@@ -173,7 +173,7 @@ class TicketManager
 
     # check for free ride for rider
     rider = user.as_rider
-    if trip.rides[0].driving
+    if !trip.rides[0].driving
       if rider.free_rides > 0
         rider.free_rides = rider.free_rides - 1 
         rider.save
@@ -231,9 +231,9 @@ class TicketManager
 
     fare.rides.scheduled.where('driving = false').each do |ride|
       if ride.rider.free_rides > 0
-        ride.fixed_price = driver_earnings_per_ride + 98
-      else
         ride.fixed_price = 0
+      else
+        ride.fixed_price = driver_earnings_per_ride + 98
       end
       ride.save
     end
