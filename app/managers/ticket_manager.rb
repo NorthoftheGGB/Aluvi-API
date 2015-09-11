@@ -156,7 +156,7 @@ class TicketManager
     Rails.logger.debug "assign payment"
 
     amount = 0
-    type = 'not specified'
+    type = nil
     trip.rides.each do |ride|
       unless ride.fare.nil?
         if ride.fare.completed?
@@ -170,6 +170,10 @@ class TicketManager
         end
       end
     end
+    if type.nil?
+      return
+    end
+
 
     # check for free ride for rider
     rider = user.as_rider

@@ -15,15 +15,15 @@ json.recipient_card_brand @user.recipient_card_brand
 json.recipient_card_last_four @user.recipient_card_last4
 json.image_small @user.image.url(:small)
 json.image_large @user.image.url
-unless @user.as_driver.nil? ||  @user.as_driver.cars[0].nil?
+unless @user.as_driver.nil? ||  @user.as_driver.car.nil?
 	json.car do 
-		json.id @user.as_driver.cars[0].id
-		json.license_plate @user.as_driver.cars[0].license_plate
-		json.make @user.as_driver.cars[0].make
-		json.model @user.as_driver.cars[0].model
-		json.year @user.as_driver.cars[0].year
-		json.state @user.as_driver.cars[0].state
-		json.color @user.as_driver.cars[0].color
-		json.car_photo @user.as_driver.cars[0].car_photo.url( :thumb )
+		json.id @user.as_driver.car.id
+		json.license_plate @user.as_driver.car.license_plate
+		json.make @user.as_driver.car.make
+		json.model @user.as_driver.car.model
+		json.year @user.as_driver.car.year
+		json.state @user.as_driver.car.state
+		json.color @user.as_driver.car.color
+		json.car_photo @user.as_driver.car.car_photo.url( :thumb )
 	end
 end

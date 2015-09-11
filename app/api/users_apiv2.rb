@@ -29,15 +29,6 @@ class UsersAPIV2 < Grape::API
       begin
         user = UserManager.create_user(params)
 
-        if params[:driver]
-          driver = Driver.unscoped.find(user.id)
-          driver.interested
-          driver.approve
-          driver.register
-          driver.activate
-          driver.save
-        end
-
         ok
         token = user.generate_token!
         response = Hash.new
@@ -164,31 +155,6 @@ class UsersAPIV2 < Grape::API
       response
     end
 
-    desc "TEST"
-    params do
-      requires :image, type: Rack::Multipart::UploadedFile
-    end
-    post "test" do
-
-      Rails.logger.debug params
-      rider = Rider.new
-      image = params[:image]
-
-      attachment = {
-        :filename => image[:filename],
-        :type => image[:type],
-        :headers => image[:head],
-        :tempfile => image[:tempfile]
-      }
-
-      Rails.logger.debug attachment
-      rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
-      Rails.logger.debug rider.image
-      rider.save
-
-
-    end
-
     desc "Update profile"
     params do
       optional :first_name, type: String
@@ -280,6 +246,32 @@ class UsersAPIV2 < Grape::API
       ok
       @user = current_rider
     end
+
+
+		desc "Update Car"
+		params do 
+			requires :make, type: String
+			requires :model, type: String
+			requires :color, type: String
+			requires :license_plate, type: String
+		end
+		post "car", jbuilder: "v2/profile" do
+			authenticate!
+			driver = current_user.as_driver
+			if driver.car.nil?
+				driver.car = Car.new
+			end
+			driver.car.make = params[:make]
+			driver.car.model = params[:model]
+			driver.car.color = params[:color]
+			driver.car.license_plate = params[:license_plate]
+			driver.car.save
+      driver.state = 'active'
+			driver.save
+			ok
+      current_rider.reload
+      @user = current_rider
+		end
 
 
     desc "Fill Commuter Pass"

@@ -48,7 +48,6 @@ class DriversController < ApplicationController
   # GET /drivers/1/edit
   def edit
     @driver = Driver.find(params[:id])
-    @driver.cars.build
   end
 
   # POST /drivers
@@ -91,9 +90,6 @@ class DriversController < ApplicationController
 			@driver.stripe_recipient_id = recipient.id
 			@driver.save
 		end
-
-    @car = @driver.cars.new(params[:cars])
-    @car.save
 
     respond_to do |format|
       if @driver.update_attributes(params[:driver])
