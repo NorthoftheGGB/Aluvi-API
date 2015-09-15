@@ -168,6 +168,7 @@ class UsersAPIV2 < Grape::API
     end
     post "profile", jbuilder: "v2/profile" do
       authenticate!
+			Rails.logger.debug params[:default_card_token]
       unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 
@@ -177,10 +178,12 @@ class UsersAPIV2 < Grape::API
           card.delete()
         end
 
+				Rails.logger.debug 'contact stripe'
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         default_card = customer.sources.create({:source => params[:default_card_token]})
         customer.save
 
+				Rails.logger.debug 'retrieving customer'
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         default_card = customer.sources.retrieve(customer.default_source)
 
@@ -197,6 +200,7 @@ class UsersAPIV2 < Grape::API
         card.exp_month = default_card.exp_month
         card.exp_year = default_card.exp_year
         card.save
+				Rails.logger.debug 'card updated'
 
       end
 

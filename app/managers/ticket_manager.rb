@@ -96,9 +96,9 @@ class TicketManager
 				Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
 				unless ride.aborted?
 					ride.abort!
+					self.calculate_costs ride.fare
+					self.notify_driver_one_rider_cancelled ride
 				end
-        self.calculate_costs ride.fare
-        self.notify_driver_one_rider_cancelled ride
 			end
 
       ride.fare.rides.each do |r|
