@@ -12,12 +12,7 @@ module Scheduler
 	def self.build_forward_fares
 
     tomorrow = DateTime.tomorrow.in_time_zone("Pacific Time (US & Canada)")
-    Rails.logger.info tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours
-    tomorrow_morning_start = tomorrow + Rails.configuration.commute_scheduler[:morning_start_hour].hours
-		tomorrow_morning_stop = tomorrow + Rails.configuration.commute_scheduler[:morning_stop_hour].hours
 		driving_rides = CommuterRide.where( {driving: true, state: 'requested'} )
-		driving_rides = driving_rides.where(  direction: 'a' )
-		driving_rides = driving_rides.where('pickup_time >= ? AND pickup_time <= ? ', tomorrow_morning_start.to_s, tomorrow_morning_stop.to_s )
 
     Rails.logger.info "First Pass - drivers"
     Rails.logger.info driving_rides.count
