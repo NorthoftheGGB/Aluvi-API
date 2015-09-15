@@ -221,11 +221,11 @@ class TicketManager
     Rails.logger.debug fare.riders.count
     case fare.riders.count
     when 3
-      variable_rate = 32
+      variable_rate = 27 
     when 2
-      variable_rate = 37
+      variable_rate = 33
     when 1
-      variable_rate = 42
+      variable_rate = 37
     end
     Rails.logger.debug variable_rate
     driver_earnings_per_ride = fare.distance * variable_rate
