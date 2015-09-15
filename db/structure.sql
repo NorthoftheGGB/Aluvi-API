@@ -801,7 +801,8 @@ CREATE TABLE users (
     image_updated_at timestamp without time zone,
     work_email character varying,
     free_rides integer DEFAULT 0,
-    payout_requested boolean DEFAULT false
+    payout_requested boolean DEFAULT false,
+    payment_mode integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1423,4 +1424,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150909020053');
 INSERT INTO schema_migrations (version) VALUES ('20150909032506');
 
 INSERT INTO schema_migrations (version) VALUES ('20150910145523');
+
+INSERT INTO schema_migrations (version) VALUES ('20150915221101');
 

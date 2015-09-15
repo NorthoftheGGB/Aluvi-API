@@ -168,7 +168,9 @@ class UsersAPIV2 < Grape::API
     end
     post "profile", jbuilder: "v2/profile" do
       authenticate!
+      Rails.logger.debug 'ok'
 			Rails.logger.debug params[:default_card_token]
+      Rails.logger.debug 'ko'
       unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 
