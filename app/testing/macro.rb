@@ -20,10 +20,22 @@ module Macro
 		Scheduler.build_commuter_trips
 	end
 
+  def self.test_free_rides
+		Harness.cancel_trips "a@a.com"
+		Harness.driver_request "a@a.com"
+		user = self.create_user "#{DateTime.now.to_time.to_f.to_s}@a.com"
+		Harness.rider_request user.email
+		user = self.create_user "#{DateTime.now.to_time.to_f.to_s}@a.com"
+		Harness.rider_request user.email
+		user = self.create_user "#{DateTime.now.to_time.to_f.to_s}@a.com"
+		Harness.rider_request user.email
+		Scheduler.build_commuter_trips
+  end
+
 	def self.create_user email
 		user = User.where(email: email).first
 		unless user.nil?
-			return
+			return user
 		end
 
 		user = UserManager.create_user({first_name: "Mr", last_name:"jones", email:email, password:"jones", phone:"3132344322"})
