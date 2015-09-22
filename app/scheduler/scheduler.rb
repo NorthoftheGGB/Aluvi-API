@@ -106,7 +106,7 @@ module Scheduler
 		CommuterRide.pending_passengers.each do |r|
       begin
 			  return_ride = r.return_ride
-        Rails.logger.info "Creating Fare"
+        Rails.logger.info "Creating Fare for #{return_ride.id.to_s}"
 		  	fare = Fare.new
 				fare.pickup_time = return_ride.pickup_time 
 		  	fare.save
@@ -152,12 +152,21 @@ module Scheduler
 
 		# 3rd pass
 		# - attempt to assign to drivers from return rides of pending_return rides
+    Rails.logger.info "Third Pass - Riders"
 		return_driving_rides.each do |r|
+
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
 			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), rides.origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.fare.drop_off_point.x.to_s + ' ' + r.fare.drop_off_point.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point] )
-			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination)")
+
+			unless r.fare.drop_off_point.nil?
+				rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.fare.drop_off_point.x.to_s + ' ' + r.fare.drop_off_point.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point] )
+				rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.fare.drop_off_point.x.to_s + ' ' + r.fare.drop_off_point.y.to_s + ") '), rides.destination)")
+			else
+				rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
+				rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination)")
+			end
+
 			rides.limit(1)
 			if rides[0].nil?
 				next
@@ -168,6 +177,16 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
+
+			if r.fare.drop_off_point.nil?
+				r.fare.meeting_point = r.origin
+				r.fare.meeting_point_place_name = r.origin_place_name
+				r.fare.drop_off_point = assign_return_ride.destination
+				r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
+				r.fare.save
+			end
+
+
       if !r.trip.fulfilled?
         r.trip.fulfilled!
       end
@@ -179,8 +198,15 @@ module Scheduler
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
 			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), rides.origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
-			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.fare.drop_off_point.x.to_s + ' ' + r.fare.drop_off_point.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point] )
-			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination)")
+
+			unless r.fare.drop_off_point.nil?
+				rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.fare.drop_off_point.x.to_s + ' ' + r.fare.drop_off_point.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_first_meeting_point] )
+				rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.fare.drop_off_point.x.to_s + ' ' + r.fare.drop_off_point.y.to_s + ") '), rides.destination)")
+			else
+				rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
+				rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination)")
+			end
+
 			rides.limit(1)
 			if rides[0].nil?
 				next
@@ -191,16 +217,36 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
+
+			if r.fare.drop_off_point.nil?
+				r.fare.meeting_point = r.origin
+				r.fare.meeting_point_place_name = r.origin_place_name
+				r.fare.drop_off_point = assign_return_ride.destination
+				r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
+				r.fare.save
+			end
+
+
       if !r.trip.fulfilled?
         r.trip.fulfilled!
       end
     end
 
-		# schedule fares or mark driving rides based on successly plan
+		# schedule fares or mark driving rides based on success plan
 		# this is for both forward and return rides
 		# driver trips can be fulfilled by passangers on either direction or both
+		Rails.logger.debug CommuterRide.pending_passengers.count
+		# we are getting each one twice
 		CommuterRide.pending_passengers.each do |driving_ride|
-			if driving_ride.fare.riders.count > 0  || driving_ride.return_ride.fare.riders.count > 0
+			other_direction_ride = driving_ride.other_direction
+			Rails.logger.debug driving_ride.fare.riders.count
+			Rails.logger.debug other_direction_ride.id
+			unless other_direction_ride.fare.nil?
+				Rails.logger.debug other_direction_ride.fare.riders.count
+			end
+
+			# return_ride here should actually just be OTHER DIRECTION
+			if (!driving_ride.fare.nil? && driving_ride.fare.riders.count > 0)  || (!other_direction_ride.fare.nil? && other_direction_ride.fare.riders.count > 0)
 				driving_ride.fare.schedule!
 				driving_ride.passengers_filled!
 				unless driving_ride.trip.fulfilled?

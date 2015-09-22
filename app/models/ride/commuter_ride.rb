@@ -32,4 +32,8 @@ class CommuterRide < Ride
 		CommuterRide.where({ trip_id: self.trip_id, direction: 'a' }).first
 	end
 
+	def other_direction
+		CommuterRide.where({ trip_id: self.trip_id}).where('id != ?', self.id).first
+	end
+
 end
