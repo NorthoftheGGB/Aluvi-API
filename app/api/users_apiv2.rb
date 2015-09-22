@@ -61,7 +61,7 @@ class UsersAPIV2 < Grape::API
         g = GmailSender.new(Rails.configuration.aluvi[:support_email], Rails.configuration.aluvi[:support_email_password])
         g.send(:to => user.email,
                :subject => "Password Reset",
-               :content => "Here is a new password for Aluvi: " + user.password)
+               :content => "Here is a new password for Aluvi: " + new_password)
         ok
       else
         error! 'User not found', 404, 'X-Error-Detail' => 'User not found'
