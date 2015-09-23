@@ -70,15 +70,19 @@ Voco::Application.configure do
 	
 	config.paperclip_defaults = {
 		:s3_credentials => {
-			:bucket => ENV['S3_BUCKET'] #'alpha'
+			:bucket => 'aluvi-alpha',
+			:access_key_id => 'AKIAIZ6VCH3PVEUGHYVA',
+			:secret_access_key => '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'
 		}
 	}
 
-	# production is the current 'staging' which is actually 'testing' for the mobile app
-	# config.mobile_app_identifier = 'com.vocotransportation.alpha'
-	config.mobile_app_identifier = ENV['MOBILE_APP_IDENTIFIER']
-	
 	config.assets.cache_store = :dalli_store
 
-	config.voco_demo_commuter_assembly_trigger_threshold = 2
+  config.stripe = {
+    :publishable_key => 'pk_live_4Ub7D8qgqi87KpWFkMRtEkzJ',
+    :secret_key => 'sk_live_4Ub7Ccpg3MbWHOMavmfs1wOU'
+  }
+
+  config.raven_dsn = 'https://a4a4e7c3ff8249cc9370b394922650dc:2a731114b7d541d1b51735a80eefcfaa@app.getsentry.com/53137'
+
 end

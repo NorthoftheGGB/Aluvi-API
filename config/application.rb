@@ -56,9 +56,6 @@ module Voco
 		# Opt into new tranactional callback error raise behavior
 		config.active_record.raise_in_transactional_callbacks = true
 
-		# Activate observers that should always be running
-		config.active_record.observers = [:ride_observer, :fare_observer, :driver_observer]
-
 		config.autoload_paths += Dir[Rails.root.join('app', 'views', 'api', '**/')]
 		config.autoload_paths += Dir[Rails.root.join('app', 'models', '**/')]
 		config.autoload_paths += Dir[Rails.root.join('app', 'api', '**/')]

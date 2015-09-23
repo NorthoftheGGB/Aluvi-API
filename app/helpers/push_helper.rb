@@ -16,7 +16,7 @@ module PushHelper
 	def self.silent_push_message(device)
 		n = self.push_message(device)
 		if device.platform == 'gcm'
-			# ??
+      n.alert = ""
 		else
 			n.alert = ""
 			n.content_available = true
@@ -25,11 +25,27 @@ module PushHelper
 	end
 
   def self.send_notification user
+    self.send_push_notification user, false do |notification|
+      yield notification
+    end
+  end
+
+  def self.send_silent_notification user
+    self.send_push_notification user, true do |notification|
+      yield notification
+    end
+  end
+
+  def self.send_push_notification user, silent
     user.devices.each do |d|
       if(d.push_token.nil? || d.push_token == '')
         next
       end
-      notification = PushHelper::push_message(d)
+      if silent
+        notification = PushHelper::silent_push_message(d)
+      else
+        notification = PushHelper::push_message(d)
+      end
       yield notification
 			if notification.app.nil?
 				Rails.logger.error "App identifier for push is not supported on this server"

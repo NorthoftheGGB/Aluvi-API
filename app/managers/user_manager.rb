@@ -30,6 +30,8 @@ module UserManager
 				raise "Stripe customer not created"
 			end
 			user.stripe_customer_id = customer.id
+
+      user.free_rides = 1
 			user.save
 			user
 		end

@@ -6,7 +6,7 @@ class Ride < ActiveRecord::Base
   attr_accessible :rider_id, :destination, :destination_place_name, :origin, :origin_place_name, :requested_datetime,
                   :state, :request_type, :pickup_time, :trip_id, :direction, :driving, :fixed_price
 
-	scope :active, -> { joins(:fare).where('rides.state = ? OR fares.state = ? OR fares.state = ?', :requested, :scheduled, :started) }
+	scope :active, -> { joins("LEFT JOIN fares ON rides.fare_id = fares.id").where('rides.state = ? OR fares.state = ? OR fares.state = ?', :requested, :scheduled, :started) }
 
 	include AASM
 	aasm.attribute_name :state
@@ -14,6 +14,7 @@ class Ride < ActiveRecord::Base
 	aasm do
 		state :requested, :initial => true
 		state :pending_return
+		state :pending_passengers
 		state :scheduled
 		state :cancelled
 		state :failed
@@ -36,6 +37,14 @@ class Ride < ActiveRecord::Base
 			transitions :from => :requested, :to => :pending_return
 		end
 
+		event :pending_passengers do
+			transitions :from => :requested, :to => :pending_passengers
+		end
+
+		event :passengers_filled do
+			transitions :from => :pending_passengers, :to => :scheduled
+		end
+
 		event :return_filled do
 			transitions :from => :pending_return, :to => :scheduled
 		end
@@ -51,7 +60,7 @@ class Ride < ActiveRecord::Base
 		event :commute_scheduler_failed, :after => :clear_fare do
 			transitions :from => :requested, :to => :commute_scheduler_failed
 			transitions :from => :pending_return, :to => :commute_scheduler_failed
-      transitions :from => :scheduled, :to => :commute_scheduler_failed
+			transitions :from => :pending_passengers, :to => :commute_scheduler_failed
 		end
 	end
 

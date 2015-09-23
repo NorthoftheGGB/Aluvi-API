@@ -4,10 +4,9 @@ class Fare < ActiveRecord::Base
 	has_many :rides, inverse_of: :fare
 	has_many :payments
 
-	has_many :riders, through: :rides
-
   attr_accessible :drop_off_point, :drop_off_point_place_name, :finished, :meeting_point, :meeting_point_place_name,
-                  :pickup_time, :scheduled, :started, :state, :max_distance_to_meeting_point, :fixed_earnings
+                  :pickup_time, :started, :state, :max_distance_to_meeting_point, :fixed_earnings,
+                  :distance
 
 	scope :active, -> { where( :state => [ :scheduled, :started ] ) }
 
@@ -88,6 +87,14 @@ class Fare < ActiveRecord::Base
 		end
 	end
 
+	def riders
+		array = Array.new
+		self.rides.scheduled.where(driving:false).each do |ride|
+			array << ride.rider
+		end
+		array
+	end
+
 	def ride_for_user user
 		ride = user.as_rider.rides.where(fare_id: self.id).first
 	end
@@ -156,18 +163,10 @@ class Fare < ActiveRecord::Base
 		notify_observers :scheduled
 	end
 
-	def notify_fare_cancelled_by_rider
-		notify_observers :fare_cancelled_by_rider
-	end
-
-	def notify_fare_cancelled_by_driver
-		notify_observers :fare_cancelled_by_driver
-	end
-
 
 	private
 	def ride_was_scheduled
-    self.scheduled = Time.now
+    #self.scheduled = Time.now
     save
 	end
 

@@ -2,6 +2,7 @@ class TicketManager
 
   # Commuter
 	def self.request_commute( departure_point, departure_place_name, departure_time, destination_point, destination_place_name, return_time, driving, rider )
+      self.rider_not_nil rider
 			trip = Trip.new
       aside = TicketManager.request_commute_leg(departure_point, departure_place_name, destination_point, destination_place_name, departure_time, driving, rider, trip.id )
 			aside.direction = 'a'
@@ -17,6 +18,7 @@ class TicketManager
 	end
 
 	def self.request_ride( departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider )
+    self.rider_not_nil rider
 		trip = Trip.new
 		aside = TicketManager.request_commute_leg(departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider, trip.id )
 		aside.direction = 'a'
@@ -27,6 +29,7 @@ class TicketManager
 	end
 
   def self.request_commute_leg( departure_point, departure_place_name, destination_point, destination_place_name, pickup_time, driving, rider, trip_id)
+    self.rider_not_nil rider
     ride = CommuterRide.create(
         departure_point,
         departure_place_name,
@@ -41,18 +44,26 @@ class TicketManager
 
 	end
 
+  def self.rider_not_nil rider
+      if rider.nil?
+        raise "Rider is Nil"
+      end
+  end
+
 	def self.driver_cancelled_fare fare
-		ride = fare.driver.as_rider.rides.where(fare_id: fare.id).first
-		unless ride.nil?
-			self.cancel_ride ride
-		end
+    ActiveRecord::Base.transaction do
+      ride = fare.driver.as_rider.rides.where(fare_id: fare.id).first
+      unless ride.nil?
+        self.cancel_ride ride
+      end
+    end
 	end
 
 
 	def self.cancel_ride ride
-			Rails.logger.info "RIDE_CANCELLED"
-			Rails.logger.debug ride.fare
-		if ride.fare != nil
+    Rails.logger.info "RIDE_CANCELLED"
+    Rails.logger.debug ride.fare
+    if ride.fare != nil
 			Rails.logger.info "RIDE_CANCELLED"
 			Rails.logger.info ride.fare.rides.scheduled.count
 			fare = ride.fare
@@ -61,12 +72,13 @@ class TicketManager
 				fare.driver_cancelled!
 				fare.finished = Time.now
 				fare.save
-				fare.rides.each do |ride|
+        rides = fare.rides.scheduled
+				rides.each do |ride|
 					unless ride.aborted?
 						ride.abort!
 					end
+          self.notify_fare_cancelled_by_driver ride
 				end
-				fare.notify_fare_cancelled_by_driver
 
 			elsif( fare.rides.scheduled.count == 2 )
 				Rails.logger.info "RIDE_CANCELLED: last rider cancelled"
@@ -74,27 +86,38 @@ class TicketManager
 				fare.rider_cancelled!
 				fare.finished = Time.now
 				fare.save
-				fare.rides.scheduled.each do |ride|
+        rides = fare.rides.scheduled
+				rides.each do |ride|
 					ride.abort!
 				end
-				fare.notify_fare_cancelled_by_rider
+				self.notify_fare_cancelled_by_rider fare
 
 			else 
 				Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
 				unless ride.aborted?
 					ride.abort!
+					self.calculate_costs ride.fare
+					self.notify_driver_one_rider_cancelled ride
 				end
 			end
 
       ride.fare.rides.each do |r|
         unless r.trip.nil?
           r.trip.abort_if_no_longer_active
+
+          if r.trip.aborted?
+            self.assign_payment_for_trip r.rider, r.trip
+          end
         end
       end
 		else
 			ride.cancel!
       unless ride.trip.nil?
         ride.trip.abort_if_no_longer_active
+
+        if ride.trip.aborted?
+          self.assign_payment_for_trip ride.rider, ride.trip
+        end
       end
 		end
 	end
@@ -103,105 +126,80 @@ class TicketManager
 
 
   def self.fare_completed(fare)
+    ActiveRecord::Base.transaction do
 
-    # process the payment
-    # TODO Refactor into delayed job
-    fare.riders.where.not(id: fare.driver.id).each do |rider|
-      begin
+      fare.riders.each do |rider|
         ride = rider.rides.where( :fare_id => fare.id ).first
-
-        payment = Payment.new
-        payment.driver = fare.driver
-        payment.fare = fare
-        payment.rider = rider
-        payment.ride = ride
-        payment.amount_cents = ride.fixed_price
-        payment.driver_earnings_cents = fare.fixed_earnings / fare.riders.count
-        payment.stripe_customer_id = rider.stripe_customer_id
-
-        case ride.request_type
-          when 'no_longer_used'
-
-            payment.initiation = 'Standard Payment'
-						if payment.amount_cents > 1200
-							payment.amount_cents = 1200
-						end
-
-            customer = Stripe::Customer.retrieve(rider.stripe_customer_id)
-            charge = Stripe::Charge.create(
-                :amount => payment.amount_cents,
-                :currency => "usd",
-                :customer => customer.id,
-                :description => "Charge for Voco Fare: " + fare.id.to_s
-            )
-            if charge.paid == true
-              payment.stripe_charge_status = 'Success'
-              payment.captured_at = DateTime.now
-              payment.paid = true
-            else
-              payment.stripe_charge_status = 'Failed'
-            end
-
-          when 'commuter_card' # Currently Unused
-
-            payment.initiation = 'Commuter Card'
-
-            # refill commuter card if necessary
-            tries = 0
-            begin
-              if rider.commuter_balance_cents < ride.cost_per_rider
-                # fill the commuter card
-                if rider.commuter_refill_amount_cents <= 0
-                  raise "Commuter refill not set"
-                end
-
-                paid = PaymentsHelper.autofill_commuter_card rider
-                if paid == true
-                  raise "retry"
-                else
-                  raise "Failed to refill commuter card"
-                end
-              end
-            rescue
-              if $!.to_s == 'retry'
-                Rails.logger.debug 'rescuing for retry'
-                tries += 1
-                if tries > 2
-                  raise "Commuter card refill did not reach required amount after 2 iterations"
-                end
-                retry
-              else
-                raise $!
-              end
-            end
-
-            # pay via commuter card
-            payment.stripe_charge_status = 'Paid By Commuter Card'
-            payment.paid = true
-            rider.commuter_balance_cents -= payment.amount_cents
-            rider.save
-
+        PushHelper.send_silent_notification rider do |notification|
+          # this just clears the current ticket at this point
+          notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 0 }
         end
-
-      rescue
-        payment.stripe_charge_status = 'Error: ' + $!.message
-        Rails.logger.debug $!.message
-        Rails.logger.debug $!.backtrace.join("\n")
-      ensure
-        payment.save
       end
 
-			PushHelper.send_notification rider do |notification|
-				notification.alert = "Receipt For Your Ride"
-				notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 100 }
+      fare.arrived!
+      fare.rides.scheduled.each do |r|
+        trip = r.trip
+        unless trip.nil?
+          trip.complete_if_no_longer_active
+
+          if trip.completed?
+            self.assign_payment_for_trip r.rider, trip
+          end
+        end
       end
 
     end
 
-    fare.arrived!
+  end
 
-    fare.driver.current_fare = nil
-    fare.driver.save
+  def self.assign_payment_for_trip user, trip
+    Rails.logger.debug "assign payment"
+
+    amount = 0
+    type = nil
+    trip.rides.each do |ride|
+      unless ride.fare.nil?
+        if ride.fare.completed?
+          if ride.driving
+            amount = amount + ride.fare.fixed_earnings
+            type = 'earning'
+          else
+            amount = amount - ride.fixed_price
+            type = 'trip'
+          end
+        end
+      end
+    end
+    if type.nil?
+      return
+    end
+
+
+    # check for free ride for rider
+    rider = user.as_rider
+    if !trip.rides[0].driving
+      if rider.free_rides > 0
+        rider.free_rides = rider.free_rides - 1 
+        rider.save
+        amount = 0
+        type = 'free trip'
+      end
+    end
+
+
+
+    receipt = Receipt.new
+    receipt.amount = amount
+    receipt.type = type
+    receipt.date = DateTime.now
+    receipt.trip = trip
+    receipt.user = user
+    receipt.save
+    Rails.logger.debug receipt
+
+    Rails.logger.debug user.commuter_balance_cents
+    user.commuter_balance_cents = user.commuter_balance_cents + amount
+    user.save
 
   end
 
@@ -217,22 +215,44 @@ class TicketManager
 		end
 	end
 
-  # Commuter
 
-  def self.calculate_fixed_price_for_commute trip
-    # TODO use GIS shapes to calculate fixed price
-    trip.rides.where.not(driving: true).each do |ride|
-      ride.fixed_price = 500
+  # Commuter
+  def self.calculate_costs fare
+    Rails.logger.debug fare.riders.count
+    case fare.riders.count
+    when 3
+      variable_rate = 27 
+    when 2
+      variable_rate = 33
+    when 1
+      variable_rate = 37
+    end
+    Rails.logger.debug variable_rate
+    driver_earnings_per_ride = fare.distance * variable_rate
+    Rails.logger.debug driver_earnings_per_ride
+    fare.fixed_earnings = driver_earnings_per_ride * fare.riders.count
+    fare.save
+
+    fare.rides.scheduled.where('driving = false').each do |ride|
+      if ride.rider.free_rides > 0
+        ride.fixed_price = 0
+      else
+        ride.fixed_price = driver_earnings_per_ride + 98
+      end
       ride.save
     end
   end
 
-  def self.calculated_fixed_earnings_for_fare fare
-    fare.fixed_earnings = 0
-    fare.rides.where.not(driving: true).each do |ride|
-      fare.fixed_earnings += ride.fixed_price * 82.25 / 100.0
-      fare.save
+  def self.notify_commuters
+
+    Trip.fulfilled_pending_notification.each do |trip|
+      TicketManager.notify_fulfilled trip
     end
+
+    Trip.unfulfilled_pending_notification.each do |trip|
+      TicketManager.notify_unfulfilled trip
+    end
+
   end
 
   def self.notify_fulfilled trip
@@ -243,6 +263,7 @@ class TicketManager
   end
 
   def self.notify_unfulfilled trip
+    Rails.logger.debug trip
     send_trip_notification trip do |notification|
       notification.alert = "We were unable to fulfill your commute to and from work.  Please try again tomorrow"
       notification.data = { type: :trip_unfulfilled, trip_id: trip.id }
@@ -256,5 +277,42 @@ class TicketManager
     trip.notified = true
     trip.save!
   end
+
+	def self.notify_fare_cancelled_by_rider(fare)
+		fare.driver.devices.each do |d|
+				if(d.push_token.nil? || d.push_token == '')
+					next	
+				end
+				n = PushHelper::push_message(d)
+				n.alert = "Your ride share from #{fare.meeting_point_place_name} to #{fare.drop_off_point_place_name} was cancelled because all riders cancelled"
+				n.data = { type: :fare_cancelled_by_rider, fare_id: fare.id }
+				n.save!
+				Rails.logger.debug "sending cancel push"
+		end
+	end
+
+  def self.notify_fare_cancelled_by_driver ride
+    rider = ride.rider
+    rider.devices.each do |d|
+      if(d.push_token.nil? || d.push_token == '')
+        next	
+      end
+      n = PushHelper::push_message(d)
+      n.alert = "Your ride from #{ride.fare.meeting_point_place_name} to #{ride.fare.drop_off_point_place_name} was cancelled by the driver"
+      n.data = { type: :fare_cancelled_by_driver, fare_id: ride.fare.id }
+      n.save!
+      Rails.logger.debug "sending driver cancelled push"
+    end
+  end
+
+  def self.notify_driver_one_rider_cancelled ride
+    driver = ride.fare.driver
+    PushHelper.send_notification driver do |notification|
+      notification.alert = "#{ride.rider.full_name} withdrew from tomorrows ride share.  The other riders are still making it though!"
+      notification.data = { type: :rider_withdrew_from_fare, fare_id: ride.fare.id }
+    end
+  end
+
+
 
  end

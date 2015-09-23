@@ -1,7 +1,6 @@
 class Driver < User
 	self.table_name = 'users'
 	
-	has_many :cars, :foreign_key => :driver_id, inverse_of: :driver # Refactor: :associated_cars
 	belongs_to :car
 	has_many :offers
 	belongs_to :current_fare, :class_name => 'Fare', :foreign_key => 'current_fare_id'

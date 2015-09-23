@@ -43,9 +43,11 @@ Voco::Application.configure do
 		}
 	}
 
-	config.mobile_app_identifier = 'com.vocotransportation.aluvi.dev'
+  config.stripe = {
+    :publishable_key => 'pk_test_qebkNcGfOXsQJ6aSrimJt3mf',
+    :secret_key => 'sk_test_P3DthPToFUqZMzmrnztHk9ju'
+  }
 
-	config.voco_demo_commuter_assembly_trigger_threshold = 0
-
+  config.raven_dsn = 'https://5ab8495b1d14474cb27678386f05a544:014bc0f112474fbd89639b41b85f26f5@app.getsentry.com/53130'
 
 end

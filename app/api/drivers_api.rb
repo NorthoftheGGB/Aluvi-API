@@ -44,7 +44,6 @@ class DriversAPI < Grape::API
 					car.year = params[:car_year]
 					car.license_plate = params[:car_license_plate]
 					car.save
-					driver.cars << car
 					driver.car = car	
 					driver.drivers_license_number = params[:drivers_license_number]
 					# need to handle referral codes	

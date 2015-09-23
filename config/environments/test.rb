@@ -44,6 +44,11 @@ Voco::Application.configure do
 		config.active_support.test_order = :random
 	end
 
-	# Aluvi specific config
-	config.voco_demo_commuter_assembly_trigger_threshold = 0
+  config.stripe = {
+    :publishable_key => 'pk_test_qebkNcGfOXsQJ6aSrimJt3mf',
+    :secret_key => 'sk_test_P3DthPToFUqZMzmrnztHk9ju'
+  }
+
+  config.raven_dsn = false
+
 end

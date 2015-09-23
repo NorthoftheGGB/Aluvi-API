@@ -6,6 +6,13 @@ GIT
       activerecord (>= 3.0.0)
 
 GIT
+  remote: https://github.com/getsentry/raven-ruby.git
+  revision: 138fed4f6edfbfe0bcbe561cde0e749581bb5fa5
+  specs:
+    sentry-raven (0.16.0.dev0)
+      faraday (>= 0.7.6)
+
+GIT
   remote: https://github.com/kathyonu/stripe-ruby-mock.git
   revision: 13135d912933e3334462208df44546b493ae5466
   branch: stripe-1.24.0
@@ -117,6 +124,8 @@ GEM
     factory_girl_rails (4.5.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
     gcm (0.1.0)
       httparty
       json
@@ -181,19 +190,12 @@ GEM
     mimemagic (0.3.0)
     mini_portile (0.6.2)
     minitest (5.7.0)
-    monetize (1.3.1)
-      money (~> 6.6)
-    money (6.6.1)
-      i18n (>= 0.6.4, <= 0.7.0)
-    money-rails (0.0.1)
-      activesupport (>= 3.0)
-      money (>= 4.0.2)
-      railties (>= 3.0)
     mono_logger (1.1.0)
     multi_json (1.11.2)
     multi_logger (0.1.0)
       railties
     multi_xml (0.5.5)
+    multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -364,6 +366,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  actionview
   activerecord-postgis-adapter
   aws-sdk (~> 1.6)
   better_errors
@@ -385,8 +388,6 @@ DEPENDENCIES
   leaflet-rails
   mapquest
   memcachier
-  monetize
-  money-rails
   multi_logger
   paperclip (~> 4.1)
   pg
@@ -400,10 +401,11 @@ DEPENDENCIES
   rspec
   rspec-rails (~> 3.1)
   sass-rails (~> 4.0.3)
+  sentry-raven!
   spring
   spring-commands-rspec
   stripe (>= 1.21)!
-  stripe-ruby-mock (~> 2.1)!
+  stripe-ruby-mock (~> 2.1.1)!
   table_cloth
   therubyracer
   thin

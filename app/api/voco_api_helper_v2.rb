@@ -69,5 +69,33 @@ module VocoApiHelperV2
 			error! payload, 400
 		end
 	end
+
+	def payment_method_required
+		error! "Payment method required", 402
+	end
+
+  def tickets 
+    rider = Rider.find(current_user.id)
+    @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
+    @rides
+  end
+
+  def invalid_latitude_range latitude
+    if latitude >= 23 && latitude <= 50
+      false
+    else
+      true
+    end
+  end
+
+  def invalid_longitude_range longitude
+    if longitude >= -130 && longitude <= -60
+      false
+    else
+      true
+    end
+  end
+
+
 end
 

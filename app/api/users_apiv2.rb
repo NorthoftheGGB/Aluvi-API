@@ -20,23 +20,14 @@ class UsersAPIV2 < Grape::API
     end
     post do
 
-			user = User.where(:email => params[:email] ).first
-			unless user.nil?
-				error! 'Already Registered', 200, 'X-Error-Detail' => 'Already Registered for Riding'
-				return
-			end
+      user = User.where(:email => params[:email] ).first
+      unless user.nil?
+        error! 'Already Registered', 200, 'X-Error-Detail' => 'Already Registered for Riding'
+        return
+      end
 
       begin
-				user = UserManager.create_user(params)
-
-        if params[:driver]
-          driver = Driver.unscoped.find(user.id)
-					driver.interested
-					driver.approve
-					driver.register
-					driver.activate
-					driver.save
-        end
+        user = UserManager.create_user(params)
 
         ok
         token = user.generate_token!
@@ -62,14 +53,15 @@ class UsersAPIV2 < Grape::API
       user = User.where(:email => params['email']).first
 
       unless (user.nil?)
-				new_password = (0...8).map { (65 + rand(26)).chr }.join
-				user.password = new_password.downcase
-				user.save
+        new_password = (0...8).map { (65 + rand(26)).chr }.join
+        user.password = new_password.downcase
+        user.save
+        Rails.logger.debug Rails.configuration.aluvi
 
-        g = GmailSender.new("support@aluviapp.com", "support4aluviapp")
+        g = GmailSender.new(Rails.configuration.aluvi[:support_email], Rails.configuration.aluvi[:support_email_password])
         g.send(:to => user.email,
                :subject => "Password Reset",
-               :content => "Here is a new password for Aluvi: " + user.password)
+               :content => "Here is a new password for Aluvi: " + new_password)
         ok
       else
         error! 'User not found', 404, 'X-Error-Detail' => 'User not found'
@@ -97,7 +89,7 @@ class UsersAPIV2 < Grape::API
           device.push_token = "" # other devices are logged out, dont push to them
           device.save
         end
-				ok
+        ok
         response = Hash.new
         response["token"] = token
         response["rider_state"] = user.rider_state
@@ -128,8 +120,8 @@ class UsersAPIV2 < Grape::API
         unless params[:driver_referral_code].nil?
           current_user.driver_referral_code = params[:driver_referral_code]
         end
-				driver = Driver.unscoped.find(current_user.id)
-				driver.interested!
+        driver = Driver.unscoped.find(current_user.id)
+        driver.interested!
       else
         user = User.where(:email => params[:email] ).first
         if user.nil?
@@ -137,8 +129,8 @@ class UsersAPIV2 < Grape::API
           user.phone = params[:phone]
           user.setup
         end
-				user.save
-				driver = Driver.unscoped.find(user.id)
+        user.save
+        driver = Driver.unscoped.find(user.id)
         driver.last_name = params[:name]
         driver.email = params[:email]
         driver.driver_request_region = params[:driver_request_region]
@@ -147,8 +139,8 @@ class UsersAPIV2 < Grape::API
         driver.save
       end
 
-			driver_state = driver.state
-			ok
+      driver_state = driver.state
+      ok
       response = Hash.new
       response["driver_state"] = driver_state
       response
@@ -163,44 +155,22 @@ class UsersAPIV2 < Grape::API
       response
     end
 
-		desc "TEST"
-		params do
-			requires :image, type: Rack::Multipart::UploadedFile
-		end
-		post "test" do
-
-			Rails.logger.debug params
-			rider = Rider.new
-			image = params[:image]
-
-			attachment = {
-				:filename => image[:filename],
-				:type => image[:type],
-				:headers => image[:head],
-				:tempfile => image[:tempfile]
-			}
-
-			Rails.logger.debug attachment
-			rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
-			Rails.logger.debug rider.image
-			rider.save
-
-
-		end
-
     desc "Update profile"
     params do
-			optional :first_name, type: String
-			optional :last_name, type: String
-			optional :email, type: String
-			optional :phone, type: String
-			optional :work_email, type: String
+      optional :first_name, type: String
+      optional :last_name, type: String
+      optional :email, type: String
+      optional :phone, type: String
+      optional :work_email, type: String
       optional :default_card_token, type: String
-			optional :default_recipient_debit_card_token, type: String
-			optional :image, type: Rack::Multipart::UploadedFile
+      optional :default_recipient_debit_card_token, type: String
+      optional :image, type: Rack::Multipart::UploadedFile
     end
     post "profile", jbuilder: "v2/profile" do
       authenticate!
+      Rails.logger.debug 'ok'
+			Rails.logger.debug params[:default_card_token]
+      Rails.logger.debug 'ko'
       unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 
@@ -210,12 +180,14 @@ class UsersAPIV2 < Grape::API
           card.delete()
         end
 
+				Rails.logger.debug 'contact stripe'
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         default_card = customer.sources.create({:source => params[:default_card_token]})
-				customer.save
+        customer.save
 
+				Rails.logger.debug 'retrieving customer'
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
-				default_card = customer.sources.retrieve(customer.default_source)
+        default_card = customer.sources.retrieve(customer.default_source)
 
         current_rider.cards.each do |card|
           card.delete
@@ -230,14 +202,15 @@ class UsersAPIV2 < Grape::API
         card.exp_month = default_card.exp_month
         card.exp_year = default_card.exp_year
         card.save
+				Rails.logger.debug 'card updated'
 
       end
 
-			Rails.logger.debug current_user
-			Rails.logger.debug current_user.as_driver
+      Rails.logger.debug current_user
+      Rails.logger.debug current_user.as_driver
       unless params[:default_recipient_debit_card_token].nil?
         # TODO handle in background, delayed job
-				StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
+        StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
       end
 
       fields = ['first_name', 'last_name', 'email', 'phone', 'work_email', 'commuter_refill_amount_cents', 'commuter_refill_enabled']
@@ -247,37 +220,64 @@ class UsersAPIV2 < Grape::API
         end
       end
 
-			Rails.logger.debug 'READY'
-			Rails.logger.debug params
-			Rails.logger.debug params[:image]
-			image = params[:image]
-			unless image.nil?
-				Rails.logger.debug 'Saving the attachement'
+      Rails.logger.debug 'READY'
+      Rails.logger.debug params
+      Rails.logger.debug params[:image]
+      image = params[:image]
+      unless image.nil?
+        Rails.logger.debug 'Saving the attachement'
 
-				attachment = {
-					:filename => image[:filename],
-					:type => image[:type],
-					:headers => image[:head],
-					:tempfile => image[:tempfile]
-				}
+        attachment = {
+          :filename => image[:filename],
+          :type => image[:type],
+          :headers => image[:head],
+          :tempfile => image[:tempfile]
+        }
 
-				Rails.logger.debug attachment
-				current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
+        Rails.logger.debug attachment
+        current_rider.image = ActionDispatch::Http::UploadedFile.new(attachment)
 
-			end
+      end
 
       current_rider.save
-			ok
-			@user = current_rider
+      ok
+      current_rider.reload
+      @user = current_rider
 
     end
 
     desc "Get Rider Profile"
     get "profile", jbuilder: "v2/profile" do
       authenticate!
-			ok
+      ok
       @user = current_rider
     end
+
+
+		desc "Update Car"
+		params do 
+			requires :make, type: String
+			requires :model, type: String
+			requires :color, type: String
+			requires :license_plate, type: String
+		end
+		post "car", jbuilder: "v2/profile" do
+			authenticate!
+			driver = current_user.as_driver
+			if driver.car.nil?
+				driver.car = Car.new
+			end
+			driver.car.make = params[:make]
+			driver.car.model = params[:model]
+			driver.car.color = params[:color]
+			driver.car.license_plate = params[:license_plate]
+			driver.car.save
+      driver.state = 'active'
+			driver.save
+			ok
+      current_rider.reload
+      @user = current_rider
+		end
 
 
     desc "Fill Commuter Pass"
@@ -290,7 +290,7 @@ class UsersAPIV2 < Grape::API
       begin
         Rails.logger.debug "add funding to commputer pass " + params[:amount_cents]
         paid = PaymentsHelper.fill_commuter_pass(current_user, params[:amount_cents].to_i)
-				ok
+        ok
         @user = current_user
       rescue
         Rails.logger.error $!.message
@@ -298,20 +298,51 @@ class UsersAPIV2 < Grape::API
       end
     end
 
-		desc "Support Message"
-		params do
-			requires "message"
-		end
-		post "support" do
-			authenticate!
-			support = Support.new
-			support.user = current_user
-			support.messsage = params.message
-			support.save
+    desc "Support Message"
+    params do
+      requires "message"
+    end
+    post "support" do
+      authenticate!
+      support = Support.new
+      support.user = current_user
+      support.messsage = params.message
+      support.save
 
-			ok
+      g = GmailSender.new(Rails.configuration.aluvi[:support_email], Rails.configuration.aluvi[:support_email_password])
+      g.send(:to => Rails.configuration.aluvi[:support_email],
+             :subject => "Support Request",
+             :content => current_user.email + ":\n" + params.message )
+      ok
 
-		end
+    end
+
+    desc "Print All Receipts"
+    post "receipts" do
+      authenticate!
+      receipts = current_rider.receipts.order("date")
+      email_body = ""
+      receipts.each do |receipt|
+        email_body = email_body + "\n" + receipt.date.strftime("%-m/%y") + " " + receipt.type + " " + (receipt.amount / 100.0).to_s
+      end
+
+      g = GmailSender.new(Rails.configuration.aluvi[:support_email], Rails.configuration.aluvi[:support_email_password])
+      g.send(:to => current_user.email,
+             :subject => "Receipts For Aluvi",
+             :content => email_body )
+      ok
+
+    end
+
+
+    desc "Request Payout"
+    post "request_payout" do
+      authenticate!
+      current_user.payout_requested = true
+      current_user.save
+      ok
+    end
+
 
   end
 

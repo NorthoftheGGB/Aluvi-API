@@ -15,13 +15,17 @@ describe Scheduler do
   WORK2_LONGITUDE = -72.9081076060728
   WORK2_LATITUDE = 41.3133458958975
 
-  HOME3_LONGITUDE = -72.917
-  HOME3_LATITUDE = 41.323
-  WORK3_LONGITUDE = -72.9082
-  WORK3_LATITUDE = 41.3134
+  HOME3_LONGITUDE = -72.9110
+  HOME3_LATITUDE = 41.3188
+  WORK3_LONGITUDE = -72.9081076060728
+  WORK3_LATITUDE = 41.3133458958975
+  #HOME3_LONGITUDE = -72.91093
+  #HOME3_LATITUDE = 41.318
+  #WORK3_LONGITUDE = -72.9082
+  #WORK3_LATITUDE = 41.3134
 
-  HOME4_LONGITUDE = -72.917
-  HOME4_LATITUDE = 41.322
+  HOME4_LONGITUDE = -72.915
+  HOME4_LATITUDE = 41.320
   WORK4_LONGITUDE = -72.9082
   WORK4_LATITUDE = 41.3132
 
@@ -86,6 +90,7 @@ describe Scheduler do
       expect(trip2.state).to eq('fulfilled')
       expect(trip1.ride_with_direction('a').fare).to eq(trip2.ride_with_direction('a').fare)
       expect(trip1.ride_with_direction('b').fare).to eq(trip2.ride_with_direction('b').fare)
+      expect(trip2.ride_with_direction('a').fare.pickup_time).to eq(home_pickup)
     end
   end
   context 'for one driver and two riders' do

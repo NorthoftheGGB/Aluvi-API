@@ -17,16 +17,31 @@ class RidesAPIV2< Grape::API
 			requires :return_pickup_time, type: DateTime
 			optional :driving, type: Boolean
 		end
-		post :commute do
+		post :commute, jbuilder: 'v2/tickets' do
 			authenticate!
       Rails.logger.debug params
+
+      # pickup time must be in the future
+      if params['departure_pickup_time'].past?
+        error! "departure_pickup_time must be in the future", 406 
+      end
+
+      if invalid_longitude_range( params[:departure_longitude]) || invalid_latitude_range( params[:departure_latitude] )
+        error! "departure coordinate outside of range", 406 
+      end
+
+      if invalid_longitude_range( params[:destination_longitude]) || invalid_latitude_range( params[:destination_latitude] )
+        error! "destination coordinate outside of range", 406 
+      end
 
 			# check for prexisting commuter ride on this date
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
 				conflict 'Commute request already exists for this day'
+      elsif current_user.payment_mode == 0 && params[:driving] == false && !current_user.as_rider.funding_available_for_trip
+        payment_method_required 
 			else
-
+        Rails.logger.debug current_rider
 				trip = TicketManager.request_commute(
 					RGeo::Geographic.spherical_factory( :srid => 4326 ).point(params[:departure_longitude], params[:departure_latitude]),
 					params[:departure_place_name],
@@ -38,12 +53,8 @@ class RidesAPIV2< Grape::API
 					current_rider
 				)
 
-				ok
-				rval = Hash.new
-				rval[:outgoing_ride_id] = trip.rides[0].id
-				rval[:return_ride_id] = trip.rides[1].id
-				rval[:trip_id] = trip.id
-				rval
+        ok
+        tickets
 			end
 		end
 
@@ -53,9 +64,7 @@ class RidesAPIV2< Grape::API
 		get 'tickets', jbuilder: 'v2/tickets' do
 			authenticate!
 			ok
-			rider = Rider.find(current_user.id)
-			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-			@rides
+      tickets
 		end
 
 		desc "User cancelled a ride"
@@ -90,9 +99,7 @@ class RidesAPIV2< Grape::API
 				end
 			end
 			ok
-			rider = Rider.find(current_user.id)
-			@rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-			@rides
+      tickets
 
 		end
 
@@ -119,9 +126,7 @@ class RidesAPIV2< Grape::API
 					fare.pickup! rider
 				end
         ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
 			end
@@ -142,12 +147,19 @@ class RidesAPIV2< Grape::API
 				end
 
 				TicketManager.fare_completed fare
-				ride.trip.complete_if_no_longer_active
 
         ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
+
+      rescue AASM::InvalidTransition => e
+        Rails.logger.error "ERROR: Invalid Transition"
+        Rails.logger.error e
+        if fare.completed?
+          ok
+          tickets
+        else
+          raise e
+        end
 
 			rescue ApiExceptions::RideNotAssignedToThisDriverException
 				forbidden $!
@@ -161,9 +173,7 @@ class RidesAPIV2< Grape::API
 				trip = Trip.find(params[:trip_id])
 				TicketManager.cancel_trip(trip)
 				ok
-        rider = Rider.find(current_user.id)
-        @rides = rider.rides.select('rides.*').where('pickup_time > ?', DateTime.now.beginning_of_day) 
-        @rides
+        tickets
 			rescue
         Rails.logger.error $!
 				#Rails.logger.error $!.backtrace.join("\n")
@@ -247,16 +257,10 @@ class RidesAPIV2< Grape::API
 
     desc "Payment Details"
     get :receipts, jbuilder: "v2/receipts" do
-      # authenticate!
-      @receipts = Array.new
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 100, "type" => :fare }
-      @receipts << { "amount" => 300, "type" => :payment }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 100, "type" => :earning }
-      @receipts << { "amount" => 300, "type" => :payout }
+      authenticate!
+      Rails.logger.debug "ok"
+      @receipts = current_user.receipts
+      Rails.logger.debug "ko"
     end
 	end
 end

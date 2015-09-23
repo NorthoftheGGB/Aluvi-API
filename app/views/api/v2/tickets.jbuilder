@@ -14,7 +14,7 @@ json.array! @rides do |ride|
     json.destination_longitude ride.destination.x
   end
   json.fixed_price ride.fixed_price
-  unless ride.fare.nil? || ride.fare.state == 'completed'
+  unless ride.fare.nil? || ride.aborted?
     json.state ride.fare.state
   else
     json.state ride.state
@@ -23,7 +23,6 @@ json.array! @rides do |ride|
 	unless ride.fare.nil?
 		json.pickup_time ride.fare.pickup_time
 		json.fare_id ride.fare.id
-		json.state ride.fare.state
 		json.meeting_point_place_name ride.fare.meeting_point_place_name
 		json.meeting_point_latitude ride.fare.meeting_point.y
 		json.meeting_point_longitude ride.fare.meeting_point.x
@@ -31,13 +30,15 @@ json.array! @rides do |ride|
 		json.drop_off_point_latitude ride.fare.drop_off_point.y
 		json.drop_off_point_longitude ride.fare.drop_off_point.x
 		json.estimated_earnings ride.fare.fixed_earnings
-		json.riders ride.fare.riders.where.not( id: ride.fare.driver.id).where.not( id: current_user.id ) do |rider|
+		json.riders ride.fare.riders do |rider|
+			if rider.id != current_user.id
 				json.id rider.id
 				json.first_name rider.first_name
 				json.last_name rider.last_name
 				json.phone rider.phone
 				json.large_image rider.image.url
 				json.small_image rider.image.url(:small)
+			end
 		end
 
 	else
@@ -56,6 +57,7 @@ json.array! @rides do |ride|
 			json.id ride.fare.driver.car.id
 			json.make ride.fare.driver.car.make
 			json.model ride.fare.driver.car.model
+			json.color ride.fare.driver.car.color
 			json.year ride.fare.driver.car.year
 			json.license_plate ride.fare.driver.car.license_plate
 			json.state ride.fare.driver.car.state
