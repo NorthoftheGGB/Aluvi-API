@@ -39,6 +39,10 @@ Voco::Application.routes.draw do
 	resources :payouts
 
 	resources :payments
+	
+	get 'snapshots/latest' => 'snapshots#latest'
+
+	resources :snapshots
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

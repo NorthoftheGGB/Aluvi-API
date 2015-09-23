@@ -8,7 +8,7 @@ module Macro
 		Scheduler.build_commuter_trips
 	end
 
-	def self.drive_with_three_rider_scheduled
+	def self.drive_with_three_rider_requested
 		Harness.cancel_trips "a@a.com"
 		Harness.cancel_trips "b@b.com"
 		Harness.cancel_trips "c@c.com"
@@ -17,9 +17,16 @@ module Macro
 		Harness.rider_request "b@b.com"	
 		Harness.rider_request "c@c.com"	
 		Harness.rider_request "d@d.com"	
+	end
+	
+	def self.drive_with_three_rider_scheduled
+		self.drive_with_three_rider_requested
 		Scheduler.build_commuter_trips
 	end
-
+  def self.three_rider_test
+		self.drive_with_three_rider_requested
+		`~/aluvi-reports/maps/before_scheduler.sh`
+	end
 	def self.create_user email
 		user = User.where(email: email).first
 		unless user.nil?
@@ -40,5 +47,10 @@ module Macro
 		self.create_user "c@c.com"
 		self.create_user "d@d.com"
 	end
-
+	def self.test_run
+		Scheduler.build_forward_fares
+	  Scheduler.build_return_fares
+		Scheduler.calculate_costs
+		`~/aluvi-reports/maps/after_scheduler.sh`	
+	end
 end

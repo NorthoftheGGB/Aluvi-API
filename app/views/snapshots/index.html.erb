@@ -1,0 +1,13 @@
+<h1>Available Maps</h1>
+<% @snapshots.each do |snapshot| %>
+<table>
+	<tr>
+		<td><a href="/reports/map_view.html?before-<%= snapshot.id %>">Before</a></td>	
+		<td><%= snapshot.before_created %></td>
+		<% if snapshot.after_fileid %>  
+			<td><a href="/reports/map_view.html?after-<%= snapshot.id %>">After</a></td>
+			<td><%= snapshot.after_created %></td>
+		<% end %>
+	</tr>
+</table>
+<% end %>
