@@ -48,4 +48,7 @@ Voco::Application.configure do
     :publishable_key => 'pk_test_qebkNcGfOXsQJ6aSrimJt3mf',
     :secret_key => 'sk_test_P3DthPToFUqZMzmrnztHk9ju'
   }
+
+  config.raven_dsn = false
+
 end
