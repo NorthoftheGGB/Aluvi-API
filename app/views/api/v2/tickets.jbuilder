@@ -57,6 +57,7 @@ json.array! @rides do |ride|
 			json.id ride.fare.driver.car.id
 			json.make ride.fare.driver.car.make
 			json.model ride.fare.driver.car.model
+			json.color ride.fare.driver.car.color
 			json.year ride.fare.driver.car.year
 			json.license_plate ride.fare.driver.car.license_plate
 			json.state ride.fare.driver.car.state
