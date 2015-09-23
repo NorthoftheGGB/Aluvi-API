@@ -83,6 +83,6 @@ Voco::Application.configure do
     :secret_key => 'sk_live_4Ub7Ccpg3MbWHOMavmfs1wOU'
   }
 
-  config.raven.dsn = 'https://a4a4e7c3ff8249cc9370b394922650dc:2a731114b7d541d1b51735a80eefcfaa@app.getsentry.com/53137'
+  config.raven_dsn = 'https://a4a4e7c3ff8249cc9370b394922650dc:2a731114b7d541d1b51735a80eefcfaa@app.getsentry.com/53137'
 
 end

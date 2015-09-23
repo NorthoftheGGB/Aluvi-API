@@ -1,5 +1,5 @@
 require 'raven'
 
 Raven.configure do |config|
-    config.dsn = Rails.configuration.raven.dsn
+    config.dsn = Rails.configuration.raven_dsn
 end
