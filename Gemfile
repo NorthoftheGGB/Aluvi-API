@@ -78,6 +78,8 @@ gem 'resque-scheduler'
 
 # QA
 gem 'multi_logger'
+gem "sentry-raven", :git => "https://github.com/getsentry/raven-ruby.git"
+
 
 # MemCache
 gem 'dalli'
@@ -85,6 +87,7 @@ gem 'memcachier'
 
 # Deployment
 gem 'capistrano'
+
 
 # Testing
 group :test do

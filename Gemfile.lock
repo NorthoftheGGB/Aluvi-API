@@ -6,6 +6,13 @@ GIT
       activerecord (>= 3.0.0)
 
 GIT
+  remote: https://github.com/getsentry/raven-ruby.git
+  revision: 138fed4f6edfbfe0bcbe561cde0e749581bb5fa5
+  specs:
+    sentry-raven (0.16.0.dev0)
+      faraday (>= 0.7.6)
+
+GIT
   remote: https://github.com/kathyonu/stripe-ruby-mock.git
   revision: 13135d912933e3334462208df44546b493ae5466
   branch: stripe-1.24.0
@@ -117,6 +124,8 @@ GEM
     factory_girl_rails (4.5.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
     gcm (0.1.0)
       httparty
       json
@@ -186,6 +195,7 @@ GEM
     multi_logger (0.1.0)
       railties
     multi_xml (0.5.5)
+    multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -391,6 +401,7 @@ DEPENDENCIES
   rspec
   rspec-rails (~> 3.1)
   sass-rails (~> 4.0.3)
+  sentry-raven!
   spring
   spring-commands-rspec
   stripe (>= 1.21)!

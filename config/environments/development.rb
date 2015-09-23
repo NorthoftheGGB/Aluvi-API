@@ -43,9 +43,9 @@ Voco::Application.configure do
 		}
 	}
 
-	config.mobile_app_identifier = 'com.vocotransportation.aluvi.dev'
-
-	config.voco_demo_commuter_assembly_trigger_threshold = 0
-
+  config.stripe = {
+    :publishable_key => 'pk_test_qebkNcGfOXsQJ6aSrimJt3mf',
+    :secret_key => 'sk_test_P3DthPToFUqZMzmrnztHk9ju'
+  }
 
 end
