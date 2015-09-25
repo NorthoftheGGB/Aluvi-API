@@ -199,7 +199,7 @@ module Scheduler
 			end
 
 			rides.limit(1)
-			if rides.size = 0
+			if rides.size == 0
 				next
 			end
 			assign_return_ride = rides[0]
