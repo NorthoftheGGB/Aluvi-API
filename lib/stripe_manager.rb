@@ -10,6 +10,7 @@ module StripeManager
 				:email => driver.email,
 				:card => token
 			)
+			driver.stripe_recipient_id = recipient.id
 		else
 			recipient = Stripe::Recipient.retrieve(driver.stripe_recipient_id)
 			recipient.card = token
@@ -20,7 +21,6 @@ module StripeManager
 		default_debit_card = recipient.cards.all().data[0]
 		driver.recipient_card_brand = default_debit_card.brand	
 		driver.recipient_card_exp_month = default_debit_card.exp_month
-		#driver.recipient_card_exp_year = default_debit_card.exp_year
 		driver.recipient_card_last4 = default_debit_card.last4
 		driver.save
 	end

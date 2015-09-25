@@ -186,8 +186,8 @@ class UsersAPIV2 < Grape::API
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         default_card = customer.sources.retrieve(customer.default_source)
 
-        if default_card.funding == 'debit'
-          StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
+        if default_card.funding == 'debit' && current_user.as_driver.stripe_recipient_id.nil?
+          StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_card_token])
         end
 
         current_rider.cards.each do |card|
