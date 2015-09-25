@@ -168,9 +168,6 @@ class UsersAPIV2 < Grape::API
     end
     post "profile", jbuilder: "v2/profile" do
       authenticate!
-      Rails.logger.debug 'ok'
-			Rails.logger.debug params[:default_card_token]
-      Rails.logger.debug 'ko'
       unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 
@@ -188,6 +185,10 @@ class UsersAPIV2 < Grape::API
 				Rails.logger.debug 'retrieving customer'
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         default_card = customer.sources.retrieve(customer.default_source)
+
+        if default_card.funding == 'debit'
+          StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_recipient_debit_card_token])
+        end
 
         current_rider.cards.each do |card|
           card.delete
