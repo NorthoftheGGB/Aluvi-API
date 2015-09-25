@@ -75,7 +75,7 @@ module Scheduler
       rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination])
       rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), origin)")
       #rides.limit(1)
-      if rides[0].nil?
+      if rides.size == 0
         next
       end
 
@@ -132,7 +132,7 @@ module Scheduler
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
 			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination)")
 			rides.limit(1)
-			if rides[0].nil?
+			if rides.size == 0
 				next
 			end
       assign_return_ride = rides[0]
@@ -168,7 +168,7 @@ module Scheduler
 			end
 
 			rides.limit(1)
-			if rides[0].nil?
+			if rides.size == 0
 				next
 			end
 			assign_return_ride = rides[0]
@@ -177,15 +177,6 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
-
-			if r.fare.drop_off_point.nil?
-				r.fare.meeting_point = r.origin
-				r.fare.meeting_point_place_name = r.origin_place_name
-				r.fare.drop_off_point = assign_return_ride.destination
-				r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
-				r.fare.save
-			end
-
 
       if !r.trip.fulfilled?
         r.trip.fulfilled!
@@ -208,7 +199,7 @@ module Scheduler
 			end
 
 			rides.limit(1)
-			if rides[0].nil?
+			if rides.size = 0
 				next
 			end
 			assign_return_ride = rides[0]
@@ -217,15 +208,6 @@ module Scheduler
 			assign_return_ride.scheduled!
 			assign_return_ride.forward_ride.return_filled!
       assign_return_ride.trip.fulfilled!
-
-			if r.fare.drop_off_point.nil?
-				r.fare.meeting_point = r.origin
-				r.fare.meeting_point_place_name = r.origin_place_name
-				r.fare.drop_off_point = assign_return_ride.destination
-				r.fare.drop_off_point_place_name = assign_return_ride.destination_place_name
-				r.fare.save
-			end
-
 
       if !r.trip.fulfilled?
         r.trip.fulfilled!
@@ -280,6 +262,14 @@ module Scheduler
 			Rails.logger.debug 'fare'
 			Rails.logger.debug fare
       begin
+        if fare.meeting_point.y.nil?
+          
+          # handle this curious exception
+          Raven.capture_exception(Exception.new("Meeting Point is Nil on fare: " + fare.id.to_s ))
+          
+          next
+        end
+
         tries ||=3
         response = mapquest.directions.route( "#{fare.meeting_point.y},#{fare.meeting_point.x}", "#{fare.drop_off_point.y},#{fare.drop_off_point.x}")
         if response.nil? || response.route.nil?

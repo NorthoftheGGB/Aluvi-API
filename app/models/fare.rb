@@ -67,17 +67,6 @@ class Fare < ActiveRecord::Base
 	alias aasm_driver_cancelled driver_cancelled
 	alias aasm_driver_cancelled! driver_cancelled!
 
-
-	def self.create ( pickup_time, meeting_point, meeting_point_place_name, drop_off_point, drop_off_point_place_name )
-		fare = Fare.new
-    fare.pickup_time = pickup_time
-    fare.meeting_point = meeting_point
-    fare.meeting_point_place_name = meeting_point_place_name
-    fare.drop_off_point = drop_off_point
-    fare.drop_off_point_place_name = drop_off_point_place_name
-    fare
-	end
-
 	def driver
 		driving_ride = self.rides.where(driving:true).first
 		unless driving_ride.nil?

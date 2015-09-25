@@ -1,7 +1,7 @@
 development:
   username: admin
   adapter: postgis
-  database: aluvi_alpha
+  database: aluvi_debug
   pool: 5
   timeout: 5000
 
