@@ -11,6 +11,7 @@ class ApiErrorHandler < Grape::Middleware::Base
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace
+			Raven.capture_exception(e)
       throw :error, :message => e.message + e.backtrace.join("\n") || options[:default_message], :status => 500
     end
   end
