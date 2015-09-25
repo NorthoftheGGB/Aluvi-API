@@ -78,8 +78,8 @@ Voco::Application.configure do
 	config.assets.cache_store = :dalli_store
 
   config.stripe = {
-    :publishable_key => 'pk_live_4Ub7D8qgqi87KpWFkMRtEkzJ',
-    :secret_key => 'sk_live_4Ub7Ccpg3MbWHOMavmfs1wOU'
+    :publishable_key => 'pk_live_ixJ9Hnt8RsUarfkDICgySIuL',
+    :secret_key => 'sk_live_xVbbTt26w0mE8UXc0ilLR6ig'
   }
 
   config.raven_dsn = 'https://a4a4e7c3ff8249cc9370b394922650dc:2a731114b7d541d1b51735a80eefcfaa@app.getsentry.com/53137'
