@@ -248,7 +248,9 @@ module Scheduler
 			r.trip.rides do |ride|
 				ride.commute_scheduler_failed!
 			end
-			r.trip.unfulfilled!
+			if !r.trip.unfulfilled?
+				r.trip.unfulfilled!
+			end
     end
 
   end
