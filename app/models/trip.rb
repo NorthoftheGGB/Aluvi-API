@@ -17,6 +17,7 @@ class Trip < ActiveRecord::Base
     state :unfulfilled
     state :aborted
 		state :completed
+		state :purged
 
     event :fulfilled do
       transitions :from => :requested, :to => :fulfilled
@@ -34,6 +35,12 @@ class Trip < ActiveRecord::Base
 		event :aborted do
 			transitions :from => :requested, :to => :aborted
 			transitions :from => :fulfilled, :to => :aborted
+		end
+
+		event :purge do
+			transitions :from => :requested, :to => :purged
+			transitions :from => :fulfilled, :to => :purged
+			transitions :from => :unfulfilled, :to => :purged
 		end
 
   end
