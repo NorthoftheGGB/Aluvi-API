@@ -8,18 +8,21 @@ class DebugAPI < Grape::API
 		post :purge do
 			Rails.logger.debug "HELLO"
 			authenticate!
-			current_user.as_rider.rides.active.each do |ride|
-        Rails.logger.debug 'hi'
-        TicketManager.cancel_ride ride
-      end
-      current_user.trips.fulfilled.each do |trip|
-        trip.aborted!
-      end
-      current_user.trips.requested.each do |trip|
-        trip.aborted!
-      end
-			Rails.logger.debug "rides"
-			ok
+			ActiveRecord::Base.transaction do
+				current_user.as_rider.rides.active.each do |ride|
+					Rails.logger.debug 'hi'
+					TicketManager.cancel_ride ride
+				end
+				current_user.trips.fulfilled.each do |trip|
+					trip.aborted!
+				end
+				current_user.trips.requested.each do |trip|
+					trip.aborted!
+				end
+				Rails.logger.debug "rides"
+				ok
+			end
+
 		end
 
     desc "Doesnt do anything yet"
