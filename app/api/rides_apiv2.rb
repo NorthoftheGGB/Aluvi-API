@@ -34,6 +34,16 @@ class RidesAPIV2< Grape::API
         error! "destination coordinate outside of range", 406 
       end
 
+      hour = DateTime.now.in_time_zone.strftime("%H").to_i
+      day = Date.today
+      if hour > 20
+        day = day + 1
+      end
+      if hour > 20 || hour < 5
+        day_string = day.strftime("%d").to_i.ordinalize
+        error! "It's past the cutoff to schedule a ride for the " + day_string + ". You can request a ride for the following at after 5 am."
+      end
+
 			# check for prexisting commuter ride on this date
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)
 			if rides_today.length > 1
