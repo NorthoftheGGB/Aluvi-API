@@ -134,7 +134,7 @@ module Scheduler
     Rails.logger.info "Second Pass - Riders"
 		return_driving_rides.each do |r|
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
-			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )
+			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), rides.origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_origin] )
 			rides = rides.order("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.destination.x.to_s + ' ' + r.destination.y.to_s + ") '), rides.destination)")
@@ -163,7 +163,7 @@ module Scheduler
 		return_driving_rides.each do |r|
 
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
-			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )
+			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), rides.origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
 
 			unless r.fare.drop_off_point.nil?
@@ -194,7 +194,7 @@ module Scheduler
 		# - attempt to assign to drivers from return rides of pending_return rides
 		return_driving_rides.each do |r|
 			rides = CommuterRide.joins("JOIN rides AS forward_rides ON forward_rides.trip_id = rides.trip_id AND forward_rides.direction = 'a' AND forward_rides.state = 'pending_return'")
-			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time, r.pickup_time + 30.minutes )
+			rides = rides.where('rides.pickup_time >= ? AND rides.pickup_time <= ? ', r.pickup_time - 15.minutes, r.pickup_time + 15.minutes )
 			rides = rides.where("st_distance( ST_GeographyFromText('SRID=4326;POINT(" + r.origin.x.to_s + ' ' + r.origin.y.to_s + ") '), rides.origin) < ?", Rails.configuration.commute_scheduler[:threshold_from_driver_destination] )
 
 			unless r.fare.drop_off_point.nil?
@@ -255,7 +255,9 @@ module Scheduler
 			r.trip.rides do |ride|
 				ride.commute_scheduler_failed!
 			end
-			r.trip.unfulfilled!
+			if !r.trip.unfulfilled?
+				r.trip.unfulfilled!
+			end
     end
 
   end
