@@ -2,11 +2,18 @@ module Scheduler
 
 	def self.build_commuter_trips
     ActiveRecord::Base.transaction do
+			self.clean_invalid_data
       self.build_forward_fares
       self.build_return_fares
       self.calculate_costs
     end
     self.notify_commuters
+	end
+
+	def self.clean_invalid_data
+		CommuterRide.pending.each do |r|
+			r.invalidate!
+		end
 	end
 
 	def self.build_forward_fares
