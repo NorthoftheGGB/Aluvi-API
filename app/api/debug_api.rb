@@ -10,7 +10,12 @@ class DebugAPI < Grape::API
 			authenticate!
 			ActiveRecord::Base.transaction do
 				current_user.as_rider.rides.active.each do |ride|
-					Rails.logger.debug 'hi'
+					TicketManager.purge_ride ride
+				end
+				current_user.as_rider.rides.pending_return do |ride|
+					TicketManager.purge_ride ride
+				end
+				current_user.as_rider.rides.pending_passengers do |ride|
 					TicketManager.purge_ride ride
 				end
 				Rails.logger.debug "rides"
