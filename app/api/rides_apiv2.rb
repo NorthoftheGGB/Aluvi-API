@@ -36,12 +36,12 @@ class RidesAPIV2< Grape::API
 
       hour = DateTime.now.in_time_zone.strftime("%H").to_i
       day = Date.today
-      if hour > 20
+      if hour > 22
         day = day + 1
       end
-      if hour > 20 || hour < 5
+      if hour > 22 || hour < 5
         day_string = day.strftime("%d").to_i.ordinalize
-        error! "It's past the cutoff to schedule a ride for the " + day_string + ". You can request a ride for the following at after 5 am."
+        #error! "It's past the cutoff to schedule a ride for the " + day_string + ". You can request a ride for the following at after 5 am."
       end
 
 			# check for prexisting commuter ride on this date
