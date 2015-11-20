@@ -27,22 +27,24 @@ class RidesAPIV2< Grape::API
       end
 
       if invalid_longitude_range( params[:departure_longitude]) || invalid_latitude_range( params[:departure_latitude] )
-        error! "departure coordinate outside of range", 406 
+        error! "departure coordinate outside of range " + params[:departure_longitude] + " " + params[:departure_latitude], 406 
       end
 
       if invalid_longitude_range( params[:destination_longitude]) || invalid_latitude_range( params[:destination_latitude] )
-        error! "destination coordinate outside of range", 406 
+        error! "destination coordinate outside of range " + params[:destination_longitude] + " " + params[:destination_latitude], 406 
       end
 
-      hour = DateTime.now.in_time_zone.strftime("%H").to_i
-      day = Date.today
-      if hour > 22
-        day = day + 1
-      end
-      if hour > 22 || hour < 5
-        day_string = day.strftime("%d").to_i.ordinalize
-        #error! "It's past the cutoff to schedule a ride for the " + day_string + ". You can request a ride for the following at after 5 am."
-      end
+			if Rails.configuration.aluvi['enable_cutoff']
+				hour = DateTime.now.in_time_zone.strftime("%H").to_i
+				day = Date.today
+				if hour > 22
+					day = day + 1
+				end
+				if hour > 22 || hour < 5
+					day_string = day.strftime("%d").to_i.ordinalize
+					error! "It's past the cutoff to schedule a ride for the " + day_string + ". You can request a ride for the following day after 5 am.", 406
+				end
+			end
 
 			# check for prexisting commuter ride on this date
 			rides_today = Ride.active.where(rider_id: current_user.id).where(request_type: 'commuter').where('rides.pickup_time > ?', params['departure_pickup_time'].beginning_of_day)

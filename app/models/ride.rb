@@ -7,6 +7,7 @@ class Ride < ActiveRecord::Base
                   :state, :request_type, :pickup_time, :trip_id, :direction, :driving, :fixed_price
 
 	scope :active, -> { joins("LEFT JOIN fares ON rides.fare_id = fares.id").where('rides.state = ? OR fares.state = ? OR fares.state = ?', :requested, :scheduled, :started) }
+	scope :pending, -> { where('state in (?)', [ :pending_return, :pending_passengers ] ) }
 
 	include AASM
 	aasm.attribute_name :state
@@ -21,6 +22,7 @@ class Ride < ActiveRecord::Base
 		state :commute_scheduler_failed
     state :aborted
     state :purged
+		state :invalidated
 
 		event :request, :after => :ride_requested do
 			transitions :from => :created, :to => :requested
@@ -69,6 +71,11 @@ class Ride < ActiveRecord::Base
 			transitions :from => :requested, :to => :commute_scheduler_failed
 			transitions :from => :pending_return, :to => :commute_scheduler_failed
 			transitions :from => :pending_passengers, :to => :commute_scheduler_failed
+		end
+
+		event :invalidate do
+			transitions :from => :pending_return, :to => :invalidated
+			transitions :from => :pending_passengers, :to => :invalidated
 		end
 	end
 
