@@ -187,13 +187,18 @@ class UsersAPIV2 < Grape::API
         default_card = customer.sources.retrieve(customer.default_source)
 
         if default_card.funding == 'debit' && current_user.as_driver.stripe_recipient_id.nil?
-          StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_card_token])
+					# For unclear reasons, this call causes the whole api method to return
+					# as in the rest of this method is not executed
+					# no exceptions appear to be captured, however
+          # StripeManager::set_driver_recipient_card(current_user.as_driver, params[:default_card_token])
         end
 
+				Rails.logger.debug default_card
         current_rider.cards.each do |card|
-          card.delete
+					card.delete
         end
 
+				Rails.logger.debug default_card
         card = Card.new
         card.rider = current_rider
         card.stripe_card_id = default_card.id
