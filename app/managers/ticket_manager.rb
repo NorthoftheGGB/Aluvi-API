@@ -156,14 +156,6 @@ class TicketManager
   def self.fare_completed(fare)
     ActiveRecord::Base.transaction do
 
-      fare.riders.each do |rider|
-        ride = rider.rides.where( :fare_id => fare.id ).first
-        PushHelper.send_silent_notification rider do |notification|
-          # this just clears the current ticket at this point
-          notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 0 }
-        end
-      end
-
       fare.arrived!
       fare.rides.scheduled.each do |r|
         trip = r.trip
@@ -175,6 +167,15 @@ class TicketManager
           end
         end
       end
+
+      fare.riders.each do |rider|
+        ride = rider.rides.where( :fare_id => fare.id ).first
+        PushHelper.send_silent_notification rider do |notification|
+          # this just clears the current ticket at this point
+          notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 0 }
+        end
+      end
+
 
     end
 
