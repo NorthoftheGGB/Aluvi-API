@@ -1,9 +1,12 @@
-development:
+development: &development
   username: admin
   adapter: postgis
   database: aluvi_alpha
   pool: 5
   timeout: 5000
+
+nightly:
+  <<: *development
 
 production:
   username: admin

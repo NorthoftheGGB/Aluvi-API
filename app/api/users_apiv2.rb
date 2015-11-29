@@ -257,6 +257,7 @@ class UsersAPIV2 < Grape::API
       authenticate!
       ok
       @user = current_rider
+			Rails.logger.debug @user.image.url
     end
 
 

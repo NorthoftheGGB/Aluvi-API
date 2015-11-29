@@ -21,6 +21,7 @@ class Ride < ActiveRecord::Base
 		state :failed
 		state :commute_scheduler_failed
     state :aborted
+    state :purged
 		state :invalidated
 
 		event :request, :after => :ride_requested do
@@ -57,6 +58,13 @@ class Ride < ActiveRecord::Base
 
     event :abort do
       transitions :from => :scheduled, :to => :aborted
+    end
+
+    event :purge do
+      transitions :from => :scheduled, :to => :purged
+      transitions :from => :pending_return, :to => :purged
+      transitions :from => :pending_passengers, :to => :purged
+      transitions :from => :requested, :to => :purged
     end
 
 		event :commute_scheduler_failed, :after => :clear_fare do

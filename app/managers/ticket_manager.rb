@@ -59,8 +59,16 @@ class TicketManager
     end
 	end
 
-
 	def self.cancel_ride ride
+		self.do_cancel_ride ride, false
+	end
+
+	def self.purge_ride ride
+		self.do_cancel_ride ride, true
+	end
+
+
+	def self.do_cancel_ride ride, purge
     Rails.logger.info "RIDE_CANCELLED"
     Rails.logger.debug ride.fare
     if ride.fare != nil
@@ -72,10 +80,14 @@ class TicketManager
 				fare.driver_cancelled!
 				fare.finished = Time.now
 				fare.save
-        rides = fare.rides.scheduled
+        rides = fare.rides.where("driving = ?", false).scheduled
 				rides.each do |ride|
 					unless ride.aborted?
-						ride.abort!
+						unless purge
+							ride.abort!
+						else
+							ride.purge!
+						end
 					end
           self.notify_fare_cancelled_by_driver ride
 				end
@@ -88,14 +100,22 @@ class TicketManager
 				fare.save
         rides = fare.rides.scheduled
 				rides.each do |ride|
-					ride.abort!
+					unless purge
+						ride.abort!
+					else
+						ride.purge!
+					end
 				end
 				self.notify_fare_cancelled_by_rider fare
 
 			else 
 				Rails.logger.info 'RIDE_CANCELLED: one rider cancelled'
 				unless ride.aborted?
-					ride.abort!
+					unless purge
+						ride.abort!
+					else
+						ride.purge!
+					end
 					self.calculate_costs ride.fare
 					self.notify_driver_one_rider_cancelled ride
 				end
@@ -103,7 +123,11 @@ class TicketManager
 
       ride.fare.rides.each do |r|
         unless r.trip.nil?
-          r.trip.abort_if_no_longer_active
+					unless purge
+						r.trip.abort_if_no_longer_active
+					else
+						r.trip.purge
+					end
 
           if r.trip.aborted?
             self.assign_payment_for_trip r.rider, r.trip
@@ -113,7 +137,11 @@ class TicketManager
 		else
 			ride.cancel!
       unless ride.trip.nil?
-        ride.trip.abort_if_no_longer_active
+				unless purge
+					ride.trip.abort_if_no_longer_active
+				else
+					ride.trip.purge
+				end
 
         if ride.trip.aborted?
           self.assign_payment_for_trip ride.rider, ride.trip
@@ -128,14 +156,6 @@ class TicketManager
   def self.fare_completed(fare)
     ActiveRecord::Base.transaction do
 
-      fare.riders.each do |rider|
-        ride = rider.rides.where( :fare_id => fare.id ).first
-        PushHelper.send_silent_notification rider do |notification|
-          # this just clears the current ticket at this point
-          notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 0 }
-        end
-      end
-
       fare.arrived!
       fare.rides.scheduled.each do |r|
         trip = r.trip
@@ -147,6 +167,15 @@ class TicketManager
           end
         end
       end
+
+      fare.riders.each do |rider|
+        ride = rider.rides.where( :fare_id => fare.id ).first
+        PushHelper.send_silent_notification rider do |notification|
+          # this just clears the current ticket at this point
+          notification.data = { type: :ride_receipt, fare_id: fare.id, amount: 0 }
+        end
+      end
+
 
     end
 
