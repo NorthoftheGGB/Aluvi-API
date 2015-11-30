@@ -54,7 +54,8 @@ class UsersAPIV2 < Grape::API
 
       unless (user.nil?)
         new_password = (0...8).map { (65 + rand(26)).chr }.join
-        user.password = new_password.downcase
+				new_password = new_password.downcase
+        user.password = new_password
         user.save
         Rails.logger.debug Rails.configuration.aluvi
 
