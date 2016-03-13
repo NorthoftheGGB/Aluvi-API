@@ -169,6 +169,22 @@ class UsersAPIV2 < Grape::API
     end
     post "profile", jbuilder: "v2/profile" do
       authenticate!
+
+      if current_user.work_email.nil? && !params[:work_email].nil?
+        # put user into the SAAS system with best effot
+        if params['work_email'].include? "glassdoor.com"
+          u = GlassdoorUser.new
+        elsif params['work_email'].include? "fico.com"
+          u = FicoUser.new
+        end
+        unless u.nil?
+          u.name = params['first_name'] + " " + params['last_name'] 
+          u.email = params['work_email']
+          #u.driver = current_user.driver_state
+          u.save!
+        end
+      end
+
       unless params[:default_card_token].nil? || params[:default_card_token] == ""
         # TODO handle in background, delayed job
 

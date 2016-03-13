@@ -12,7 +12,7 @@ gem 'protected_attributes'
 gem 'rails-observers'
 
 # database
-#gem 'mysql2'
+gem 'mysql2', '~> 0.3.18' 
 gem 'foreigner', :git => 'git://github.com/deepwinter/foreigner.git'
 gem 'pg'
 gem 'activerecord-postgis-adapter'

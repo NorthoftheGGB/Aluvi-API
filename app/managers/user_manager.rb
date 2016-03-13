@@ -2,6 +2,7 @@ module UserManager
 
 	def self.create_user params
 
+    rval = nil
 		ActiveRecord::Base.transaction do
 
 			user = User.new
@@ -33,8 +34,9 @@ module UserManager
 
       user.free_rides = 1
 			user.save
-			user
+			rval = user
 		end
+    rval
 	end
 
 end

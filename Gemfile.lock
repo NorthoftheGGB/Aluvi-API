@@ -196,6 +196,7 @@ GEM
       railties
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    mysql2 (0.3.20)
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -389,6 +390,7 @@ DEPENDENCIES
   mapquest
   memcachier
   multi_logger
+  mysql2 (~> 0.3.18)
   paperclip (~> 4.1)
   pg
   protected_attributes
